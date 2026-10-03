@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fiktivní PID & ČD</title>
+  <title>Fiktivní PID & ČD Portal</title>
   <style>
     :root {
       --bg-dark: #0f172a;
@@ -42,7 +42,7 @@
 
     header h1 {
       margin: 0;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -230,38 +230,14 @@
   <header>
     <h1>🚌 IDOS / Fiktivní PID</h1>
     <div class="user-panel">
-      <span id="user-email" style="font-size: 0.85rem; color: #e2e8f0;"></span>
-      <button id="auth-btn">Přihlásit</button>
+      <span id="user-email-header" style="font-size: 0.85rem; color: #e2e8f0;"></span>
+      <button class="auth-trigger-btn">Přihlásit</button>
     </div>
   </header>
 
   <div class="container">
 
-    <!-- Linky PID -->
-    <div class="card">
-      <h2>🚏 Linky PID</h2>
-      <ul>
-        <li><span><strong>123:</strong> Na Knížecí – Šmukýřka</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>772:</strong> Na Knížecí – Smíchovské Nádraží</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>773:</strong> Šmukýřka – Slaný, Aut. Nádr.</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>774:</strong> Slaný, Pražská – Slaný ČSAD</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>775:</strong> Slaný, ČSAD – Slaný, Šultysova <br><small style="color:var(--text-muted)">(dále jako 776 směr Žižice, Drnov)</small></span> <span class="badge">Autobus</span></li>
-        <li><span><strong>776:</strong> Slaný, Aut. Nádr. – Žižice, Drnov</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>334</strong></span> <span class="badge">Autobus</span></li>
-      </ul>
-    </div>
-
-    <!-- Linky ČD -->
-    <div class="card">
-      <h2>🚆 Sekce České Dráhy (ČD)</h2>
-      <ul>
-        <li><span><strong>S1:</strong> Praha, Smíchovské Nádraží – Slaný</span> <span class="badge badge-train">Vlak</span></li>
-        <li><span><strong>R23:</strong> Praha, Smíchovské Nádraží – Žižice</span> <span class="badge badge-train">Rychlík</span></li>
-        <li><span><strong>S2:</strong> Žižice – Praha, Smíchovské Nádraží</span> <span class="badge badge-train">Vlak</span></li>
-      </ul>
-    </div>
-
-    <!-- Vozy -->
+    <!-- 1. VOZY (ZAKÓDOVANÉ) -->
     <div class="card">
       <h2>🚍 Vozový Park</h2>
       
@@ -292,9 +268,9 @@
       <p style="color: var(--text-muted); font-style: italic; margin: 5px 0;">( žádný )</p>
     </div>
 
-    <!-- Nákup jízdenky -->
+    <!-- 2. JÍZDENKY -->
     <div class="card">
-      <h2>🎫 Virtuální jízdenky</h2>
+      <h2>🎫 Virtuální Jízdenky</h2>
       <p id="auth-warning" style="color: #f87171; font-size: 0.9rem; margin-top: 0;">Pro nákup jízdenky se musíte nejprve přihlásit přes Google.</p>
       
       <label for="ticket-type">Vyberte typ jízdenky</label>
@@ -336,6 +312,52 @@
       </div>
     </div>
 
+    <!-- 3. PŘIHLÁŠENÍ -->
+    <div class="card">
+      <h2>👤 Uživatelský Účet</h2>
+      <div id="user-status-card">
+        <p style="color: var(--text-muted); margin-top: 0;">Status: <strong id="account-status-text" style="color: #f87171;">Nepřihlášen</strong></p>
+        <button class="auth-trigger-btn" style="width: 100%;">Přihlásit přes Google</button>
+      </div>
+    </div>
+
+    <!-- 4. INFO -->
+    <div class="card">
+      <h2>ℹ️ Informace o systému</h2>
+      <p style="margin-top: 0; color: var(--text-muted); line-height: 1.5;">
+        Vítejte v oficiálním portálu <strong>Fiktivního PID & ČD</strong>. Tento systém slouží pro simulaci odbavení cestujících, nákup virtuálních dokladů a přehled provozovaných linek a vozidel.
+      </p>
+      <ul>
+        <li><span><strong>Platba:</strong> Brána TadxPay (Simulace)</span></li>
+        <li><span><strong>Ověření:</strong> Google Firebase Authentication</span></li>
+        <li><span><strong>Oznámení:</strong> Integrováno s Discord Webhook</span></li>
+      </ul>
+    </div>
+
+    <!-- 5. LINKY ČD -->
+    <div class="card">
+      <h2>🚆 Linky České Dráhy (ČD)</h2>
+      <ul>
+        <li><span><strong>S1:</strong> Praha, Smíchovské Nádraží – Slaný</span> <span class="badge badge-train">Vlak</span></li>
+        <li><span><strong>R23:</strong> Praha, Smíchovské Nádraží – Žižice</span> <span class="badge badge-train">Rychlík</span></li>
+        <li><span><strong>S2:</strong> Žižice – Praha, Smíchovské Nádraží</span> <span class="badge badge-train">Vlak</span></li>
+      </ul>
+    </div>
+
+    <!-- 6. LINKY PID -->
+    <div class="card">
+      <h2>🚏 Linky PID</h2>
+      <ul>
+        <li><span><strong>123:</strong> Na Knížecí – Šmukýřka</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>772:</strong> Na Knížecí – Smíchovské Nádraží</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>773:</strong> Šmukýřka – Slaný, Aut. Nádr.</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>774:</strong> Slaný, Pražská – Slaný ČSAD</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>775:</strong> Slaný, ČSAD – Slaný, Šultysova <br><small style="color:var(--text-muted)">(dále jako 776 směr Žižice, Drnov)</small></span> <span class="badge">Autobus</span></li>
+        <li><span><strong>776:</strong> Slaný, Aut. Nádr. – Žižice, Drnov</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>334</strong></span> <span class="badge">Autobus</span></li>
+      </ul>
+    </div>
+
   </div>
 
   <!-- Platební Modal (TadxPay) -->
@@ -368,10 +390,17 @@
     </div>
   </div>
 
-  <!-- Firebase Auth Module -->
+  <!-- Firebase Auth Module (přesměrování pro mobilní zařízení) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      signInWithRedirect, 
+      getRedirectResult, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCA8xhs3qS9NH7XoedqDjdL2WY7gh0_-WE",
@@ -387,43 +416,57 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    const authBtn = document.getElementById('auth-btn');
-    const userEmailSpan = document.getElementById('user-email');
+    const authBtns = document.querySelectorAll('.auth-trigger-btn');
+    const userEmailHeader = document.getElementById('user-email-header');
     const buyBtn = document.getElementById('buy-btn');
     const authWarning = document.getElementById('auth-warning');
+    const accountStatusText = document.getElementById('account-status-text');
 
     window.currentUser = null;
 
-    authBtn.addEventListener('click', () => {
-      if (window.currentUser) {
-        signOut(auth);
-      } else {
-        signInWithPopup(auth, provider).catch(error => alert("Chyba při přihlašování: " + error.message));
-      }
+    getRedirectResult(auth).catch((error) => {
+      console.error("Chyba při přihlášení z přesměrování:", error);
+    });
+
+    authBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (window.currentUser) {
+          signOut(auth);
+        } else {
+          signInWithRedirect(auth, provider);
+        }
+      });
     });
 
     onAuthStateChanged(auth, (user) => {
       window.currentUser = user;
       if (user) {
-        userEmailSpan.textContent = user.displayName || user.email;
-        authBtn.textContent = 'Odhlásit';
+        const displayName = user.displayName || user.email;
+        userEmailHeader.textContent = displayName;
+        accountStatusText.textContent = `Přihlášen jako ${displayName}`;
+        accountStatusText.style.color = '#10b981';
+
+        authBtns.forEach(btn => btn.textContent = 'Odhlásit');
         buyBtn.disabled = false;
         authWarning.style.display = 'none';
       } else {
-        userEmailSpan.textContent = '';
-        authBtn.textContent = 'Přihlásit';
+        userEmailHeader.textContent = '';
+        accountStatusText.textContent = 'Nepřihlášen';
+        accountStatusText.style.color = '#f87171';
+
+        authBtns.forEach(btn => btn.textContent = 'Přihlásit přes Google');
         buyBtn.disabled = true;
         authWarning.style.display = 'block';
       }
     });
   </script>
 
-  <!-- Hlavní logika a Discord Embed -->
+  <!-- Hlavní aplikační logika & Discord Webhook -->
   <script>
-    // SEM VLOŽ SŮJ DISCORD WEBHOOK URL
+    // DOPLŇ SEM SVŮJ DISCORD WEBHOOK URL
     const DISCORD_WEBHOOK_URL = "DOPLŇ_SVŮJ_DISCORD_WEBHOOK_URL";
 
-    // Odemknutí vozů PINem
+    // Odemknutí vozů PINem (8162)
     function unlockFleet() {
       const pin = document.getElementById('fleet-pin').value;
       if (pin === '8162') {
@@ -434,7 +477,7 @@
       }
     }
 
-    // Platební simulace
+    // Platební modul (TadxPay Simulace)
     let currentPin = "";
 
     function openPayment() {
@@ -508,12 +551,12 @@
 
       document.getElementById('active-ticket').style.display = 'block';
 
-      // Odeslání Embed obdélníku na Discord Webhook
+      // Odeslání obdélníku (Embed) na Discord
       sendDiscordEmbed(ticketId, selectedOptionText, passengerType, timeBoughtStr, timeValidStr);
     }
 
     function sendDiscordEmbed(ticketId, ticketName, passenger, boughtAt, validUntil) {
-      if (!https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt || DISCORD_WEBHOOK_URL.includes("DOPLŇ_SVŮJ_DISCORD_WEBHOOK_URL")) {
+      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt")) {
         console.warn("Discord Webhook není nastaven.");
         return;
       }
