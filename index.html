@@ -284,15 +284,15 @@
       <label for="ticket-type">Vyberte typ jízdenky</label>
       <select id="ticket-type">
         <optgroup label="Jednotlivé jízdenky">
-          <option value="24" data-minutes="30">30 minutová – 24 Kč</option>
-          <option value="32" data-minutes="60">60 minutová – 32 Kč</option>
-          <option value="100" data-minutes="1440">24 hodinová – 100 Kč</option>
+          <option value="30" data-minutes="30">30 minutová – 30 Kč</option>
+          <option value="70" data-minutes="60">60 minutová – 70 Kč</option>
+          <option value="120" data-minutes="1440">24 hodinová – 120 Kč</option>
         </optgroup>
         <optgroup label="Předplatné">
-          <option value="250" data-minutes="10080">Týdenní – 250 Kč</option>
+          <option value="222" data-minutes="10080">Týdenní – 222 Kč</option>
           <option value="550" data-minutes="43200">Měsíční – 550 Kč</option>
-          <option value="2750" data-minutes="259200">6 měsíční – 2750 Kč</option>
-          <option value="3650" data-minutes="525600">Roční – 3650 Kč</option>
+          <option value="2790" data-minutes="259200">6 měsíční – 2790 Kč</option>
+          <option value="3630" data-minutes="525600">Roční – 3630 Kč</option>
         </optgroup>
       </select>
 
@@ -331,7 +331,7 @@
 
     <!-- 4. INFO -->
     <div class="card">
-      <h2>ℹ️ Informace o systému</h2>
+      <h2>ℹ️️ Informace o systému</h2>
       <p style="margin-top: 0; color: var(--text-muted); line-height: 1.5;">
         Vítejte v oficiálním portálu <strong>Fiktivního PID & ČD</strong>.
       </p>
@@ -398,7 +398,7 @@
     </div>
   </div>
 
-  <!-- FIREBASE AUTHENTICATION (BEZPEČNÉ PRO iOS / SAFARI) -->
+  <!-- FIREBASE AUTHENTICATION -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { 
@@ -461,9 +461,8 @@
     });
   </script>
 
-  <!-- LOGIKA TICKETŮ A EMBEDU -->
+  <!-- LOGIKA TICKETŮ A EMBEDU S CORS PROXY -->
   <script>
-    // ⚠️️ VLOŽ SEM SŮJ DISCORD WEBHOOK URL:
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
 
     function unlockFleet() {
@@ -563,11 +562,8 @@
       sendDiscordEmbed(ticketId, selectedOptionText, passengerType, discordNick, robloxNick, timeBoughtStr, timeValidStr);
     }
 
-    function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
-      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt")) {
-        console.warn("Chybí Discord Webhook!");
-        return;
-      }
+    async function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
+      if (!DISCORD_WEBHOOK_URL) return;
 
       const googleAccount = (window.currentUser && window.currentUser.email) ? window.currentUser.email : "Nepřihlášen";
 
@@ -594,11 +590,27 @@
         ]
       };
 
-      fetch(DISCORD_WEBHOOK_URL.trim(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).catch(err => console.error("Webhook error:", err));
+      // Využití CORS Proxy pro spolehlivé doručení požadavku z prohlížeče
+      const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(DISCORD_WEBHOOK_URL.trim());
+
+      try {
+        let res = await fetch(proxyUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          // Pokus o přímé volání, pokud proxy selže
+          await fetch(DISCORD_WEBHOOK_URL.trim(), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
+      } catch (err) {
+        console.error("Chyba při odesílání Webhooku:", err);
+      }
     }
   </script>
 </body>
