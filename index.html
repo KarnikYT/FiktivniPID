@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiktivní PID & ČD</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --accent-blue: #2563eb;
+      --accent-cd: #0284c7;
+      --accent-green: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding-bottom: 50px;
+    }
+
+    header {
+      background-color: var(--accent-blue);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-panel {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    button {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button:hover {
+      opacity: 0.95;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-green {
+      background-color: var(--accent-green);
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      margin-top: 15px;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.15rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card h3 {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 15px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    li:last-child {
+      border-bottom: none;
+    }
+
+    .badge {
+      background: #334155;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      color: #38bdf8;
+    }
+
+    .badge-train {
+      background: #0284c7;
+      color: white;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    select, input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: #0f172a;
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    /* Modal / Payment overlay */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 100;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background-color: var(--card-bg);
+      width: 100%;
+      max-width: 500px;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 25px;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .pin-pad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .pin-btn {
+      background-color: #334155;
+      font-size: 1.3rem;
+      padding: 16px;
+      border-radius: 10px;
+    }
+
+    .ticket-box {
+      border: 2px dashed var(--accent-blue);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 20px;
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .qr-container {
+      background: white;
+      padding: 12px;
+      display: inline-block;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>🚌 IDOS / Fiktivní PID</h1>
+    <div class="user-panel">
+      <span id="user-email" style="font-size: 0.85rem; color: #e2e8f0;"></span>
+      <button id="auth-btn">Přihlásit</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Linky PID -->
+    <div class="card">
+      <h2>🚏 Linky PID</h2>
+      <ul>
+        <li><span><strong>123:</strong> Na Knížecí – Šmukýřka</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>772:</strong> Na Knížecí – Smíchovské Nádraží</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>773:</strong> Šmukýřka – Slaný, Aut. Nádr.</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>774:</strong> Slaný, Pražská – Slaný ČSAD</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>775:</strong> Slaný, ČSAD – Slaný, Šultysova <br><small style="color:var(--text-muted)">(dále jako 776 směr Žižice, Drnov)</small></span> <span class="badge">Autobus</span></li>
+        <li><span><strong>776:</strong> Slaný, Aut. Nádr. – Žižice, Drnov</span> <span class="badge">Autobus</span></li>
+        <li><span><strong>334</strong></span> <span class="badge">Autobus</span></li>
+      </ul>
+    </div>
+
+    <!-- Linky ČD -->
+    <div class="card">
+      <h2>🚆 Sekce České Dráhy (ČD)</h2>
+      <ul>
+        <li><span><strong>S1:</strong> Praha, Smíchovské Nádraží – Slaný</span> <span class="badge badge-train">Vlak</span></li>
+        <li><span><strong>R23:</strong> Praha, Smíchovské Nádraží – Žižice</span> <span class="badge badge-train">Rychlík</span></li>
+        <li><span><strong>S2:</strong> Žižice – Praha, Smíchovské Nádraží</span> <span class="badge badge-train">Vlak</span></li>
+      </ul>
+    </div>
+
+    <!-- Vozy -->
+    <div class="card">
+      <h2>🚍 Vozový Park</h2>
+      
+      <h3>Zatím nedostupné</h3>
+      <ul>
+        <li>Iveco Crossway 12 LE</li>
+      </ul>
+
+      <h3>Dostupné (Odmknutí PINem)</h3>
+      <div id="fleet-lock" style="margin-top: 10px;">
+        <input type="password" id="fleet-pin" placeholder="Zadejte PIN (kód) pro odemknutí">
+        <button onclick="unlockFleet()" style="width: 100%; margin-top: 8px;">Odemknout vozy</button>
+      </div>
+
+      <ul id="fleet-list" style="display: none; margin-top: 10px;">
+        <li>SOR CN12</li>
+        <li>SOR NB12</li>
+        <li>SOR NS12</li>
+        <li>Irisbus Citelis 12</li>
+        <li>Irisbus Citelis 18</li>
+        <li>SOR TNS12</li>
+        <li>Škoda 30tr</li>
+        <li>Setra</li>
+        <li>SOR C12</li>
+      </ul>
+
+      <h3>Ve hře</h3>
+      <p style="color: var(--text-muted); font-style: italic; margin: 5px 0;">( žádný )</p>
+    </div>
+
+    <!-- Nákup jízdenky -->
+    <div class="card">
+      <h2>🎫 Virtuální jízdenky</h2>
+      <p id="auth-warning" style="color: #f87171; font-size: 0.9rem; margin-top: 0;">Pro nákup jízdenky se musíte nejprve přihlásit přes Google.</p>
+      
+      <label for="ticket-type">Vyberte typ jízdenky</label>
+      <select id="ticket-type">
+        <optgroup label="Jednotlivé jízdenky">
+          <option value="24">30 minutová – 24 Kč</option>
+          <option value="32">60 minutová – 32 Kč</option>
+          <option value="100">24 hodinová – 100 Kč</option>
+        </optgroup>
+        <optgroup label="Předplatné">
+          <option value="250">Týdenní – 250 Kč</option>
+          <option value="550">Měsíční – 550 Kč</option>
+          <option value="2750">6 měsíční – 2750 Kč</option>
+          <option value="3650">Roční – 3650 Kč</option>
+        </optgroup>
+      </select>
+
+      <label for="passenger-type">Kategorie cestujícího</label>
+      <select id="passenger-type">
+        <option value="Základní (15+)">Základní (15+)</option>
+        <option value="Dítě / žák (6-15 let)">Dítě / žák (6-15 let)</option>
+        <option value="Senior (65+)">Senior (65+)</option>
+      </select>
+
+      <button class="btn-green" id="buy-btn" onclick="openPayment()" disabled>💳 Koupit jízdenku</button>
+
+      <!-- Aktivní jízdenka -->
+      <div id="active-ticket" class="ticket-box" style="display: none;">
+        <h3 style="color: var(--accent-green); margin:0; font-size: 1.1rem;">✔ PLATNÁ JÍZDENKA</h3>
+        <p id="ticket-info" style="font-weight: bold; font-size: 1.1rem; margin: 10px 0 2px 0;"></p>
+        <p id="passenger-info" style="color: var(--text-muted); margin: 0; font-size: 0.9rem;"></p>
+        
+        <div class="qr-container">
+          <div id="qrcode"></div>
+        </div>
+        
+        <p id="ticket-id" style="font-family: monospace; font-size: 1rem; font-weight: bold; margin: 5px 0;"></p>
+        <p id="ticket-validity" style="font-size: 0.85rem; color: var(--text-muted); white-space: pre-line;"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Platební Modal (TadxPay) -->
+  <div id="payment-modal" class="modal">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <strong style="color: var(--accent-blue); font-size: 1.1rem;">⚡ TadxPay</strong>
+        <span style="background: #334155; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">SIMULACE</span>
+      </div>
+      <p style="margin: 15px 0 5px 0; font-size: 1rem;">Celkem k úhradě: <strong id="pay-amount" style="color: var(--accent-green);">0 Kč</strong></p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">Zadejte libovolný 4místný PIN pro potvrzení platby</p>
+
+      <div style="text-align: center; font-size: 1.8rem; letter-spacing: 8px; margin: 15px 0;" id="pin-display">••••</div>
+
+      <div class="pin-pad">
+        <button class="pin-btn" onclick="pressPin('1')">1</button>
+        <button class="pin-btn" onclick="pressPin('2')">2</button>
+        <button class="pin-btn" onclick="pressPin('3')">3</button>
+        <button class="pin-btn" onclick="pressPin('4')">4</button>
+        <button class="pin-btn" onclick="pressPin('5')">5</button>
+        <button class="pin-btn" onclick="pressPin('6')">6</button>
+        <button class="pin-btn" onclick="pressPin('7')">7</button>
+        <button class="pin-btn" onclick="pressPin('8')">8</button>
+        <button class="pin-btn" onclick="pressPin('9')">9</button>
+        <button class="pin-btn" onclick="clearPin()">✕</button>
+        <button class="pin-btn" onclick="pressPin('0')">0</button>
+        <button class="pin-btn" style="background: var(--accent-green);" onclick="processPayment()">✓</button>
+      </div>
+      <button style="width: 100%; margin-top: 15px; background: transparent; color: var(--text-muted);" onclick="closePayment()">Zrušit</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCA8xhs3qS9NH7XoedqDjdL2WY7gh0_-WE",
+      authDomain: "fiktivnipid.firebaseapp.com",
+      projectId: "fiktivnipid",
+      storageBucket: "fiktivnipid.firebasestorage.app",
+      messagingSenderId: "858723196116",
+      appId: "1:858723196116:web:05dbbe2f8684277e30af41",
+      measurementId: "G-Y3R4KFDNQ3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const authBtn = document.getElementById('auth-btn');
+    const userEmailSpan = document.getElementById('user-email');
+    const buyBtn = document.getElementById('buy-btn');
+    const authWarning = document.getElementById('auth-warning');
+
+    window.currentUser = null;
+
+    authBtn.addEventListener('click', () => {
+      if (window.currentUser) {
+        signOut(auth);
+      } else {
+        signInWithPopup(auth, provider).catch(error => alert("Chyba při přihlašování: " + error.message));
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      window.currentUser = user;
+      if (user) {
+        userEmailSpan.textContent = user.displayName || user.email;
+        authBtn.textContent = 'Odhlásit';
+        buyBtn.disabled = false;
+        authWarning.style.display = 'none';
+      } else {
+        userEmailSpan.textContent = '';
+        authBtn.textContent = 'Přihlásit';
+        buyBtn.disabled = true;
+        authWarning.style.display = 'block';
+      }
+    });
+  </script>
+
+  <script>
+    // VLOŽTE NÍŽE VÁŠ DISCORD WEBHOOK URL
+    const DISCORD_WEBHOOK_URL = "DOPLŇ_SVŮJ_DISCORD_WEBHOOK_URL";
+
+    // Odemknutí vozů PINem
+    function unlockFleet() {
+      const pin = document.getElementById('fleet-pin').value;
+      if (pin === '8162') {
+        document.getElementById('fleet-list').style.display = 'block';
+        document.getElementById('fleet-lock').style.display = 'none';
+      } else {
+        alert('Nesprávný PIN kód!');
+      }
+    }
+
+    // Platební simulace
+    let currentPin = "";
+
+    function openPayment() {
+      const select = document.getElementById('ticket-type');
+      const price = select.value;
+      document.getElementById('pay-amount').textContent = price + " Kč";
+      document.getElementById('payment-modal').style.display = 'flex';
+      clearPin();
+    }
+
+    function closePayment() {
+      document.getElementById('payment-modal').style.display = 'none';
+    }
+
+    function pressPin(num) {
+      if (currentPin.length < 4) {
+        currentPin += num;
+        updatePinDisplay();
+      }
+    }
+
+    function clearPin() {
+      currentPin = "";
+      updatePinDisplay();
+    }
+
+    function updatePinDisplay() {
+      document.getElementById('pin-display').textContent = '•'.repeat(currentPin.length) || '••••';
+    }
+
+    function processPayment() {
+      if (currentPin.length !== 4) {
+        alert('Zadejte 4místný PIN!');
+        return;
+      }
+
+      closePayment();
+      generateTicket();
+    }
+
+    function generateTicket() {
+      const ticketType = document.getElementById('ticket-type');
+      const selectedOptionText = ticketType.options[ticketType.selectedIndex].text;
+      const passengerType = document.getElementById('passenger-type').value;
+
+      document.getElementById('ticket-info').textContent = selectedOptionText;
+      document.getElementById('passenger-info').textContent = passengerType;
+
+      const ticketId = 'TCK-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('ticket-id').textContent = 'ID: ' + ticketId;
+
+      const now = new Date();
+      const validUntil = new Date(now.getTime() + 30 * 60000);
+      
+      const timeBoughtStr = `${now.toLocaleDateString('cs-CZ')}${now.toLocaleTimeString('cs-CZ')}`;
+      const timeValidStr = validUntil.toLocaleTimeString('cs-CZ');
+
+      document.getElementById('ticket-validity').textContent = 
+        `Zakoupeno: ${timeBoughtStr}\nPlatnost do:${timeValidStr}`;
+
+      // Generování QR kódu
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = "";
+      new QRCode(qrContainer, {
+        text: ticketId,
+        width: 140,
+        height: 140
+      });
+
+      document.getElementById('active-ticket').style.display = 'block';
+
+      // Odeslání obdélníku s informacemi na Discord
+      sendDiscordEmbed(ticketId, selectedOptionText, passengerType, timeBoughtStr, timeValidStr);
+    }
+
+    // Odeslání Discord Embed zprávy
+    function sendDiscordEmbed(ticketId, ticketName, passenger, boughtAt, validUntil) {
+      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("DOPLŇ_SVŮJ_DISCORD_WEBHOOK_URL")) {
+        console.warn("Discord Webhook není zadaný.");
+        return;
+      }
+
+      const userEmail = window.currentUser ? window.currentUser.email : "Neznámý uživatel";
+      const userName = window.currentUser ? (window.currentUser.displayName || userEmail) : "Anonym";
+
+      const payload = {
+        embeds: [
+          {
+            title: "🎫 Zakoupena nová jízdenka",
+            description: "Byla úspěšně ověřena transakce v systému **TadxPay**.",
+            color: 3887002, // Zelená
+            fields: [
+              { name: "👤 Cestující", value: `${userName} (\`${userEmail}\`)`, inline: false },
+              { name: "🎟️ Typ jízdenky", value: ticketName, inline: true },
+              { name: "👥 Kategorie", value: passenger, inline: true },
+              { name: "🆔 ID Jízdenky", value: `\`${ticketId}\``, inline: false },
+              { name: "📅 Zakoupeno", value: boughtAt, inline: true },
+              { name: "⏳ Platnost do", value: validUntil, inline: true }
+            ],
+            footer: {
+              text: "Fiktivní PID & ČD • Webový systém"
+            },
+            timestamp: new Date().toISOString()
+          }
+        ]
+      };
+
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.error("Chyba při odesílání na Discord:", err));
+    }
+  </script>
+</body>
+</html>
