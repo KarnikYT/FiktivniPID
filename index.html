@@ -237,7 +237,7 @@
 
   <div class="container">
 
-    <!-- 1. VOZY (ZAKÓDOVANÉ) -->
+    <!-- 1. VOZY -->
     <div class="card">
       <h2>🚍 Vozový Park</h2>
       
@@ -284,15 +284,15 @@
       <label for="ticket-type">Vyberte typ jízdenky</label>
       <select id="ticket-type">
         <optgroup label="Jednotlivé jízdenky">
-          <option value="30" data-minutes="30">30 minutová – 24 Kč</option>
-          <option value="70" data-minutes="60">60 minutová – 32 Kč</option>
-          <option value="170" data-minutes="1440">24 hodinová – 100 Kč</option>
+          <option value="24" data-minutes="30">30 minutová – 24 Kč</option>
+          <option value="32" data-minutes="60">60 minutová – 32 Kč</option>
+          <option value="100" data-minutes="1440">24 hodinová – 100 Kč</option>
         </optgroup>
         <optgroup label="Předplatné">
-          <option value="260" data-minutes="10080">Týdenní – 250 Kč</option>
+          <option value="250" data-minutes="10080">Týdenní – 250 Kč</option>
           <option value="550" data-minutes="43200">Měsíční – 550 Kč</option>
-          <option value="3000" data-minutes="259200">6 měsíční – 2750 Kč</option>
-          <option value="5550" data-minutes="525600">Roční – 3650 Kč</option>
+          <option value="2750" data-minutes="259200">6 měsíční – 2750 Kč</option>
+          <option value="3650" data-minutes="525600">Roční – 3650 Kč</option>
         </optgroup>
       </select>
 
@@ -305,7 +305,6 @@
 
       <button class="btn-green" id="buy-btn" onclick="openPayment()">💳 Koupit jízdenku</button>
 
-      <!-- Aktivní jízdenka -->
       <div id="active-ticket" class="ticket-box" style="display: none;">
         <h3 style="color: var(--accent-green); margin:0; font-size: 1.1rem;">✔ PLATNÁ JÍZDENKA</h3>
         <p id="ticket-info" style="font-weight: bold; font-size: 1.1rem; margin: 10px 0 2px 0;"></p>
@@ -369,7 +368,7 @@
 
   </div>
 
-  <!-- Platební Modal (TadxPay) -->
+  <!-- Platební Modal -->
   <div id="payment-modal" class="modal">
     <div class="modal-content">
       <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -399,18 +398,15 @@
     </div>
   </div>
 
-  <!-- FIREBASE AUTHENTICATION (MODULE) -->
+  <!-- FIREBASE AUTHENTICATION (BEZPEČNÉ PRO iOS / SAFARI) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { 
       getAuth, 
       GoogleAuthProvider, 
-      signInWithRedirect, 
-      getRedirectResult, 
+      signInWithPopup, 
       signOut, 
-      onAuthStateChanged,
-      setPersistence,
-      browserLocalPersistence
+      onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -427,29 +423,23 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    setPersistence(auth, browserLocalPersistence).catch(err => console.error("Persistence error:", err));
-
     const authBtns = document.querySelectorAll('.auth-trigger-btn');
     const userEmailHeader = document.getElementById('user-email-header');
     const accountStatusText = document.getElementById('account-status-text');
 
     window.currentUser = null;
 
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result && result.user) {
-          console.log("Přihlášeno:", result.user.email);
-        }
-      })
-      .catch((error) => console.error("Auth redirect error:", error));
-
     authBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         if (window.currentUser) {
           signOut(auth);
         } else {
-          accountStatusText.textContent = "Přesměrovávám...";
-          signInWithRedirect(auth, provider);
+          accountStatusText.textContent = "Načítám přihlášení...";
+          signInWithPopup(auth, provider).catch(error => {
+            console.error("Popup Error:", error);
+            accountStatusText.textContent = "Chyba při přihlášení!";
+            accountStatusText.style.color = '#f87171';
+          });
         }
       });
     });
@@ -471,10 +461,10 @@
     });
   </script>
 
-  <!-- HLAVNÍ LOGIKA KÓDU A WEBHOOKU -->
+  <!-- LOGIKA TICKETŮ A EMBEDU -->
   <script>
-    // ⚠️ VLOŽ SEM SŮJ DISCORD WEBHOOK URL:
-    const RAW_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
+    // ⚠️️ VLOŽ SEM SŮJ DISCORD WEBHOOK URL:
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
 
     function unlockFleet() {
       const pin = document.getElementById('fleet-pin').value;
@@ -573,9 +563,9 @@
       sendDiscordEmbed(ticketId, selectedOptionText, passengerType, discordNick, robloxNick, timeBoughtStr, timeValidStr);
     }
 
-    async function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
-      if (!RAW_DISCORD_WEBHOOK || RAW_DISCORD_WEBHOOK.includes("https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt")) {
-        alert("⚠️ Pozor: V kódu chybí zadaný Discord Webhook URL!");
+    function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
+      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt")) {
+        console.warn("Chybí Discord Webhook!");
         return;
       }
 
@@ -586,7 +576,7 @@
         embeds: [
           {
             title: "🎫 Zakoupena nová jízdenka",
-            description: "Nákup byl úspěšně zpracován přes **TadxPay**.",
+            description: "Nákup byl zpracován přes **TadxPay**.",
             color: 3887002,
             fields: [
               { name: "💬 Discord", value: discordNick, inline: true },
@@ -604,29 +594,11 @@
         ]
       };
 
-      // Použití CORS Proxy pro spolehlivé doručení z prohlížeče
-      const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(RAW_DISCORD_WEBHOOK.trim());
-
-      try {
-        const response = await fetch(proxyUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        if (response.ok) {
-          console.log("Embed odeslán na Discord!");
-        } else {
-          // Pokud proxy selže, zkusíme to napřímo
-          await fetch(RAW_DISCORD_WEBHOOK.trim(), {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-        }
-      } catch (error) {
-        console.error("Chyba při odesílání embedu:", error);
-      }
+      fetch(DISCORD_WEBHOOK_URL.trim(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(err => console.error("Webhook error:", err));
     }
   </script>
 </body>
