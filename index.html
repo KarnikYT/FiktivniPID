@@ -241,38 +241,48 @@
     <div class="card">
       <h2>🚍 Vozový Park</h2>
       
-      <h3>Zatím nedostupné</h3>
-      <ul>
-        <li>Iveco Crossway 12 LE</li>
-      </ul>
-
-      <h3>Dostupné (Odmknutí PINem)</h3>
-      <div id="fleet-lock" style="margin-top: 10px;">
+      <!-- Zámek vozového parku -->
+      <div id="fleet-lock">
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0;">Pro zobrazení seznamu vozidel zadejte bezpečnostní PIN kód.</p>
         <input type="password" id="fleet-pin" placeholder="Zadejte PIN (kód) pro odemknutí">
-        <button onclick="unlockFleet()" style="width: 100%; margin-top: 8px;">Odemknout vozy</button>
+        <button onclick="unlockFleet()" style="width: 100%; margin-top: 10px;">Odemknout vozy</button>
       </div>
 
-      <ul id="fleet-list" style="display: none; margin-top: 10px;">
-        <li>SOR CN12</li>
-        <li>SOR NB12</li>
-        <li>SOR NS12</li>
-        <li>Irisbus Citelis 12</li>
-        <li>Irisbus Citelis 18</li>
-        <li>SOR TNS12</li>
-        <li>Škoda 30tr</li>
-        <li>Setra</li>
-        <li>SOR C12</li>
-      </ul>
+      <!-- Celý obsah vozového parku se zobrazí až po PINu -->
+      <div id="fleet-content" style="display: none;">
+        <h3>Zatím nedostupné</h3>
+        <ul>
+          <li>Iveco Crossway 12 LE</li>
+        </ul>
 
-      <h3>Ve hře</h3>
-      <p style="color: var(--text-muted); font-style: italic; margin: 5px 0;">( žádný )</p>
+        <h3>Dostupné</h3>
+        <ul>
+          <li>SOR CN12</li>
+          <li>SOR NB12</li>
+          <li>SOR NS12</li>
+          <li>Irisbus Citelis 12</li>
+          <li>Irisbus Citelis 18</li>
+          <li>SOR TNS12</li>
+          <li>Škoda 30tr</li>
+          <li>Setra</li>
+          <li>SOR C12</li>
+        </ul>
+
+        <h3>Ve hře</h3>
+        <p style="color: var(--text-muted); font-style: italic; margin: 5px 0;">( žádný )</p>
+      </div>
     </div>
 
     <!-- 2. JÍZDENKY -->
     <div class="card">
       <h2>🎫 Virtuální Jízdenky</h2>
-      <p id="auth-warning" style="color: #f87171; font-size: 0.9rem; margin-top: 0;">Pro nákup jízdenky se musíte nejprve přihlásit přes Google.</p>
       
+      <label for="discord-nick">Discord uživatelské jméno *</label>
+      <input type="text" id="discord-nick" placeholder="např. uzivatel_123">
+
+      <label for="roblox-nick">Roblox uživatelské jméno *</label>
+      <input type="text" id="roblox-nick" placeholder="např. RobloxPlayerCZ">
+
       <label for="ticket-type">Vyberte typ jízdenky</label>
       <select id="ticket-type">
         <optgroup label="Jednotlivé jízdenky">
@@ -295,13 +305,14 @@
         <option value="Senior (65+)">Senior (65+)</option>
       </select>
 
-      <button class="btn-green" id="buy-btn" onclick="openPayment()" disabled>💳 Koupit jízdenku</button>
+      <button class="btn-green" id="buy-btn" onclick="openPayment()">💳 Koupit jízdenku</button>
 
       <!-- Aktivní jízdenka -->
       <div id="active-ticket" class="ticket-box" style="display: none;">
         <h3 style="color: var(--accent-green); margin:0; font-size: 1.1rem;">✔ PLATNÁ JÍZDENKA</h3>
         <p id="ticket-info" style="font-weight: bold; font-size: 1.1rem; margin: 10px 0 2px 0;"></p>
         <p id="passenger-info" style="color: var(--text-muted); margin: 0; font-size: 0.9rem;"></p>
+        <p id="user-nicks-info" style="color: #38bdf8; margin: 5px 0 0 0; font-size: 0.85rem; font-weight: 500;"></p>
         
         <div class="qr-container">
           <div id="qrcode"></div>
@@ -422,8 +433,6 @@
 
     const authBtns = document.querySelectorAll('.auth-trigger-btn');
     const userEmailHeader = document.getElementById('user-email-header');
-    const buyBtn = document.getElementById('buy-btn');
-    const authWarning = document.getElementById('auth-warning');
     const accountStatusText = document.getElementById('account-status-text');
 
     window.currentUser = null;
@@ -450,39 +459,43 @@
         userEmailHeader.textContent = displayName;
         accountStatusText.textContent = `Přihlášen jako ${displayName}`;
         accountStatusText.style.color = '#10b981';
-
         authBtns.forEach(btn => btn.textContent = 'Odhlásit');
-        buyBtn.disabled = false;
-        authWarning.style.display = 'none';
       } else {
         userEmailHeader.textContent = '';
         accountStatusText.textContent = 'Nepřihlášen';
         accountStatusText.style.color = '#f87171';
-
         authBtns.forEach(btn => btn.textContent = 'Přihlásit přes Google');
-        buyBtn.disabled = true;
-        authWarning.style.display = 'block';
       }
     });
   </script>
 
   <!-- Hlavní logika a Discord Embed -->
   <script>
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
+    const DISCORD_WEBHOOK_URL = "DOPLŇ_SVŮJ_DISCORD_WEBHOOK_URL";
 
+    // Odemknutí celého vozového parku PINem (8162)
     function unlockFleet() {
       const pin = document.getElementById('fleet-pin').value;
       if (pin === '8162') {
-        document.getElementById('fleet-list').style.display = 'block';
+        document.getElementById('fleet-content').style.display = 'block';
         document.getElementById('fleet-lock').style.display = 'none';
       } else {
         alert('Nesprávný PIN kód!');
       }
     }
 
+    // Platební brána TadxPay
     let currentPin = "";
 
     function openPayment() {
+      const discordNick = document.getElementById('discord-nick').value.trim();
+      const robloxNick = document.getElementById('roblox-nick').value.trim();
+
+      if (!discordNick || !robloxNick) {
+        alert('Vyplňte prosím své Discord i Roblox uživatelské jméno!');
+        return;
+      }
+
       const select = document.getElementById('ticket-type');
       const price = select.value;
       document.getElementById('pay-amount').textContent = price + " Kč";
@@ -512,7 +525,7 @@
 
     function processPayment() {
       if (currentPin.length !== 4) {
-        alert('Zadejte 4místný PIN!');
+        alert('Zadejte 4místný PIN pro dokončení platby!');
         return;
       }
 
@@ -521,6 +534,9 @@
     }
 
     function generateTicket() {
+      const discordNick = document.getElementById('discord-nick').value.trim();
+      const robloxNick = document.getElementById('roblox-nick').value.trim();
+      
       const ticketTypeSelect = document.getElementById('ticket-type');
       const selectedOption = ticketTypeSelect.options[ticketTypeSelect.selectedIndex];
       const selectedOptionText = selectedOption.text;
@@ -529,6 +545,7 @@
 
       document.getElementById('ticket-info').textContent = selectedOptionText;
       document.getElementById('passenger-info').textContent = passengerType;
+      document.getElementById('user-nicks-info').textContent = `Discord: ${discordNick} \vert{} Roblox:${robloxNick}`;
 
       const ticketId = 'TCK-' + Math.floor(100000 + Math.random() * 900000);
       document.getElementById('ticket-id').textContent = 'ID: ' + ticketId;
@@ -552,18 +569,16 @@
 
       document.getElementById('active-ticket').style.display = 'block';
 
-      sendDiscordEmbed(ticketId, selectedOptionText, passengerType, timeBoughtStr, timeValidStr);
+      sendDiscordEmbed(ticketId, selectedOptionText, passengerType, discordNick, robloxNick, timeBoughtStr, timeValidStr);
     }
 
-    function sendDiscordEmbed(ticketId, ticketName, passenger, boughtAt, validUntil) {
-      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("DOPLŇ_SVŮJ_DISCORD_WEBHOOK_URL")) {
+    function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
+      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt")) {
         console.warn("Discord Webhook není zadaný.");
         return;
       }
 
-      const userEmail = window.currentUser ? window.currentUser.email : "Neznámý e-mail";
-      const userName = window.currentUser ? (window.currentUser.displayName || userEmail) : "Anonymní uživatel";
-      const userPhoto = window.currentUser && window.currentUser.photoURL ? window.currentUser.photoURL : "https://i.imgur.com/83pL60w.png";
+      const googleAccount = window.currentUser ? window.currentUser.email : "Nepřihlášen (Host)";
 
       const payload = {
         username: "Fiktivní PID - Jízdenkový Systém",
@@ -573,12 +588,10 @@
             title: "🎫 Zakoupena nová jízdenka",
             description: "Nákup byl úspěšně zpracován přes bránu **TadxPay (Simulace)**.",
             color: 3887002,
-            author: {
-              name: userName,
-              icon_url: userPhoto
-            },
             fields: [
-              { name: "👤 E-mail kupujícího", value: `\`${userEmail}\``, inline: false },
+              { name: "💬 Discord Nick", value: `\`${discordNick}\``, inline: true },
+              { name: "🎮 Roblox Nick", value: `\`${robloxNick}\``, inline: true },
+              { name: "👤 Google Účet", value: `\`${googleAccount}\``, inline: false },
               { name: "🎟️ Typ jízdenky", value: ticketName, inline: true },
               { name: "👥 Kategorie", value: passenger, inline: true },
               { name: "🆔 Kód jízdenky", value: `\`${ticketId}\``, inline: false },
