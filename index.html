@@ -390,7 +390,7 @@
     </div>
   </div>
 
-  <!-- Firebase Auth Module (přesměrování pro mobilní zařízení) -->
+  <!-- Firebase Auth Module -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { 
@@ -399,7 +399,9 @@
       signInWithRedirect, 
       getRedirectResult, 
       signOut, 
-      onAuthStateChanged 
+      onAuthStateChanged,
+      setPersistence,
+      browserLocalPersistence
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -416,6 +418,8 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
+    setPersistence(auth, browserLocalPersistence).catch(err => console.error("Persistence error:", err));
+
     const authBtns = document.querySelectorAll('.auth-trigger-btn');
     const userEmailHeader = document.getElementById('user-email-header');
     const buyBtn = document.getElementById('buy-btn');
@@ -425,7 +429,7 @@
     window.currentUser = null;
 
     getRedirectResult(auth).catch((error) => {
-      console.error("Chyba při přihlášení z přesměrování:", error);
+      console.error("Chyba přesměrování:", error);
     });
 
     authBtns.forEach(btn => {
@@ -433,6 +437,7 @@
         if (window.currentUser) {
           signOut(auth);
         } else {
+          accountStatusText.textContent = "Přihlašuji...";
           signInWithRedirect(auth, provider);
         }
       });
@@ -461,12 +466,10 @@
     });
   </script>
 
-  <!-- Hlavní aplikační logika & Discord Webhook -->
+  <!-- Hlavní logika a Discord Embed -->
   <script>
-    // DOPLŇ SEM SVŮJ DISCORD WEBHOOK URL
-    const DISCORD_WEBHOOK_URL = "DOPLŇ_SVŮJ_DISCORD_WEBHOOK_URL";
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
 
-    // Odemknutí vozů PINem (8162)
     function unlockFleet() {
       const pin = document.getElementById('fleet-pin').value;
       if (pin === '8162') {
@@ -477,7 +480,6 @@
       }
     }
 
-    // Platební modul (TadxPay Simulace)
     let currentPin = "";
 
     function openPayment() {
@@ -540,7 +542,6 @@
       document.getElementById('ticket-validity').textContent = 
         `Zakoupeno: ${timeBoughtStr}\nPlatnost do:${timeValidStr}`;
 
-      // Generování QR kódu
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = "";
       new QRCode(qrContainer, {
@@ -551,13 +552,12 @@
 
       document.getElementById('active-ticket').style.display = 'block';
 
-      // Odeslání obdélníku (Embed) na Discord
       sendDiscordEmbed(ticketId, selectedOptionText, passengerType, timeBoughtStr, timeValidStr);
     }
 
     function sendDiscordEmbed(ticketId, ticketName, passenger, boughtAt, validUntil) {
-      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt")) {
-        console.warn("Discord Webhook není nastaven.");
+      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("DOPLŇ_SVŮJ_DISCORD_WEBHOOK_URL")) {
+        console.warn("Discord Webhook není zadaný.");
         return;
       }
 
@@ -572,7 +572,7 @@
           {
             title: "🎫 Zakoupena nová jízdenka",
             description: "Nákup byl úspěšně zpracován přes bránu **TadxPay (Simulace)**.",
-            color: 3887002, // Zelený obdélník
+            color: 3887002,
             author: {
               name: userName,
               icon_url: userPhoto
@@ -594,7 +594,7 @@
         ]
       };
 
-      fetch(https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt, {
+      fetch(DISCORD_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
