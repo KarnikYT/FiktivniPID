@@ -296,14 +296,23 @@
         </optgroup>
       </select>
 
-      <label for="passenger-type">Kategorie cestujícího</label>
+            <label for="passenger-type">Kategorie cestujícího</label>
       <select id="passenger-type">
         <option value="Základní (15+)">Základní (15+)</option>
         <option value="Dítě / žák (6-15 let)">Dítě / žák (6-15 let)</option>
         <option value="Senior (65+)">Senior (65+)</option>
       </select>
 
+      <!-- NOVÉ: Checkbox pro zobrazení emailu -->
+      <div style="margin-top: 15px; display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" id="share-email-check" style="width: auto; cursor: pointer;">
+        <label for="share-email-check" style="margin: 0; cursor: pointer; color: #f8fafc; font-size: 0.9rem;">
+          Zveřejnit můj Google e-mail v Discord embedu
+        </label>
+      </div>
+
       <button class="btn-green" id="buy-btn" onclick="openPayment()">💳 Koupit jízdenku</button>
+
 
       <div id="active-ticket" class="ticket-box" style="display: none;">
         <h3 style="color: var(--accent-green); margin:0; font-size: 1.1rem;">✔ PLATNÁ JÍZDENKA</h3>
