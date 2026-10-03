@@ -243,7 +243,7 @@
       
       <!-- Zámek vozového parku -->
       <div id="fleet-lock">
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0;">Pro zobrazení seznamu vozidel zadejte bezpečnostní PIN kód.</p>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0;">Pro zobrazení seznamu vozidel zadejte bezpečnostní PIN kód (8162).</p>
         <input type="password" id="fleet-pin" placeholder="Zadejte PIN (kód) pro odemknutí">
         <button onclick="unlockFleet()" style="width: 100%; margin-top: 10px;">Odemknout vozy</button>
       </div>
@@ -401,7 +401,7 @@
     </div>
   </div>
 
-  <!-- Firebase Auth Module -->
+  <!-- FIREBASE AUTHENTICATION (MODULE) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { 
@@ -437,27 +437,38 @@
 
     window.currentUser = null;
 
-    getRedirectResult(auth).catch((error) => {
-      console.error("Chyba přesměrování:", error);
-    });
+    // Zpracování přesměrování z Google
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result && result.user) {
+          console.log("Úspěšně přihlášeno přes redirect:", result.user.email);
+        }
+      })
+      .catch((error) => {
+        console.error("Chyba při přihlášení přes přesměrování:", error);
+      });
 
+    // Tlačítka pro přihlášení/odhlášení
     authBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         if (window.currentUser) {
-          signOut(auth);
+          signOut(auth).then(() => {
+            console.log("Uživatel odhlášen");
+          });
         } else {
-          accountStatusText.textContent = "Přihlašuji...";
+          accountStatusText.textContent = "Přesměrovávám na Google...";
           signInWithRedirect(auth, provider);
         }
       });
     });
 
+    // Sledování stavu přihlášení
     onAuthStateChanged(auth, (user) => {
       window.currentUser = user;
       if (user) {
         const displayName = user.displayName || user.email;
         userEmailHeader.textContent = displayName;
-        accountStatusText.textContent = `Přihlášen jako ${displayName}`;
+        accountStatusText.textContent = `Přihlášen jako: ${displayName}`;
         accountStatusText.style.color = '#10b981';
         authBtns.forEach(btn => btn.textContent = 'Odhlásit');
       } else {
@@ -469,9 +480,10 @@
     });
   </script>
 
-  <!-- Hlavní logika a Discord Embed -->
+  <!-- HLAVNÍ LOGIKA TICKETŮ, PINU A DISCORD EMBEDU -->
   <script>
-    const DISCORD_WEBHOOK_URL = "DOPLŇ_SVŮJ_DISCORD_WEBHOOK_URL";
+    // SEM VLOŽ SŮJ DISCORD WEBHOOK URL:
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
 
     // Odemknutí celého vozového parku PINem (8162)
     function unlockFleet() {
@@ -545,7 +557,7 @@
 
       document.getElementById('ticket-info').textContent = selectedOptionText;
       document.getElementById('passenger-info').textContent = passengerType;
-      document.getElementById('user-nicks-info').textContent = `Discord: ${discordNick} \vert{} Roblox:${robloxNick}`;
+      document.getElementById('user-nicks-info').textContent = `Discord: ${discordNick} | Roblox: ${robloxNick}`;
 
       const ticketId = 'TCK-' + Math.floor(100000 + Math.random() * 900000);
       document.getElementById('ticket-id').textContent = 'ID: ' + ticketId;
@@ -553,11 +565,11 @@
       const now = new Date();
       const validUntil = new Date(now.getTime() + minutesValid * 60000);
       
-      const timeBoughtStr = `${now.toLocaleDateString('cs-CZ')}${now.toLocaleTimeString('cs-CZ')}`;
-      const timeValidStr = `${validUntil.toLocaleDateString('cs-CZ')}${validUntil.toLocaleTimeString('cs-CZ')}`;
+      const timeBoughtStr = `${now.toLocaleDateString('cs-CZ')} ${now.toLocaleTimeString('cs-CZ')}`;
+      const timeValidStr = `${validUntil.toLocaleDateString('cs-CZ')} ${validUntil.toLocaleTimeString('cs-CZ')}`;
 
       document.getElementById('ticket-validity').textContent = 
-        `Zakoupeno: ${timeBoughtStr}\nPlatnost do:${timeValidStr}`;
+        `Zakoupeno: ${timeBoughtStr}\nPlatnost do: ${timeValidStr}`;
 
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = "";
@@ -569,38 +581,38 @@
 
       document.getElementById('active-ticket').style.display = 'block';
 
+      // Odeslání na Discord Webhook
       sendDiscordEmbed(ticketId, selectedOptionText, passengerType, discordNick, robloxNick, timeBoughtStr, timeValidStr);
     }
 
     function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
       if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt")) {
-        console.warn("Discord Webhook není zadaný.");
+        console.warn("Discord Webhook URL není nastaven! Zadej platný odkaz v kódu.");
         return;
       }
 
-      const googleAccount = window.currentUser ? window.currentUser.email : "Nepřihlášen (Host)";
+      const googleAccount = (window.currentUser && window.currentUser.email) ? window.currentUser.email : "Nepřihlášen (Host)";
 
       const payload = {
-        username: "Fiktivní PID - Jízdenkový Systém",
+        username: "Fiktivní PID - Jízdenky",
         avatar_url: "https://i.imgur.com/83pL60w.png",
         embeds: [
           {
             title: "🎫 Zakoupena nová jízdenka",
-            description: "Nákup byl úspěšně zpracován přes bránu **TadxPay (Simulace)**.",
+            description: "Nákup byl úspěšně zpracován přes platební bránu **TadxPay**.",
             color: 3887002,
             fields: [
-              { name: "💬 Discord Nick", value: `\`${discordNick}\``, inline: true },
-              { name: "🎮 Roblox Nick", value: `\`${robloxNick}\``, inline: true },
-              { name: "👤 Google Účet", value: `\`${googleAccount}\``, inline: false },
-              { name: "🎟️ Typ jízdenky", value: ticketName, inline: true },
+              { name: "💬 Discord", value: discordNick, inline: true },
+              { name: "🎮 Roblox", value: robloxNick, inline: true },
+              { name: "👤 Google účet", value: googleAccount, inline: false },
+              { name: "🎟️ Jízdenka", value: ticketName, inline: true },
               { name: "👥 Kategorie", value: passenger, inline: true },
-              { name: "🆔 Kód jízdenky", value: `\`${ticketId}\``, inline: false },
+              { name: "🆔 Kód jízdenky", value: ticketId, inline: false },
               { name: "📅 Zakoupeno", value: boughtAt, inline: true },
               { name: "⏳ Platí do", value: validUntil, inline: true }
             ],
             footer: {
-              text: "Fiktivní PID & ČD • Web Portal",
-              icon_url: "https://i.imgur.com/83pL60w.png"
+              text: "Fiktivní PID & ČD System"
             },
             timestamp: new Date().toISOString()
           }
@@ -609,9 +621,21 @@
 
       fetch(DISCORD_WEBHOOK_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify(payload)
-      }).catch(err => console.error("Chyba při odesílání na Discord:", err));
+      })
+      .then(res => {
+        if (res.ok) {
+          console.log("Embed úspěšně odeslán na Discord!");
+        } else {
+          console.error("Chyba při odesílání na Discord Webhook, status:", res.status);
+        }
+      })
+      .catch(err => {
+        console.error("Síťová chyba při odesílání na Discord:", err);
+      });
     }
   </script>
 </body>
