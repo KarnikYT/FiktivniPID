@@ -303,7 +303,7 @@
         <option value="Senior (65+)">Senior (65+)</option>
       </select>
 
-      <!-- Volba pro sdílení emailu v Discord embedu -->
+      <!-- Volba pro sdílení e-mailu -->
       <div style="margin-top: 15px; display: flex; align-items: center; gap: 8px;">
         <input type="checkbox" id="share-email-check" style="width: auto; cursor: pointer;">
         <label for="share-email-check" style="margin: 0; cursor: pointer; color: #f8fafc; font-size: 0.9rem;">
@@ -406,7 +406,7 @@
     </div>
   </div>
 
-  <!-- FIREBASE AUTHENTICATION -->
+  <!-- FIREBASE AUTHENTICATION (iOS / SAFARI POPUP METHOD) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { 
@@ -469,7 +469,7 @@
     });
   </script>
 
-  <!-- LOGIKA TICKETŮ A EMBEDU S OCHRANOU EMAILU A CORS PROXY -->
+  <!-- LOGIKA TICKETŮ A DISCORD EMBEDU -->
   <script>
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
 
@@ -573,11 +573,14 @@
     async function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
       if (!DISCORD_WEBHOOK_URL) return;
 
-      const wantShareEmail = document.getElementById('share-email-check').checked;
-      let googleAccount = "Skrytý / Nepřihlášen";
+      // Ochrana e-mailu: Zkontrolujeme checkbox PŘÍMO PŘED odesláním
+      const shareCheckbox = document.getElementById('share-email-check');
+      const isChecked = shareCheckbox ? shareCheckbox.checked : false;
+
+      let googleAccount = "Nepřihlášen";
 
       if (window.currentUser && window.currentUser.email) {
-        if (wantShareEmail) {
+        if (isChecked === true) {
           googleAccount = window.currentUser.email;
         } else {
           googleAccount = "🔒 Skryto uživatelem";
@@ -595,7 +598,7 @@
               { name: "💬 Discord", value: discordNick, inline: true },
               { name: "🎮 Roblox", value: robloxNick, inline: true },
               { name: "👤 Google Účet", value: googleAccount, inline: false },
-              { name: "🎟️️ Jízdenka", value: ticketName, inline: true },
+              { name: "🎟️ Jízdenka", value: ticketName, inline: true },
               { name: "👥 Kategorie", value: passenger, inline: true },
               { name: "🆔 Kód", value: ticketId, inline: false },
               { name: "📅 Zakoupeno", value: boughtAt, inline: true },
