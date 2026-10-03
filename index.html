@@ -241,14 +241,12 @@
     <div class="card">
       <h2>🚍 Vozový Park</h2>
       
-      <!-- Zámek vozového parku -->
       <div id="fleet-lock">
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0;">Pro zobrazení seznamu vozidel zadejte bezpečnostní PIN kód (8162).</p>
-        <input type="password" id="fleet-pin" placeholder="Zadejte PIN (kód) pro odemknutí">
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0;">Pro zobrazení seznamu vozidel zadejte PIN kód (8162).</p>
+        <input type="password" id="fleet-pin" placeholder="Zadejte PIN pro odemknutí">
         <button onclick="unlockFleet()" style="width: 100%; margin-top: 10px;">Odemknout vozy</button>
       </div>
 
-      <!-- Celý obsah vozového parku se zobrazí až po PINu -->
       <div id="fleet-content" style="display: none;">
         <h3>Zatím nedostupné</h3>
         <ul>
@@ -286,15 +284,15 @@
       <label for="ticket-type">Vyberte typ jízdenky</label>
       <select id="ticket-type">
         <optgroup label="Jednotlivé jízdenky">
-          <option value="24" data-minutes="30">30 minutová – 24 Kč</option>
-          <option value="32" data-minutes="60">60 minutová – 32 Kč</option>
-          <option value="100" data-minutes="1440">24 hodinová – 100 Kč</option>
+          <option value="30" data-minutes="30">30 minutová – 24 Kč</option>
+          <option value="70" data-minutes="60">60 minutová – 32 Kč</option>
+          <option value="170" data-minutes="1440">24 hodinová – 100 Kč</option>
         </optgroup>
         <optgroup label="Předplatné">
-          <option value="250" data-minutes="10080">Týdenní – 250 Kč</option>
+          <option value="260" data-minutes="10080">Týdenní – 250 Kč</option>
           <option value="550" data-minutes="43200">Měsíční – 550 Kč</option>
-          <option value="2750" data-minutes="259200">6 měsíční – 2750 Kč</option>
-          <option value="3650" data-minutes="525600">Roční – 3650 Kč</option>
+          <option value="3000" data-minutes="259200">6 měsíční – 2750 Kč</option>
+          <option value="5550" data-minutes="525600">Roční – 3650 Kč</option>
         </optgroup>
       </select>
 
@@ -336,7 +334,7 @@
     <div class="card">
       <h2>ℹ️ Informace o systému</h2>
       <p style="margin-top: 0; color: var(--text-muted); line-height: 1.5;">
-        Vítejte v oficiálním portálu <strong>Fiktivního PID & ČD</strong>. Tento systém slouží pro simulaci odbavení cestujících, nákup virtuálních dokladů a přehled provozovaných linek a vozidel.
+        Vítejte v oficiálním portálu <strong>Fiktivního PID & ČD</strong>.
       </p>
       <ul>
         <li><span><strong>Platba:</strong> Brána TadxPay (Simulace)</span></li>
@@ -363,7 +361,7 @@
         <li><span><strong>772:</strong> Na Knížecí – Smíchovské Nádraží</span> <span class="badge">Autobus</span></li>
         <li><span><strong>773:</strong> Šmukýřka – Slaný, Aut. Nádr.</span> <span class="badge">Autobus</span></li>
         <li><span><strong>774:</strong> Slaný, Pražská – Slaný ČSAD</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>775:</strong> Slaný, ČSAD – Slaný, Šultysova <br><small style="color:var(--text-muted)">(dále jako 776 směr Žižice, Drnov)</small></span> <span class="badge">Autobus</span></li>
+        <li><span><strong>775:</strong> Slaný, ČSAD – Slaný, Šultysova</span> <span class="badge">Autobus</span></li>
         <li><span><strong>776:</strong> Slaný, Aut. Nádr. – Žižice, Drnov</span> <span class="badge">Autobus</span></li>
         <li><span><strong>334</strong></span> <span class="badge">Autobus</span></li>
       </ul>
@@ -437,32 +435,25 @@
 
     window.currentUser = null;
 
-    // Zpracování přesměrování z Google
     getRedirectResult(auth)
       .then((result) => {
         if (result && result.user) {
-          console.log("Úspěšně přihlášeno přes redirect:", result.user.email);
+          console.log("Přihlášeno:", result.user.email);
         }
       })
-      .catch((error) => {
-        console.error("Chyba při přihlášení přes přesměrování:", error);
-      });
+      .catch((error) => console.error("Auth redirect error:", error));
 
-    // Tlačítka pro přihlášení/odhlášení
     authBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         if (window.currentUser) {
-          signOut(auth).then(() => {
-            console.log("Uživatel odhlášen");
-          });
+          signOut(auth);
         } else {
-          accountStatusText.textContent = "Přesměrovávám na Google...";
+          accountStatusText.textContent = "Přesměrovávám...";
           signInWithRedirect(auth, provider);
         }
       });
     });
 
-    // Sledování stavu přihlášení
     onAuthStateChanged(auth, (user) => {
       window.currentUser = user;
       if (user) {
@@ -480,12 +471,11 @@
     });
   </script>
 
-  <!-- HLAVNÍ LOGIKA TICKETŮ, PINU A DISCORD EMBEDU -->
+  <!-- HLAVNÍ LOGIKA KÓDU A WEBHOOKU -->
   <script>
-    // SEM VLOŽ SŮJ DISCORD WEBHOOK URL:
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
+    // ⚠️ VLOŽ SEM SŮJ DISCORD WEBHOOK URL:
+    const RAW_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
 
-    // Odemknutí celého vozového parku PINem (8162)
     function unlockFleet() {
       const pin = document.getElementById('fleet-pin').value;
       if (pin === '8162') {
@@ -496,7 +486,6 @@
       }
     }
 
-    // Platební brána TadxPay
     let currentPin = "";
 
     function openPayment() {
@@ -581,61 +570,63 @@
 
       document.getElementById('active-ticket').style.display = 'block';
 
-      // Odeslání na Discord Webhook
       sendDiscordEmbed(ticketId, selectedOptionText, passengerType, discordNick, robloxNick, timeBoughtStr, timeValidStr);
     }
 
-    function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
-      if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt")) {
-        console.warn("Discord Webhook URL není nastaven! Zadej platný odkaz v kódu.");
+    async function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
+      if (!RAW_DISCORD_WEBHOOK || RAW_DISCORD_WEBHOOK.includes("https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt")) {
+        alert("⚠️ Pozor: V kódu chybí zadaný Discord Webhook URL!");
         return;
       }
 
-      const googleAccount = (window.currentUser && window.currentUser.email) ? window.currentUser.email : "Nepřihlášen (Host)";
+      const googleAccount = (window.currentUser && window.currentUser.email) ? window.currentUser.email : "Nepřihlášen";
 
       const payload = {
         username: "Fiktivní PID - Jízdenky",
-        avatar_url: "https://i.imgur.com/83pL60w.png",
         embeds: [
           {
             title: "🎫 Zakoupena nová jízdenka",
-            description: "Nákup byl úspěšně zpracován přes platební bránu **TadxPay**.",
+            description: "Nákup byl úspěšně zpracován přes **TadxPay**.",
             color: 3887002,
             fields: [
               { name: "💬 Discord", value: discordNick, inline: true },
               { name: "🎮 Roblox", value: robloxNick, inline: true },
-              { name: "👤 Google účet", value: googleAccount, inline: false },
+              { name: "👤 Google Účet", value: googleAccount, inline: false },
               { name: "🎟️ Jízdenka", value: ticketName, inline: true },
               { name: "👥 Kategorie", value: passenger, inline: true },
-              { name: "🆔 Kód jízdenky", value: ticketId, inline: false },
+              { name: "🆔 Kód", value: ticketId, inline: false },
               { name: "📅 Zakoupeno", value: boughtAt, inline: true },
               { name: "⏳ Platí do", value: validUntil, inline: true }
             ],
-            footer: {
-              text: "Fiktivní PID & ČD System"
-            },
+            footer: { text: "Fiktivní PID Portal" },
             timestamp: new Date().toISOString()
           }
         ]
       };
 
-      fetch(DISCORD_WEBHOOK_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(res => {
-        if (res.ok) {
-          console.log("Embed úspěšně odeslán na Discord!");
+      // Použití CORS Proxy pro spolehlivé doručení z prohlížeče
+      const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(RAW_DISCORD_WEBHOOK.trim());
+
+      try {
+        const response = await fetch(proxyUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          console.log("Embed odeslán na Discord!");
         } else {
-          console.error("Chyba při odesílání na Discord Webhook, status:", res.status);
+          // Pokud proxy selže, zkusíme to napřímo
+          await fetch(RAW_DISCORD_WEBHOOK.trim(), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
         }
-      })
-      .catch(err => {
-        console.error("Síťová chyba při odesílání na Discord:", err);
-      });
+      } catch (error) {
+        console.error("Chyba při odesílání embedu:", error);
+      }
     }
   </script>
 </body>
