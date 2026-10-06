@@ -10,6 +10,7 @@
       --card-bg: #1e293b;
       --accent: #2563eb;
       --accent-green: #10b981;
+      --accent-gold: #f59e0b;
       --text: #f8fafc;
       --text-sub: #94a3b8;
     }
@@ -26,10 +27,9 @@
       padding: 20px;
     }
 
-    /* Rámčík mobilu */
     .phone-container {
-      width: 380px;
-      height: 740px;
+      width: 390px;
+      height: 780px;
       background: var(--phone-bg);
       border: 12px solid #334155;
       border-radius: 40px;
@@ -40,10 +40,9 @@
       position: relative;
     }
 
-    /* Notch / Výřez */
     .notch {
       width: 140px;
-      height: 20px;
+      height: 22px;
       background: #334155;
       margin: 0 auto;
       border-bottom-left-radius: 12px;
@@ -51,7 +50,6 @@
       z-index: 100;
     }
 
-    /* Plocha mobilu */
     .screen {
       flex: 1;
       padding: 15px;
@@ -60,12 +58,33 @@
       overflow-y: auto;
     }
 
-    /* Mřížka aplikací na ploše */
+    .lang-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .lang-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .lang-btn.active {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
     .app-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 15px;
-      margin-top: 20px;
+      margin-top: 25px;
     }
 
     .app-icon {
@@ -76,9 +95,9 @@
     }
 
     .icon-box {
-      width: 60px;
-      height: 60px;
-      border-radius: 16px;
+      width: 65px;
+      height: 65px;
+      border-radius: 18px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -88,12 +107,11 @@
 
     .app-name {
       color: var(--text);
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       margin-top: 6px;
       text-align: center;
     }
 
-    /* Okno otveřené aplikace */
     .app-window {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -102,6 +120,7 @@
       padding: 40px 15px 20px 15px;
       display: none;
       flex-direction: column;
+      overflow-y: auto;
     }
 
     .app-header {
@@ -122,7 +141,6 @@
       cursor: pointer;
     }
 
-    /* Formuláře a prvky */
     label { font-size: 0.8rem; color: var(--text-sub); margin-top: 10px; display: block; }
     input, select, textarea {
       width: 100%;
@@ -156,9 +174,9 @@
       margin-top: 10px;
     }
 
-    /* SMS zprávy chat */
     .chat-box {
       flex: 1;
+      min-height: 180px;
       overflow-y: auto;
       border: 1px solid #334155;
       border-radius: 8px;
@@ -175,7 +193,47 @@
       font-size: 0.85rem;
       color: var(--text);
     }
+
+    .driver-card {
+      border: 1px solid var(--accent-gold);
+      background: rgba(245, 158, 11, 0.05);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .pin-modal {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .pin-pad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 240px;
+      margin-top: 15px;
+    }
+
+    .pin-btn {
+      background: #334155;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -183,84 +241,156 @@
     <div class="notch"></div>
 
     <div class="screen">
-      <h2 style="color: var(--text); font-size: 1.1rem; text-align: center; margin-top: 10px;">Fiktivní PID Phone</h2>
+      <h2 style="color: var(--text); font-size: 1.1rem; text-align: center; margin-top: 10px;">Fiktivní PID OS</h2>
       
-      <!-- Plocha aplikací -->
+      <!-- Přepínač jazyků -->
+      <div class="lang-bar">
+        <button class="lang-btn active" onclick="setLanguage('cs')">🇨🇿 CS</button>
+        <button class="lang-btn" onclick="setLanguage('sk')">🇸🇰 SK</button>
+        <button class="lang-btn" onclick="setLanguage('en')">🇬🇧 EN</button>
+      </div>
+
+      <!-- Mřížka aplikací -->
       <div class="app-grid">
         <div class="app-icon" onclick="openApp('app-auth')">
-          <div class="icon-box" style="background: #e11d48;">👤</div>
-          <span class="app-name">Účet</span>
+          <div class="icon-box" style="background: #ea580c;">👤</div>
+          <span class="app-name" data-i18n="app_auth">Účet</span>
         </div>
         <div class="app-icon" onclick="openApp('app-tickets')">
           <div class="icon-box" style="background: #2563eb;">🎫</div>
-          <span class="app-name">Jízdenky</span>
+          <span class="app-name" data-i18n="app_tickets">Jízdenky</span>
         </div>
         <div class="app-icon" onclick="openApp('app-sms')">
           <div class="icon-box" style="background: #10b981;">💬</div>
-          <span class="app-name">SMS Zprávy</span>
+          <span class="app-name" data-i18n="app_sms">SMS Chat</span>
+        </div>
+        <div class="app-icon" onclick="openApp('app-driver')">
+          <div class="icon-box" style="background: #d97706;">👨‍✈️</div>
+          <span class="app-name" data-i18n="app_driver">Řidič VIP</span>
         </div>
       </div>
     </div>
 
-    <!-- 1. APLIKACE: PŘIHLAŠOVÁNÍ -->
+    <!-- 1. ÚČET & GOOGLE PŘIHLÁŠENÍ -->
     <div id="app-auth" class="app-window">
       <div class="app-header">
-        <button class="btn-back" onclick="closeApps()">← Zpět</button>
-        <strong style="color: white;">Můj Účet</strong>
+        <button class="btn-back" onclick="closeApps()" data-i18n="back">← Zpět</button>
+        <strong style="color: white;" data-i18n="auth_title">Můj Účet</strong>
       </div>
-      <p id="auth-status" style="color: var(--text-sub); font-size: 0.9rem;">Status: Nepřihlášen</p>
-      <button class="btn-action" id="btn-login">Přihlásit přes Google</button>
+      <p id="auth-status" style="color: var(--text-sub); font-size: 0.9rem;"></p>
+      <button class="btn-action" id="btn-login" data-i18n="login_btn">Přihlásit přes Google</button>
     </div>
 
-    <!-- 2. APLIKACE: JÍZDENKY & SLEVY -->
+    <!-- 2. JÍZDENKY & SLEVY & DISCORD WEBHOOK -->
     <div id="app-tickets" class="app-window">
       <div class="app-header">
-        <button class="btn-back" onclick="closeApps()">← Zpět</button>
-        <strong style="color: white;">Koupit Jízdenku</strong>
+        <button class="btn-back" onclick="closeApps()" data-i18n="back">← Zpět</button>
+        <strong style="color: white;" data-i18n="buy_ticket_title">Koupit Jízdenku</strong>
       </div>
+
+      <label data-i18n="lbl_discord">Discord Uživatelské Jméno</label>
+      <input type="text" id="ticket-discord" placeholder="např. uzivatel_123">
+
+      <label data-i18n="lbl_roblox">Roblox Uživatelské Jméno</label>
+      <input type="text" id="ticket-roblox" placeholder="např. RobloxPlayerCZ">
       
-      <label>Typ jízdenky</label>
+      <label data-i18n="lbl_ticket_type">Typ jízdenky</label>
       <select id="ticket-base-price" onchange="calculateDiscount()">
-        <option value="24">30 minut (24 Kč)</option>
-        <option value="32">60 minut (32 Kč)</option>
-        <option value="100">24 hodin (100 Kč)</option>
+        <option value="24" data-min="30" data-i18n="opt_30m">30 minut (24 Kč)</option>
+        <option value="32" data-min="60" data-i18n="opt_60m">60 minut (32 Kč)</option>
+        <option value="100" data-min="1440" data-i18n="opt_24h">24 hodin (100 Kč)</option>
       </select>
 
-      <label>Kategorie cestujícího</label>
+      <label data-i18n="lbl_category">Kategorie cestujícího</label>
       <select id="passenger-category" onchange="calculateDiscount()">
-        <option value="1">Základní 15+ (Bez slevy)</option>
-        <option value="0.5">Dítě / žák 6-15 let (Sleva 50%)</option>
-        <option value="0.5">Senior 65+ (Sleva 50%)</option>
+        <option value="1" data-i18n="cat_adult">Základní 15+ (Bez slevy)</option>
+        <option value="0.5" data-i18n="cat_child">Dítě / žák 6-15 let (Sleva 50%)</option>
+        <option value="0.5" data-i18n="cat_senior">Senior 65+ (Sleva 50%)</option>
       </select>
 
-      <div class="price-tag" id="final-price">Cena po slevě: 24 Kč</div>
+      <div class="price-tag" id="final-price">Cena k úhradě: 24 Kč</div>
 
-      <button class="btn-action" style="background: var(--accent-green);" onclick="buyTicket()">Koupit Jízdenku</button>
+      <button class="btn-action" style="background: var(--accent-green);" onclick="startTicketPayment()" data-i18n="pay_btn">💳 Zaplatit a Získat</button>
+
+      <div id="qr-result" style="display:none; text-align:center; margin-top:15px; background:#1e293b; padding:10px; border-radius:10px;">
+        <p style="color:var(--accent-green); font-weight:bold; margin:5px 0;" data-i18n="ticket_active">✔ JÍZDENKA AKTIVNÍ</p>
+        <div id="qrcode" style="display:inline-block; background:white; padding:8px; border-radius:8px;"></div>
+        <p id="ticket-code-display" style="font-family:monospace; margin-top:5px; font-weight:bold;"></p>
+      </div>
     </div>
 
-    <!-- 3. APLIKACE: SMS PŘES EMAIL -->
+    <!-- 3. SMS CHAT -->
     <div id="app-sms" class="app-window">
       <div class="app-header">
-        <button class="btn-back" onclick="closeApps()">← Zpět</button>
-        <strong style="color: white;">SMS přes Email</strong>
+        <button class="btn-back" onclick="closeApps()" data-i18n="back">← Zpět</button>
+        <strong style="color: white;" data-i18n="sms_title">SMS Chat</strong>
       </div>
 
       <div class="chat-box" id="sms-history">
-        <div class="msg-item"><i>Žádné nové zprávy</i></div>
+        <div class="msg-item"><i data-i18n="no_msgs">Žádné zprávy</i></div>
       </div>
 
-      <label>E-mail příjemce</label>
-      <input type="email" id="sms-target" placeholder="uzivatel@gmail.com">
+      <label data-i18n="lbl_recipient">Příjemce (E-mail / Jméno)</label>
+      <input type="text" id="sms-target" placeholder="prijemce@email.cz">
 
-      <label>Zpráva</label>
+      <label data-i18n="lbl_message">Zpráva</label>
       <textarea id="sms-text" rows="2" placeholder="Napiš zprávu..."></textarea>
 
-      <button class="btn-action" onclick="sendSms()">Odeslat SMS</button>
+      <button class="btn-action" onclick="sendSms()" data-i18n="send_btn">Odeslat SMS</button>
+    </div>
+
+    <!-- 4. PŘEDPLATNÉ PRO ŘIDIČE (PIN 71609161) -->
+    <div id="app-driver" class="app-window">
+      <div class="app-header">
+        <button class="btn-back" onclick="closeApps()" data-i18n="back">← Zpět</button>
+        <strong style="color: white;" data-i18n="driver_title">Předplatné Řidiče</strong>
+      </div>
+
+      <div id="driver-lock">
+        <p style="color: var(--text-sub); font-size: 0.85rem;" data-i18n="driver_pin_info">Pro přístup k nabídkám předplatného řidičů zadejte speciální PIN kód.</p>
+        <input type="password" id="driver-pin-input" placeholder="Zadejte PIN kód">
+        <button class="btn-action" style="background: var(--accent-gold);" onclick="unlockDriver()" data-i18n="unlock_btn">Odemknout Sekci</button>
+      </div>
+
+      <div id="driver-content" style="display: none;">
+        <div class="driver-card">
+          <strong style="color: var(--accent-gold);" data-i18n="sub_monthly_title">🚕 Měsíční Licence Řidiče</strong>
+          <p style="font-size:0.8rem; color:var(--text-sub); margin:4px 0;" data-i18n="sub_monthly_desc">Aktivuje služební oprávnění na 30 dní.</p>
+          <strong style="color: white;">550 Kč / měsíc</strong>
+        </div>
+
+        <div class="driver-card">
+          <strong style="color: var(--accent-gold);" data-i18n="sub_yearly_title">👑 Roční VIP Karta Řidiče</strong>
+          <p style="font-size:0.8rem; color:var(--text-sub); margin:4px 0;" data-i18n="sub_yearly_desc">Neomezený přístup ke všem autobusům a vlakům.</p>
+          <strong style="color: white;">3 650 Kč / rok</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIN MODAL PRO PLATBY -->
+    <div id="pin-modal" class="pin-modal">
+      <strong style="color: white; margin-bottom: 5px;" data-i18n="enter_pin_title">Zadejte 4místný PIN platby</strong>
+      <div style="font-size: 1.5rem; letter-spacing: 5px; color: var(--accent-green);" id="pin-display">••••</div>
+      <div class="pin-pad">
+        <button class="pin-btn" onclick="pressPin('1')">1</button>
+        <button class="pin-btn" onclick="pressPin('2')">2</button>
+        <button class="pin-btn" onclick="pressPin('3')">3</button>
+        <button class="pin-btn" onclick="pressPin('4')">4</button>
+        <button class="pin-btn" onclick="pressPin('5')">5</button>
+        <button class="pin-btn" onclick="pressPin('6')">6</button>
+        <button class="pin-btn" onclick="pressPin('7')">7</button>
+        <button class="pin-btn" onclick="pressPin('8')">8</button>
+        <button class="pin-btn" onclick="pressPin('9')">9</button>
+        <button class="pin-btn" style="background:#ef4444;" onclick="clearPin()">✕</button>
+        <button class="pin-btn" onclick="pressPin('0')">0</button>
+        <button class="pin-btn" style="background:var(--accent-green);" onclick="confirmPaymentPin()">✓</button>
+      </div>
+      <button onclick="closePinModal()" style="background:transparent; border:none; color:var(--text-sub); margin-top:15px; cursor:pointer;" data-i18n="cancel">Zrušit</button>
     </div>
 
   </div>
 
-  <!-- FIREBASE SCRIPT -->
+  <!-- FIREBASE AUTH -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -281,7 +411,6 @@
     window.currentUser = null;
 
     const loginBtn = document.getElementById('btn-login');
-    const authStatus = document.getElementById('auth-status');
 
     loginBtn.addEventListener('click', () => {
       if (window.currentUser) {
@@ -293,18 +422,190 @@
 
     onAuthStateChanged(auth, (user) => {
       window.currentUser = user;
-      if (user) {
-        authStatus.textContent = `Přihlášen: ${user.email}`;
-        loginBtn.textContent = 'Odhlásit se';
-      } else {
-        authStatus.textContent = 'Status: Nepřihlášen';
-        loginBtn.textContent = 'Přihlásit přes Google';
-      }
+      updateAuthUI();
     });
   </script>
 
-  <!-- MOBILNÍ LOGIKA -->
+  <!-- PŘEKLADY A LOGIKA -->
   <script>
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
+
+    let currentLang = 'cs';
+
+    const translations = {
+      cs: {
+        app_auth: "Účet",
+        app_tickets: "Jízdenky",
+        app_sms: "SMS Chat",
+        app_driver: "Řidič VIP",
+        back: "← Zpět",
+        auth_title: "Můj Účet",
+        status_unlogged: "Status: Nepřihlášen",
+        status_logged: "Přihlášen: ",
+        login_btn: "Přihlásit přes Google",
+        logout_btn: "Odhlásit se",
+        buy_ticket_title: "Koupit Jízdenku",
+        lbl_discord: "Discord Uživatelské Jméno",
+        lbl_roblox: "Roblox Uživatelské Jméno",
+        lbl_ticket_type: "Typ jízdenky",
+        opt_30m: "30 minut (24 Kč)",
+        opt_60m: "60 minut (32 Kč)",
+        opt_24h: "24 hodin (100 Kč)",
+        lbl_category: "Kategorie cestujícího",
+        cat_adult: "Základní 15+ (Bez slevy)",
+        cat_child: "Dítě / žák 6-15 let (Sleva 50%)",
+        cat_senior: "Senior 65+ (Sleva 50%)",
+        price_tag: "Cena k úhradě: ",
+        pay_btn: "💳 Zaplatit a Získat",
+        ticket_active: "✔ JÍZDENKA AKTIVNÍ",
+        sms_title: "SMS Chat",
+        no_msgs: "Žádné zprávy",
+        lbl_recipient: "Příjemce (E-mail / Jméno)",
+        lbl_message: "Zpráva",
+        send_btn: "Odeslat SMS",
+        driver_title: "Předplatné Řidiče",
+        driver_pin_info: "Pro přístup k nabídkám předplatného řidičů zadejte speciální PIN kód.",
+        unlock_btn: "Odemknout Sekci",
+        sub_monthly_title: "🚕 Měsíční Licence Řidiče",
+        sub_monthly_desc: "Aktivuje služební oprávnění na 30 dní.",
+        sub_yearly_title: "👑 Roční VIP Karta Řidiče",
+        sub_yearly_desc: "Neomezený přístup ke všem autobusům a vlakům.",
+        enter_pin_title: "Zadejte 4místný PIN platby",
+        cancel: "Zrušit",
+        err_login_required: "🔒 Pro zakoupení jízdenky musíte být nejprve přihlášeni přes Google v aplikaci Účet!",
+        err_fill_nicks: "Vyplňte prosím své Discord a Roblox jméno!",
+        err_pin_4digits: "Zadejte kompletní 4místný PIN!",
+        msg_success: "✔ Jízdenka úspěšně zakoupena a zapsána do systému!",
+        err_sms_login: "Pro posílání SMS musíte být přihlášeni přes Google!",
+        err_sms_fields: "Vyplňte příjemce i zprávu!",
+        err_driver_pin: "Chybný PIN kód pro sekci Řidiče!"
+      },
+      sk: {
+        app_auth: "Účet",
+        app_tickets: "Cestovné lístky",
+        app_sms: "SMS Chat",
+        app_driver: "Vodič VIP",
+        back: "← Späť",
+        auth_title: "Môj Účet",
+        status_unlogged: "Status: Neprihlásený",
+        status_logged: "Prihlásený: ",
+        login_btn: "Prihlásiť cez Google",
+        logout_btn: "Odhlásiť sa",
+        buy_ticket_title: "Kúpiť Lístok",
+        lbl_discord: "Discord Užívateľské Meno",
+        lbl_roblox: "Roblox Užívateľské Meno",
+        lbl_ticket_type: "Typ lístka",
+        opt_30m: "30 minút (24 Kč)",
+        opt_60m: "60 minút (32 Kč)",
+        opt_24h: "24 hodín (100 Kč)",
+        lbl_category: "Kategória cestujúceho",
+        cat_adult: "Základný 15+ (Bez zľavy)",
+        cat_child: "Dieťa / žiak 6-15 rokov (Zľava 50%)",
+        cat_senior: "Senior 65+ (Zľava 50%)",
+        price_tag: "Cena na úhradu: ",
+        pay_btn: "💳 Zaplatiť a Získať",
+        ticket_active: "✔ LÍSTOK AKTÍVNY",
+        sms_title: "SMS Chat",
+        no_msgs: "Žiadne správy",
+        lbl_recipient: "Príjemca (E-mail / Meno)",
+        lbl_message: "Správa",
+        send_btn: "Odoslať SMS",
+        driver_title: "Predplatné Vodiča",
+        driver_pin_info: "Pre prístup k ponukám predplatného vodičov zadajte špeciálny PIN kód.",
+        unlock_btn: "Odomknúť Sekciu",
+        sub_monthly_title: "🚕 Mesačná Licencia Vodiča",
+        sub_monthly_desc: "Aktivuje služobné oprávnenie na 30 dní.",
+        sub_yearly_title: "👑 Ročná VIP Karta Vodiča",
+        sub_yearly_desc: "Neobmedzený prístup ku všetkým autobusom a vlakom.",
+        enter_pin_title: "Zadajte 4-miestny PIN platby",
+        cancel: "Zrušiť",
+        err_login_required: "🔒 Pre zakúpenie lístka musíte byť najprv prihlásení cez Google v aplikácii Účet!",
+        err_fill_nicks: "Vyplňte prosím svoje Discord a Roblox meno!",
+        err_pin_4digits: "Zadajte kompletný 4-miestny PIN!",
+        msg_success: "✔ Lístok úspešne zakúpený a zapísaný do systému!",
+        err_sms_login: "Pre posielanie SMS musíte byť prihlásení cez Google!",
+        err_sms_fields: "Vyplňte príjemcu aj správu!",
+        err_driver_pin: "Nesprávny PIN kód pre sekciu Vodiča!"
+      },
+      en: {
+        app_auth: "Account",
+        app_tickets: "Tickets",
+        app_sms: "SMS Chat",
+        app_driver: "Driver VIP",
+        back: "← Back",
+        auth_title: "My Account",
+        status_unlogged: "Status: Not logged in",
+        status_logged: "Logged in: ",
+        login_btn: "Sign in with Google",
+        logout_btn: "Sign out",
+        buy_ticket_title: "Buy Ticket",
+        lbl_discord: "Discord Username",
+        lbl_roblox: "Roblox Username",
+        lbl_ticket_type: "Ticket Type",
+        opt_30m: "30 minutes (24 CZK)",
+        opt_60m: "60 minutes (32 CZK)",
+        opt_24h: "24 hours (100 CZK)",
+        lbl_category: "Passenger Category",
+        cat_adult: "Adult 15+ (No discount)",
+        cat_child: "Child 6-15 yrs (50% discount)",
+        cat_senior: "Senior 65+ (50% discount)",
+        price_tag: "Total price: ",
+        pay_btn: "💳 Pay & Claim",
+        ticket_active: "✔ TICKET ACTIVE",
+        sms_title: "SMS Chat",
+        no_msgs: "No messages",
+        lbl_recipient: "Recipient (E-mail / Name)",
+        lbl_message: "Message",
+        send_btn: "Send SMS",
+        driver_title: "Driver Subscriptions",
+        driver_pin_info: "Enter the special PIN code to unlock driver subscription offers.",
+        unlock_btn: "Unlock Section",
+        sub_monthly_title: "🚕 Monthly Driver License",
+        sub_monthly_desc: "Activates service permit for 30 days.",
+        sub_yearly_title: "👑 Yearly Driver VIP Card",
+        sub_yearly_desc: "Unlimited access to all buses and trains.",
+        enter_pin_title: "Enter 4-digit payment PIN",
+        cancel: "Cancel",
+        err_login_required: "🔒 You must be signed in with Google in the Account app to buy a ticket!",
+        err_fill_nicks: "Please fill in your Discord and Roblox usernames!",
+        err_pin_4digits: "Enter a complete 4-digit PIN!",
+        msg_success: "✔ Ticket successfully purchased and saved to the system!",
+        err_sms_login: "You must be signed in with Google to send SMS!",
+        err_sms_fields: "Fill in both recipient and message!",
+        err_driver_pin: "Incorrect PIN code for the Driver section!"
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+
+      calculateDiscount();
+      updateAuthUI();
+    }
+
+    function updateAuthUI() {
+      const authStatus = document.getElementById('auth-status');
+      const loginBtn = document.getElementById('btn-login');
+
+      if (window.currentUser) {
+        authStatus.textContent = translations[currentLang].status_logged + window.currentUser.email;
+        loginBtn.textContent = translations[currentLang].logout_btn;
+      } else {
+        authStatus.textContent = translations[currentLang].status_unlogged;
+        loginBtn.textContent = translations[currentLang].login_btn;
+      }
+    }
+
     function openApp(appId) {
       document.querySelectorAll('.app-window').forEach(win => win.style.display = 'none');
       document.getElementById(appId).style.display = 'flex';
@@ -314,43 +615,149 @@
       document.querySelectorAll('.app-window').forEach(win => win.style.display = 'none');
     }
 
-    /* Výpočet slevy pro 6-15 a 65+ */
+    /* SLEVY JÍZDENEK */
     function calculateDiscount() {
       const base = parseFloat(document.getElementById('ticket-base-price').value);
-      const discountRatio = parseFloat(document.getElementById('passenger-category').value);
-      const finalPrice = Math.round(base * discountRatio);
+      const ratio = parseFloat(document.getElementById('passenger-category').value);
+      const finalPrice = Math.round(base * ratio);
+      const unit = currentLang === 'en' ? 'CZK' : 'Kč';
+      document.getElementById('final-price').textContent = `${translations[currentLang].price_tag}${finalPrice} ${unit}`;
+    }
+
+    /* PLATBA & PIN */
+    let currentPaymentPin = "";
+
+    function startTicketPayment() {
+      if (!window.currentUser) {
+        alert(translations[currentLang].err_login_required);
+        return;
+      }
+
+      const dNick = document.getElementById('ticket-discord').value.trim();
+      const rNick = document.getElementById('ticket-roblox').value.trim();
+
+      if (!dNick || !rNick) {
+        alert(translations[currentLang].err_fill_nicks);
+        return;
+      }
+
+      currentPaymentPin = "";
+      updatePinDisplay();
+      document.getElementById('pin-modal').style.display = 'flex';
+    }
+
+    function pressPin(n) {
+      if (currentPaymentPin.length < 4) {
+        currentPaymentPin += n;
+        updatePinDisplay();
+      }
+    }
+
+    function clearPin() {
+      currentPaymentPin = "";
+      updatePinDisplay();
+    }
+
+    function updatePinDisplay() {
+      document.getElementById('pin-display').textContent = '•'.repeat(currentPaymentPin.length) || '••••';
+    }
+
+    function closePinModal() {
+      document.getElementById('pin-modal').style.display = 'none';
+    }
+
+    function confirmPaymentPin() {
+      if (currentPaymentPin.length !== 4) {
+        alert(translations[currentLang].err_pin_4digits);
+        return;
+      }
+      closePinModal();
+      completeTicketPurchase();
+    }
+
+    /* ZPRACOVÁNÍ JÍZDENKY A WEBHOOK */
+    async function completeTicketPurchase() {
+      const dNick = document.getElementById('ticket-discord').value;
+      const rNick = document.getElementById('ticket-roblox').value;
+      const baseSelect = document.getElementById('ticket-base-price');
+      const opt = baseSelect.options[baseSelect.selectedIndex];
+      const category = document.getElementById('passenger-category').options[document.getElementById('passenger-category').selectedIndex].text;
       
-      document.getElementById('final-price').textContent = `Cena po slevě: ${finalPrice} Kč`;
+      const ticketId = 'TCK-' + Math.floor(100000 + Math.random() * 900000);
+      
+      const qrBox = document.getElementById('qrcode');
+      qrBox.innerHTML = "";
+      new QRCode(qrBox, { text: ticketId, width: 120, height: 120 });
+      document.getElementById('ticket-code-display').textContent = ticketId;
+      document.getElementById('qr-result').style.display = 'block';
+
+      const payload = {
+        username: "Fiktivní PID - Jízdenky",
+        embeds: [{
+          title: "🎫 Nová Zakoupená Jízdenka",
+          color: 3066993,
+          fields: [
+            { name: "👤 Google Účet", value: window.currentUser.email, inline: false },
+            { name: "💬 Discord", value: dNick, inline: true },
+            { name: "🎮 Roblox", value: rNick, inline: true },
+            { name: "🎟️ Typ", value: opt.text, inline: true },
+            { name: "👥 Kategorie", value: category, inline: true },
+            { name: "🆔 ID Jízdenky", value: ticketId, inline: false }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        await fetch("https://corsproxy.io/?" + encodeURIComponent(DISCORD_WEBHOOK_URL), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        alert(translations[currentLang].msg_success);
+      } catch (e) {
+        console.error(e);
+        alert(translations[currentLang].msg_success);
+      }
     }
 
-    function buyTicket() {
-      alert("Jízdenka úspěšně zakoupena!");
-    }
-
-    /* SMS přes e-mail */
+    /* SMS CHAT */
     function sendSms() {
       const target = document.getElementById('sms-target').value;
       const text = document.getElementById('sms-text').value;
 
       if (!window.currentUser) {
-        alert("Pro odesílání SMS musíte být přihlášeni!");
+        alert(translations[currentLang].err_sms_login);
         return;
       }
 
       if (!target || !text) {
-        alert("Vyplňte e-mail příjemce i zprávu!");
+        alert(translations[currentLang].err_sms_fields);
         return;
       }
 
-      const chatBox = document.getElementById('sms-history');
-      const msg = document.createElement('div');
-      msg.className = 'msg-item';
-      msg.innerHTML = `<strong>Pro (${target}):</strong> ${text}`;
-      chatBox.appendChild(msg);
+      const box = document.getElementById('sms-history');
+      const item = document.createElement('div');
+      item.className = 'msg-item';
+      item.innerHTML = `<strong>Pro ${target}:</strong> ${text}`;
+      box.appendChild(item);
 
       document.getElementById('sms-text').value = '';
-      alert(`SMS zpráva odeslána na e-mail: ${target}`);
     }
+
+    /* ODEMKNUTÍ ŘIDIČE (PIN 71609161) */
+    function unlockDriver() {
+      const pin = document.getElementById('driver-pin-input').value;
+      if (pin === '71609161') {
+        document.getElementById('driver-lock').style.display = 'none';
+        document.getElementById('driver-content').style.display = 'block';
+      } else {
+        alert(translations[currentLang].err_driver_pin);
+      }
+    }
+
+    // Inicializace výchozího jazyka po načtení
+    setLanguage('cs');
   </script>
 </body>
 </html>
