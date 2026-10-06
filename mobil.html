@@ -202,6 +202,16 @@
       margin-bottom: 12px;
     }
 
+    .ticket-inspect-card {
+      background: #1e293b;
+      border-left: 4px solid var(--accent-green);
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+
     .pin-modal {
       display: none;
       position: absolute;
@@ -281,11 +291,11 @@
       <button class="btn-action" id="btn-login" data-i18n="login_btn">Přihlásit přes Google</button>
     </div>
 
-    <!-- 2. JÍZDENKY & SLEVY & DISCORD WEBHOOK -->
+    <!-- 2. JÍZDENKY & PŘEDPLATNÉ & DISCORD WEBHOOK -->
     <div id="app-tickets" class="app-window">
       <div class="app-header">
         <button class="btn-back" onclick="closeApps()" data-i18n="back">← Zpět</button>
-        <strong style="color: white;" data-i18n="buy_ticket_title">Koupit Jízdenku</strong>
+        <strong style="color: white;" data-i18n="buy_ticket_title">Koupit Jízdenku / Předplatné</strong>
       </div>
 
       <label data-i18n="lbl_discord">Discord Uživatelské Jméno</label>
@@ -294,11 +304,20 @@
       <label data-i18n="lbl_roblox">Roblox Uživatelské Jméno</label>
       <input type="text" id="ticket-roblox" placeholder="např. RobloxPlayerCZ">
       
-      <label data-i18n="lbl_ticket_type">Typ jízdenky</label>
+      <label data-i18n="lbl_ticket_type">Typ jízdenky / předplatného</label>
       <select id="ticket-base-price" onchange="calculateDiscount()">
-        <option value="24" data-min="30" data-i18n="opt_30m">30 minut (24 Kč)</option>
-        <option value="32" data-min="60" data-i18n="opt_60m">60 minut (32 Kč)</option>
-        <option value="100" data-min="1440" data-i18n="opt_24h">24 hodin (100 Kč)</option>
+        <optgroup label="Krátkodobé jízdenky">
+          <option value="24" data-i18n="opt_30m">30 minut (24 Kč)</option>
+          <option value="32" data-i18n="opt_60m">60 minut (32 Kč)</option>
+          <option value="100" data-i18n="opt_24h">24 hodin (100 Kč)</option>
+        </optgroup>
+        <optgroup label="Dlouhodobé předplatné">
+          <option value="220" data-i18n="opt_1w">Týdenní kupón (220 Kč)</option>
+          <option value="550" data-i18n="opt_1m">Měsíční kupón (550 Kč)</option>
+          <option value="2800" data-i18n="opt_6m">6 měsíců kupón (2 800 Kč)</option>
+          <option value="3650" data-i18n="opt_1y">Roční kupón (3 650 Kč)</option>
+          <option value="9900" data-i18n="opt_3y">3 roky kupón (9 900 Kč)</option>
+        </optgroup>
       </select>
 
       <label data-i18n="lbl_category">Kategorie cestujícího</label>
@@ -315,7 +334,7 @@
       <div id="qr-result" style="display:none; text-align:center; margin-top:15px; background:#1e293b; padding:10px; border-radius:10px;">
         <p style="color:var(--accent-green); font-weight:bold; margin:5px 0;" data-i18n="ticket_active">✔ JÍZDENKA AKTIVNÍ</p>
         <div id="qrcode" style="display:inline-block; background:white; padding:8px; border-radius:8px;"></div>
-        <p id="ticket-code-display" style="font-family:monospace; margin-top:5px; font-weight:bold;"></p>
+        <p id="ticket-code-display" style="font-family:monospace; margin-top:5px; font-weight:bold; color: white;"></p>
       </div>
     </div>
 
@@ -339,20 +358,27 @@
       <button class="btn-action" onclick="sendSms()" data-i18n="send_btn">Odeslat SMS</button>
     </div>
 
-    <!-- 4. PŘEDPLATNÉ PRO ŘIDIČE (PIN 71609161) -->
+    <!-- 4. PŘEDPLATNÉ A KONTROLA PRO ŘIDIČE (PIN 71609161) -->
     <div id="app-driver" class="app-window">
       <div class="app-header">
         <button class="btn-back" onclick="closeApps()" data-i18n="back">← Zpět</button>
-        <strong style="color: white;" data-i18n="driver_title">Předplatné Řidiče</strong>
+        <strong style="color: white;" data-i18n="driver_title">Sekce Řidiče</strong>
       </div>
 
       <div id="driver-lock">
-        <p style="color: var(--text-sub); font-size: 0.85rem;" data-i18n="driver_pin_info">Pro přístup k nabídkám předplatného řidičů zadejte speciální PIN kód.</p>
+        <p style="color: var(--text-sub); font-size: 0.85rem;" data-i18n="driver_pin_info">Pro přístup k nabídkám předplatného a přehledu jízdenek zadejte PIN kód.</p>
         <input type="password" id="driver-pin-input" placeholder="Zadejte PIN kód">
         <button class="btn-action" style="background: var(--accent-gold);" onclick="unlockDriver()" data-i18n="unlock_btn">Odemknout Sekci</button>
       </div>
 
       <div id="driver-content" style="display: none;">
+        <h4 style="color: var(--accent-gold); margin: 0 0 10px 0;" data-i18n="driver_inspections">🔍 Jízdenky a Předplatná Cestujících</h4>
+        <div id="passenger-tickets-list" style="max-height: 220px; overflow-y: auto; margin-bottom: 20px;">
+          <!-- Dynamicky se sem vkládají jízdenky -->
+          <p style="color: var(--text-sub); font-size: 0.8rem;" data-i18n="no_tickets_yet">Zatím nebyly zakoupeny žádné jízdenky.</p>
+        </div>
+
+        <h4 style="color: var(--text); margin: 15px 0 10px 0;" data-i18n="driver_licences">🚕 Služební Předplatné Řidiče</h4>
         <div class="driver-card">
           <strong style="color: var(--accent-gold);" data-i18n="sub_monthly_title">🚕 Měsíční Licence Řidiče</strong>
           <p style="font-size:0.8rem; color:var(--text-sub); margin:4px 0;" data-i18n="sub_monthly_desc">Aktivuje služební oprávnění na 30 dní.</p>
@@ -431,6 +457,7 @@
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
 
     let currentLang = 'cs';
+    let globalTicketsList = [];
 
     const translations = {
       cs: {
@@ -444,28 +471,36 @@
         status_logged: "Přihlášen: ",
         login_btn: "Přihlásit přes Google",
         logout_btn: "Odhlásit se",
-        buy_ticket_title: "Koupit Jízdenku",
+        buy_ticket_title: "Koupit Jízdenku / Kupón",
         lbl_discord: "Discord Uživatelské Jméno",
         lbl_roblox: "Roblox Uživatelské Jméno",
-        lbl_ticket_type: "Typ jízdenky",
+        lbl_ticket_type: "Typ jízdenky / předplatného",
         opt_30m: "30 minut (24 Kč)",
         opt_60m: "60 minut (32 Kč)",
         opt_24h: "24 hodin (100 Kč)",
+        opt_1w: "Týdenní kupón (220 Kč)",
+        opt_1m: "Měsíční kupón (550 Kč)",
+        opt_6m: "6 měsíců kupón (2 800 Kč)",
+        opt_1y: "Roční kupón (3 650 Kč)",
+        opt_3y: "3 roky kupón (9 900 Kč)",
         lbl_category: "Kategorie cestujícího",
         cat_adult: "Základní 15+ (Bez slevy)",
         cat_child: "Dítě / žák 6-15 let (Sleva 50%)",
         cat_senior: "Senior 65+ (Sleva 50%)",
         price_tag: "Cena k úhradě: ",
         pay_btn: "💳 Zaplatit a Získat",
-        ticket_active: "✔ JÍZDENKA AKTIVNÍ",
+        ticket_active: "✔ JÍZDENKA / KUPÓN AKTIVNÍ",
         sms_title: "SMS Chat",
         no_msgs: "Žádné zprávy",
         lbl_recipient: "Příjemce (E-mail / Jméno)",
         lbl_message: "Zpráva",
         send_btn: "Odeslat SMS",
-        driver_title: "Předplatné Řidiče",
-        driver_pin_info: "Pro přístup k nabídkám předplatného řidičů zadejte speciální PIN kód.",
+        driver_title: "Sekce Řidiče",
+        driver_pin_info: "Pro přístup k nabídkám předplatného a přehledu jízdenek zadejte PIN kód.",
         unlock_btn: "Odemknout Sekci",
+        driver_inspections: "🔍 Jízdenky a Předplatná Cestujících",
+        driver_licences: "🚕 Služební Předplatné Řidiče",
+        no_tickets_yet: "Zatím nebyly zakoupeny žádné jízdenky.",
         sub_monthly_title: "🚕 Měsíční Licence Řidiče",
         sub_monthly_desc: "Aktivuje služební oprávnění na 30 dní.",
         sub_yearly_title: "👑 Roční VIP Karta Řidiče",
@@ -475,7 +510,7 @@
         err_login_required: "🔒 Pro zakoupení jízdenky musíte být nejprve přihlášeni přes Google v aplikaci Účet!",
         err_fill_nicks: "Vyplňte prosím své Discord a Roblox jméno!",
         err_pin_4digits: "Zadejte kompletní 4místný PIN!",
-        msg_success: "✔ Jízdenka úspěšně zakoupena a zapsána do systému!",
+        msg_success: "✔ Jízdenka / Kupón úspěšně zakoupen a zapsán do systému!",
         err_sms_login: "Pro posílání SMS musíte být přihlášeni přes Google!",
         err_sms_fields: "Vyplňte příjemce i zprávu!",
         err_driver_pin: "Chybný PIN kód pro sekci Řidiče!"
@@ -491,28 +526,36 @@
         status_logged: "Prihlásený: ",
         login_btn: "Prihlásiť cez Google",
         logout_btn: "Odhlásiť sa",
-        buy_ticket_title: "Kúpiť Lístok",
+        buy_ticket_title: "Kúpiť Lístok / Kupón",
         lbl_discord: "Discord Užívateľské Meno",
         lbl_roblox: "Roblox Užívateľské Meno",
-        lbl_ticket_type: "Typ lístka",
+        lbl_ticket_type: "Typ lístka / predplatného",
         opt_30m: "30 minút (24 Kč)",
         opt_60m: "60 minút (32 Kč)",
         opt_24h: "24 hodín (100 Kč)",
+        opt_1w: "Týždenný kupón (220 Kč)",
+        opt_1m: "Mesačný kupón (550 Kč)",
+        opt_6m: "6 mesiacov kupón (2 800 Kč)",
+        opt_1y: "Ročný kupón (3 650 Kč)",
+        opt_3y: "3 roky kupón (9 900 Kč)",
         lbl_category: "Kategória cestujúceho",
         cat_adult: "Základný 15+ (Bez zľavy)",
         cat_child: "Dieťa / žiak 6-15 rokov (Zľava 50%)",
         cat_senior: "Senior 65+ (Zľava 50%)",
         price_tag: "Cena na úhradu: ",
         pay_btn: "💳 Zaplatiť a Získať",
-        ticket_active: "✔ LÍSTOK AKTÍVNY",
+        ticket_active: "✔ LÍSTOK / KUPÓN AKTÍVNY",
         sms_title: "SMS Chat",
         no_msgs: "Žiadne správy",
         lbl_recipient: "Príjemca (E-mail / Meno)",
         lbl_message: "Správa",
         send_btn: "Odoslať SMS",
-        driver_title: "Predplatné Vodiča",
-        driver_pin_info: "Pre prístup k ponukám predplatného vodičov zadajte špeciálny PIN kód.",
+        driver_title: "Sekcia Vodiča",
+        driver_pin_info: "Pre prístup k ponukám predplatného a prehľadu lístkov zadajte PIN kód.",
         unlock_btn: "Odomknúť Sekciu",
+        driver_inspections: "🔍 Lístky a Predplatné Cestujúcich",
+        driver_licences: "🚕 Služobné Predplatné Vodiča",
+        no_tickets_yet: "Zatiaľ neboli zakúpené žiadne lístky.",
         sub_monthly_title: "🚕 Mesačná Licencia Vodiča",
         sub_monthly_desc: "Aktivuje služobné oprávnenie na 30 dní.",
         sub_yearly_title: "👑 Ročná VIP Karta Vodiča",
@@ -522,7 +565,7 @@
         err_login_required: "🔒 Pre zakúpenie lístka musíte byť najprv prihlásení cez Google v aplikácii Účet!",
         err_fill_nicks: "Vyplňte prosím svoje Discord a Roblox meno!",
         err_pin_4digits: "Zadajte kompletný 4-miestny PIN!",
-        msg_success: "✔ Lístok úspešne zakúpený a zapísaný do systému!",
+        msg_success: "✔ Lístok / Kupón úspešne zakúpený a zapísaný do systému!",
         err_sms_login: "Pre posielanie SMS musíte byť prihlásení cez Google!",
         err_sms_fields: "Vyplňte príjemcu aj správu!",
         err_driver_pin: "Nesprávny PIN kód pre sekciu Vodiča!"
@@ -538,28 +581,36 @@
         status_logged: "Logged in: ",
         login_btn: "Sign in with Google",
         logout_btn: "Sign out",
-        buy_ticket_title: "Buy Ticket",
+        buy_ticket_title: "Buy Ticket / Pass",
         lbl_discord: "Discord Username",
         lbl_roblox: "Roblox Username",
-        lbl_ticket_type: "Ticket Type",
+        lbl_ticket_type: "Ticket / Pass Type",
         opt_30m: "30 minutes (24 CZK)",
         opt_60m: "60 minutes (32 CZK)",
         opt_24h: "24 hours (100 CZK)",
+        opt_1w: "7-Day Pass (220 CZK)",
+        opt_1m: "Monthly Pass (550 CZK)",
+        opt_6m: "6-Month Pass (2,800 CZK)",
+        opt_1y: "Yearly Pass (3,650 CZK)",
+        opt_3y: "3-Year Pass (9,900 CZK)",
         lbl_category: "Passenger Category",
         cat_adult: "Adult 15+ (No discount)",
         cat_child: "Child 6-15 yrs (50% discount)",
         cat_senior: "Senior 65+ (50% discount)",
         price_tag: "Total price: ",
         pay_btn: "💳 Pay & Claim",
-        ticket_active: "✔ TICKET ACTIVE",
+        ticket_active: "✔ TICKET / PASS ACTIVE",
         sms_title: "SMS Chat",
         no_msgs: "No messages",
         lbl_recipient: "Recipient (E-mail / Name)",
         lbl_message: "Message",
         send_btn: "Send SMS",
-        driver_title: "Driver Subscriptions",
-        driver_pin_info: "Enter the special PIN code to unlock driver subscription offers.",
+        driver_title: "Driver Section",
+        driver_pin_info: "Enter PIN code to access subscriptions and passenger ticket records.",
         unlock_btn: "Unlock Section",
+        driver_inspections: "🔍 Passenger Tickets & Passes",
+        driver_licences: "🚕 Driver Service Passes",
+        no_tickets_yet: "No tickets have been purchased yet.",
         sub_monthly_title: "🚕 Monthly Driver License",
         sub_monthly_desc: "Activates service permit for 30 days.",
         sub_yearly_title: "👑 Yearly Driver VIP Card",
@@ -569,7 +620,7 @@
         err_login_required: "🔒 You must be signed in with Google in the Account app to buy a ticket!",
         err_fill_nicks: "Please fill in your Discord and Roblox usernames!",
         err_pin_4digits: "Enter a complete 4-digit PIN!",
-        msg_success: "✔ Ticket successfully purchased and saved to the system!",
+        msg_success: "✔ Ticket / Pass successfully purchased and saved to system!",
         err_sms_login: "You must be signed in with Google to send SMS!",
         err_sms_fields: "Fill in both recipient and message!",
         err_driver_pin: "Incorrect PIN code for the Driver section!"
@@ -591,6 +642,7 @@
 
       calculateDiscount();
       updateAuthUI();
+      renderDriverTickets();
     }
 
     function updateAuthUI() {
@@ -615,7 +667,7 @@
       document.querySelectorAll('.app-window').forEach(win => win.style.display = 'none');
     }
 
-    /* SLEVY JÍZDENEK */
+    /* SLEVY JÍZDENEK A PŘEDPLATNÉHO */
     function calculateDiscount() {
       const base = parseFloat(document.getElementById('ticket-base-price').value);
       const ratio = parseFloat(document.getElementById('passenger-category').value);
@@ -682,6 +734,7 @@
       const baseSelect = document.getElementById('ticket-base-price');
       const opt = baseSelect.options[baseSelect.selectedIndex];
       const category = document.getElementById('passenger-category').options[document.getElementById('passenger-category').selectedIndex].text;
+      const priceText = document.getElementById('final-price').textContent;
       
       const ticketId = 'TCK-' + Math.floor(100000 + Math.random() * 900000);
       
@@ -691,17 +744,33 @@
       document.getElementById('ticket-code-display').textContent = ticketId;
       document.getElementById('qr-result').style.display = 'block';
 
+      // Uložení jízdenky/předplatného do paměti pro řidiče
+      const ticketRecord = {
+        id: ticketId,
+        userEmail: window.currentUser.email,
+        discord: dNick,
+        roblox: rNick,
+        type: opt.text,
+        category: category,
+        price: priceText,
+        time: new Date().toLocaleTimeString()
+      };
+      
+      globalTicketsList.unshift(ticketRecord);
+      renderDriverTickets();
+
       const payload = {
-        username: "Fiktivní PID - Jízdenky",
+        username: "Fiktivní PID - Jízdenky & Kupóny",
         embeds: [{
-          title: "🎫 Nová Zakoupená Jízdenka",
+          title: "🎫 Zakoupena Jízdenka / Předplatné",
           color: 3066993,
           fields: [
             { name: "👤 Google Účet", value: window.currentUser.email, inline: false },
             { name: "💬 Discord", value: dNick, inline: true },
             { name: "🎮 Roblox", value: rNick, inline: true },
-            { name: "🎟️ Typ", value: opt.text, inline: true },
+            { name: "🎟️ Typ / Platnost", value: opt.text, inline: true },
             { name: "👥 Kategorie", value: category, inline: true },
+            { name: "💳 Zaplaceno", value: priceText, inline: true },
             { name: "🆔 ID Jízdenky", value: ticketId, inline: false }
           ],
           timestamp: new Date().toISOString()
@@ -709,7 +778,7 @@
       };
 
       try {
-        await fetch("https://corsproxy.io/?" + encodeURIComponent(DISCORD_WEBHOOK_URL), {
+        await fetch(DISCORD_WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
@@ -719,6 +788,26 @@
         console.error(e);
         alert(translations[currentLang].msg_success);
       }
+    }
+
+    /* ZOBRAZENÍ JÍZDENEK PRO ŘIDIČE */
+    function renderDriverTickets() {
+      const container = document.getElementById('passenger-tickets-list');
+      if (!container) return;
+
+      if (globalTicketsList.length === 0) {
+        container.innerHTML = `<p style="color: var(--text-sub); font-size: 0.8rem;">${translations[currentLang].no_tickets_yet}</p>`;
+        return;
+      }
+
+      container.innerHTML = globalTicketsList.map(t => `
+        <div class="ticket-inspect-card">
+          <strong style="color: var(--accent-gold);">${t.id}</strong> (${t.time})<br>
+          <b>Roblox:</b> ${t.roblox} | <b>Discord:</b> ${t.discord}<br>
+          <b>Typ:</b> ${t.type}<br>
+          <b>Kat:</b> ${t.category} | <b>Účet:</b> ${t.userEmail}
+        </div>
+      `).join('');
     }
 
     /* SMS CHAT */
@@ -751,6 +840,7 @@
       if (pin === '71609161') {
         document.getElementById('driver-lock').style.display = 'none';
         document.getElementById('driver-content').style.display = 'block';
+        renderDriverTickets();
       } else {
         alert(translations[currentLang].err_driver_pin);
       }
