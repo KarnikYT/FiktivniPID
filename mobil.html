@@ -11,6 +11,7 @@
       --accent: #2563eb;
       --accent-green: #10b981;
       --accent-gold: #f59e0b;
+      --accent-red: #ef4444;
       --text: #f8fafc;
       --text-sub: #94a3b8;
     }
@@ -174,6 +175,18 @@
       margin-top: 10px;
     }
 
+    .lock-banner {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+    }
+
     .chat-box {
       flex: 1;
       min-height: 180px;
@@ -281,55 +294,92 @@
       </div>
     </div>
 
-    <!-- 1. ÚČET & GOOGLE PŘIHLÁŠENÍ -->
+    <!-- 1. ÚČET & GOOGLE / REVIZOR PŘIHLÁŠENÍ -->
     <div id="app-auth" class="app-window">
       <div class="app-header">
         <button class="btn-back" onclick="closeApps()" data-i18n="back">← Zpět</button>
         <strong style="color: white;" data-i18n="auth_title">Můj Účet</strong>
       </div>
       <p id="auth-status" style="color: var(--text-sub); font-size: 0.9rem;"></p>
+      
       <button class="btn-action" id="btn-login" data-i18n="login_btn">Přihlásit přes Google</button>
+
+      <hr style="border:0; border-top:1px solid #334155; margin:20px 0; width:100%;">
+
+      <div id="revizor-login-box">
+        <strong style="color:var(--accent-red); font-size:0.85rem;" data-i18n="revizor_title">🕵️ Přihlášení Revizora</strong>
+        <label data-i18n="lbl_revizor_user">Uživatelské jméno revizora</label>
+        <input type="text" id="revizor-username" placeholder="revizor10271">
+        <label data-i18n="lbl_revizor_pin">PIN Revizora</label>
+        <input type="password" id="revizor-pin" placeholder="90162">
+        <button class="btn-action" style="background:var(--accent-red);" onclick="loginRevizor()" data-i18n="btn_revizor_login">Přihlásit jako Revizor</button>
+      </div>
     </div>
 
-    <!-- 2. JÍZDENKY & PŘEDPLATNÉ & DISCORD WEBHOOK -->
+    <!-- 2. JÍZDENKY & PŘEDPLATNÉ -->
     <div id="app-tickets" class="app-window">
       <div class="app-header">
         <button class="btn-back" onclick="closeApps()" data-i18n="back">← Zpět</button>
-        <strong style="color: white;" data-i18n="buy_ticket_title">Koupit Jízdenku / Předplatné</strong>
+        <strong style="color: white;" data-i18n="buy_ticket_title">Koupit Jízdenku / Kupón</strong>
       </div>
 
-      <label data-i18n="lbl_discord">Discord Uživatelské Jméno</label>
-      <input type="text" id="ticket-discord" placeholder="např. uzivatel_123">
+      <!-- Blokovací banner při kontrole revizora -->
+      <div id="revizor-lock-banner" class="lock-banner" style="display:none;">
+        ⚠️ Prodej jízdenek je uzamčen revizorem!<br>Zbývá: <span id="lock-timer">04:00</span>
+      </div>
 
-      <label data-i18n="lbl_roblox">Roblox Uživatelské Jméno</label>
-      <input type="text" id="ticket-roblox" placeholder="např. RobloxPlayerCZ">
-      
-      <label data-i18n="lbl_ticket_type">Typ jízdenky / předplatného</label>
-      <select id="ticket-base-price" onchange="calculateDiscount()">
-        <optgroup label="Krátkodobé jízdenky">
-          <option value="24" data-i18n="opt_30m">30 minut (24 Kč)</option>
-          <option value="32" data-i18n="opt_60m">60 minut (32 Kč)</option>
-          <option value="100" data-i18n="opt_24h">24 hodin (100 Kč)</option>
-        </optgroup>
-        <optgroup label="Dlouhodobé předplatné">
-          <option value="220" data-i18n="opt_1w">Týdenní kupón (220 Kč)</option>
-          <option value="550" data-i18n="opt_1m">Měsíční kupón (550 Kč)</option>
-          <option value="2800" data-i18n="opt_6m">6 měsíců kupón (2 800 Kč)</option>
-          <option value="3650" data-i18n="opt_1y">Roční kupón (3 650 Kč)</option>
-          <option value="9900" data-i18n="opt_3y">3 roky kupón (9 900 Kč)</option>
-        </optgroup>
-      </select>
+      <div id="ticket-buy-form">
+        <label data-i18n="lbl_discord">Discord Uživatelské Jméno</label>
+        <input type="text" id="ticket-discord" placeholder="např. uzivatel_123">
 
-      <label data-i18n="lbl_category">Kategorie cestujícího</label>
-      <select id="passenger-category" onchange="calculateDiscount()">
-        <option value="1" data-i18n="cat_adult">Základní 15+ (Bez slevy)</option>
-        <option value="0.5" data-i18n="cat_child">Dítě / žák 6-15 let (Sleva 50%)</option>
-        <option value="0.5" data-i18n="cat_senior">Senior 65+ (Sleva 50%)</option>
-      </select>
+        <label data-i18n="lbl_roblox">Roblox Uživatelské Jméno</label>
+        <input type="text" id="ticket-roblox" placeholder="např. RobloxPlayerCZ">
+        
+        <label data-i18n="lbl_ticket_type">Typ jízdenky / předplatného</label>
+        <select id="ticket-base-price" onchange="calculateDiscount()">
+          <optgroup label="Krátkodobé jízdenky">
+            <option value="24" data-is-sub="false" data-i18n="opt_30m">30 minut (24 Kč)</option>
+            <option value="32" data-is-sub="false" data-i18n="opt_60m">60 minut (32 Kč)</option>
+            <option value="100" data-is-sub="false" data-i18n="opt_24h">24 hodin (100 Kč)</option>
+          </optgroup>
+          <optgroup label="Dlouhodobé předplatné">
+            <option value="220" data-is-sub="true" data-i18n="opt_1w">Týdenní kupón (220 Kč)</option>
+            <option value="550" data-is-sub="true" data-i18n="opt_1m">Měsíční kupón (550 Kč)</option>
+            <option value="2800" data-is-sub="true" data-i18n="opt_6m">6 měsíců kupón (2 800 Kč)</option>
+            <option value="3650" data-is-sub="true" data-i18n="opt_1y">Roční kupón (3 650 Kč)</option>
+            <option value="9900" data-is-sub="true" data-i18n="opt_3y">3 roky kupón (9 900 Kč)</option>
+          </optgroup>
+        </select>
 
-      <div class="price-tag" id="final-price">Cena k úhradě: 24 Kč</div>
+        <label data-i18n="lbl_category">Kategorie cestujícího</label>
+        <select id="passenger-category" onchange="calculateDiscount()">
+          <option value="1" data-i18n="cat_adult">Základní 15+ (Bez slevy)</option>
+          <option value="0.5" data-i18n="cat_child">Dítě / žák 6-15 let (Sleva 50%)</option>
+          <option value="0.5" data-i18n="cat_senior">Senior 65+ (Sleva 50%)</option>
+        </select>
 
-      <button class="btn-action" style="background: var(--accent-green);" onclick="startTicketPayment()" data-i18n="pay_btn">💳 Zaplatit a Získat</button>
+        <!-- Nové předvolby: E-mail na Discord & Ověření -->
+        <label data-i18n="lbl_show_email">Zobrazit e-mail v Discord Embed?</label>
+        <select id="pref-show-email">
+          <option value="ano" data-i18n="opt_yes">Ano</option>
+          <option value="ne" data-i18n="opt_no">Ne (Skrýt e-mail)</option>
+        </select>
+
+        <label data-i18n="lbl_verify_email">Ověřit před platbou přes e-mail?</label>
+        <select id="pref-verify-email" onchange="toggleVerifyCodeInput()">
+          <option value="ne" data-i18n="opt_no">Ne</option>
+          <option value="ano" data-i18n="opt_yes">Ano (Poslat 4místný kód)</option>
+        </select>
+
+        <div id="email-verify-box" style="display:none; margin-top:8px; background:#020617; padding:8px; border-radius:8px; border:1px dashed var(--accent);">
+          <button type="button" style="background:var(--accent); border:none; color:white; padding:6px; border-radius:6px; font-size:0.75rem; cursor:pointer; width:100%;" onclick="sendVerificationEmailCode()" data-i18n="btn_send_code">📩 Poslat ověřovací kód</button>
+          <input type="text" id="input-verify-code" placeholder="Zadejte obdržený kód" style="margin-top:5px; font-size:0.85rem; text-align:center;">
+        </div>
+
+        <div class="price-tag" id="final-price">Cena k úhradě: 24 Kč</div>
+
+        <button class="btn-action" id="btn-pay-action" style="background: var(--accent-green);" onclick="startTicketPayment()" data-i18n="pay_btn">💳 Zaplatit a Získat</button>
+      </div>
 
       <div id="qr-result" style="display:none; text-align:center; margin-top:15px; background:#1e293b; padding:10px; border-radius:10px;">
         <p style="color:var(--accent-green); font-weight:bold; margin:5px 0;" data-i18n="ticket_active">✔ JÍZDENKA AKTIVNÍ</p>
@@ -358,7 +408,7 @@
       <button class="btn-action" onclick="sendSms()" data-i18n="send_btn">Odeslat SMS</button>
     </div>
 
-    <!-- 4. PŘEDPLATNÉ A KONTROLA PRO ŘIDIČE (PIN 71609161) -->
+    <!-- 4. ŘIDIČ VIP (PIN 71609161) -->
     <div id="app-driver" class="app-window">
       <div class="app-header">
         <button class="btn-back" onclick="closeApps()" data-i18n="back">← Zpět</button>
@@ -372,10 +422,14 @@
       </div>
 
       <div id="driver-content" style="display: none;">
-        <h4 style="color: var(--accent-gold); margin: 0 0 10px 0;" data-i18n="driver_inspections">🔍 Jízdenky a Předplatná Cestujících</h4>
-        <div id="passenger-tickets-list" style="max-height: 220px; overflow-y: auto; margin-bottom: 20px;">
-          <!-- Dynamicky se sem vkládají jízdenky -->
-          <p style="color: var(--text-sub); font-size: 0.8rem;" data-i18n="no_tickets_yet">Zatím nebyly zakoupeny žádné jízdenky.</p>
+        <h4 style="color: var(--accent-gold); margin: 0 0 10px 0;" data-i18n="driver_subscriptions_list">👑 Přehled Aktivních Předplatných Cestujících</h4>
+        <div id="passenger-subscriptions-list" style="max-height: 180px; overflow-y: auto; margin-bottom: 15px;">
+          <!-- Sem se načítají uživatelé s dlouhodobým předplatným -->
+        </div>
+
+        <h4 style="color: var(--accent-green); margin: 15px 0 10px 0;" data-i18n="driver_inspections">🔍 Všechny Zakoupené Jízdenky</h4>
+        <div id="passenger-tickets-list" style="max-height: 180px; overflow-y: auto; margin-bottom: 15px;">
+          <!-- Sem se načítají všechny jízdenky -->
         </div>
 
         <h4 style="color: var(--text); margin: 15px 0 10px 0;" data-i18n="driver_licences">🚕 Služební Předplatné Řidiče</h4>
@@ -383,12 +437,6 @@
           <strong style="color: var(--accent-gold);" data-i18n="sub_monthly_title">🚕 Měsíční Licence Řidiče</strong>
           <p style="font-size:0.8rem; color:var(--text-sub); margin:4px 0;" data-i18n="sub_monthly_desc">Aktivuje služební oprávnění na 30 dní.</p>
           <strong style="color: white;">550 Kč / měsíc</strong>
-        </div>
-
-        <div class="driver-card">
-          <strong style="color: var(--accent-gold);" data-i18n="sub_yearly_title">👑 Roční VIP Karta Řidiče</strong>
-          <p style="font-size:0.8rem; color:var(--text-sub); margin:4px 0;" data-i18n="sub_yearly_desc">Neomezený přístup ke všem autobusům a vlakům.</p>
-          <strong style="color: white;">3 650 Kč / rok</strong>
         </div>
       </div>
     </div>
@@ -447,7 +495,11 @@
     });
 
     onAuthStateChanged(auth, (user) => {
-      window.currentUser = user;
+      if (user) {
+        window.currentUser = { email: user.email, isRevizor: false };
+      } else if (!window.currentUser || !window.currentUser.isRevizor) {
+        window.currentUser = null;
+      }
       updateAuthUI();
     });
   </script>
@@ -458,6 +510,9 @@
 
     let currentLang = 'cs';
     let globalTicketsList = [];
+    let revizorLockTimer = null;
+    let revizorLockEndTime = 0;
+    let generatedVerifyCode = null;
 
     const translations = {
       cs: {
@@ -471,6 +526,10 @@
         status_logged: "Přihlášen: ",
         login_btn: "Přihlásit přes Google",
         logout_btn: "Odhlásit se",
+        revizor_title: "🕵️ Přihlášení Revizora",
+        lbl_revizor_user: "Uživatelské jméno revizora",
+        lbl_revizor_pin: "PIN Revizora",
+        btn_revizor_login: "Přihlásit jako Revizor",
         buy_ticket_title: "Koupit Jízdenku / Kupón",
         lbl_discord: "Discord Uživatelské Jméno",
         lbl_roblox: "Roblox Uživatelské Jméno",
@@ -487,6 +546,11 @@
         cat_adult: "Základní 15+ (Bez slevy)",
         cat_child: "Dítě / žák 6-15 let (Sleva 50%)",
         cat_senior: "Senior 65+ (Sleva 50%)",
+        lbl_show_email: "Zobrazit e-mail v Discord Embed?",
+        lbl_verify_email: "Ověřit před platbou přes e-mail?",
+        opt_yes: "Ano",
+        opt_no: "Ne",
+        btn_send_code: "📩 Poslat ověřovací kód",
         price_tag: "Cena k úhradě: ",
         pay_btn: "💳 Zaplatit a Získat",
         ticket_active: "✔ JÍZDENKA / KUPÓN AKTIVNÍ",
@@ -498,13 +562,13 @@
         driver_title: "Sekce Řidiče",
         driver_pin_info: "Pro přístup k nabídkám předplatného a přehledu jízdenek zadejte PIN kód.",
         unlock_btn: "Odemknout Sekci",
-        driver_inspections: "🔍 Jízdenky a Předplatná Cestujících",
+        driver_subscriptions_list: "👑 Přehled Aktivních Předplatných Cestujících",
+        driver_inspections: "🔍 Všechny Zakoupené Jízdenky",
         driver_licences: "🚕 Služební Předplatné Řidiče",
         no_tickets_yet: "Zatím nebyly zakoupeny žádné jízdenky.",
+        no_subs_yet: "Žádný uživatel nemá dlouhodobé předplatné.",
         sub_monthly_title: "🚕 Měsíční Licence Řidiče",
         sub_monthly_desc: "Aktivuje služební oprávnění na 30 dní.",
-        sub_yearly_title: "👑 Roční VIP Karta Řidiče",
-        sub_yearly_desc: "Neomezený přístup ke všem autobusům a vlakům.",
         enter_pin_title: "Zadejte 4místný PIN platby",
         cancel: "Zrušit",
         err_login_required: "🔒 Pro zakoupení jízdenky musíte být nejprve přihlášeni přes Google v aplikaci Účet!",
@@ -513,7 +577,11 @@
         msg_success: "✔ Jízdenka / Kupón úspěšně zakoupen a zapsán do systému!",
         err_sms_login: "Pro posílání SMS musíte být přihlášeni přes Google!",
         err_sms_fields: "Vyplňte příjemce i zprávu!",
-        err_driver_pin: "Chybný PIN kód pro sekci Řidiče!"
+        err_driver_pin: "Chybný PIN kód pro sekci Řidiče!",
+        err_revizor_login: "Chybné uživatelské jméno nebo PIN revizora!",
+        msg_revizor_locked: "🚨 Revizor se přihlásil! Nákup jízdenek je uzamčen na 4 minuty.",
+        err_locked_by_revizor: "🔒 Prodej jízdenek je aktuálně uzamčen revizorem!",
+        err_invalid_verify_code: "❌ Nesprávný ověřovací kód z e-mailu!"
       },
       sk: {
         app_auth: "Účet",
@@ -526,6 +594,10 @@
         status_logged: "Prihlásený: ",
         login_btn: "Prihlásiť cez Google",
         logout_btn: "Odhlásiť sa",
+        revizor_title: "🕵️️ Prihlásenie Revízora",
+        lbl_revizor_user: "Užívateľské meno revízora",
+        lbl_revizor_pin: "PIN Revízora",
+        btn_revizor_login: "Prihlásiť ako Revízor",
         buy_ticket_title: "Kúpiť Lístok / Kupón",
         lbl_discord: "Discord Užívateľské Meno",
         lbl_roblox: "Roblox Užívateľské Meno",
@@ -542,6 +614,11 @@
         cat_adult: "Základný 15+ (Bez zľavy)",
         cat_child: "Dieťa / žiak 6-15 rokov (Zľava 50%)",
         cat_senior: "Senior 65+ (Zľava 50%)",
+        lbl_show_email: "Zobraziť e-mail v Discord Embed?",
+        lbl_verify_email: "Overiť pred platbou cez e-mail?",
+        opt_yes: "Áno",
+        opt_no: "Nie",
+        btn_send_code: "📩 Poslať overovací kód",
         price_tag: "Cena na úhradu: ",
         pay_btn: "💳 Zaplatiť a Získať",
         ticket_active: "✔ LÍSTOK / KUPÓN AKTÍVNY",
@@ -553,13 +630,13 @@
         driver_title: "Sekcia Vodiča",
         driver_pin_info: "Pre prístup k ponukám predplatného a prehľadu lístkov zadajte PIN kód.",
         unlock_btn: "Odomknúť Sekciu",
-        driver_inspections: "🔍 Lístky a Predplatné Cestujúcich",
+        driver_subscriptions_list: "👑 Prehľad Aktívnych Predplatných Cestujúcich",
+        driver_inspections: "🔍 Všetky Zakúpené Lístky",
         driver_licences: "🚕 Služobné Predplatné Vodiča",
         no_tickets_yet: "Zatiaľ neboli zakúpené žiadne lístky.",
+        no_subs_yet: "Žiadny používateľ nemá dlhodobé predplatné.",
         sub_monthly_title: "🚕 Mesačná Licencia Vodiča",
         sub_monthly_desc: "Aktivuje služobné oprávnenie na 30 dní.",
-        sub_yearly_title: "👑 Ročná VIP Karta Vodiča",
-        sub_yearly_desc: "Neobmedzený prístup ku všetkým autobusom a vlakom.",
         enter_pin_title: "Zadajte 4-miestny PIN platby",
         cancel: "Zrušiť",
         err_login_required: "🔒 Pre zakúpenie lístka musíte byť najprv prihlásení cez Google v aplikácii Účet!",
@@ -568,7 +645,11 @@
         msg_success: "✔ Lístok / Kupón úspešne zakúpený a zapísaný do systému!",
         err_sms_login: "Pre posielanie SMS musíte byť prihlásení cez Google!",
         err_sms_fields: "Vyplňte príjemcu aj správu!",
-        err_driver_pin: "Nesprávny PIN kód pre sekciu Vodiča!"
+        err_driver_pin: "Nesprávny PIN kód pre sekciu Vodiča!",
+        err_revizor_login: "Nesprávne užívateľské meno alebo PIN revízora!",
+        msg_revizor_locked: "🚨 Revízor sa prihlásil! Nákup lístkov je uzamknutý na 4 minúty.",
+        err_locked_by_revizor: "🔒 Predaj lístkov je aktuálne uzamknutý revízorom!",
+        err_invalid_verify_code: "❌ Nesprávny overovací kód z e-mailu!"
       },
       en: {
         app_auth: "Account",
@@ -581,6 +662,10 @@
         status_logged: "Logged in: ",
         login_btn: "Sign in with Google",
         logout_btn: "Sign out",
+        revizor_title: "🕵️ Ticket Inspector Login",
+        lbl_revizor_user: "Inspector Username",
+        lbl_revizor_pin: "Inspector PIN",
+        btn_revizor_login: "Login as Inspector",
         buy_ticket_title: "Buy Ticket / Pass",
         lbl_discord: "Discord Username",
         lbl_roblox: "Roblox Username",
@@ -597,6 +682,11 @@
         cat_adult: "Adult 15+ (No discount)",
         cat_child: "Child 6-15 yrs (50% discount)",
         cat_senior: "Senior 65+ (50% discount)",
+        lbl_show_email: "Show email in Discord Embed?",
+        lbl_verify_email: "Verify via email before payment?",
+        opt_yes: "Yes",
+        opt_no: "No",
+        btn_send_code: "📩 Send Verification Code",
         price_tag: "Total price: ",
         pay_btn: "💳 Pay & Claim",
         ticket_active: "✔ TICKET / PASS ACTIVE",
@@ -608,13 +698,13 @@
         driver_title: "Driver Section",
         driver_pin_info: "Enter PIN code to access subscriptions and passenger ticket records.",
         unlock_btn: "Unlock Section",
-        driver_inspections: "🔍 Passenger Tickets & Passes",
+        driver_subscriptions_list: "👑 Passenger Active Subscriptions Overview",
+        driver_inspections: "🔍 All Purchased Tickets",
         driver_licences: "🚕 Driver Service Passes",
         no_tickets_yet: "No tickets have been purchased yet.",
+        no_subs_yet: "No user currently holds a long-term pass.",
         sub_monthly_title: "🚕 Monthly Driver License",
         sub_monthly_desc: "Activates service permit for 30 days.",
-        sub_yearly_title: "👑 Yearly Driver VIP Card",
-        sub_yearly_desc: "Unlimited access to all buses and trains.",
         enter_pin_title: "Enter 4-digit payment PIN",
         cancel: "Cancel",
         err_login_required: "🔒 You must be signed in with Google in the Account app to buy a ticket!",
@@ -623,7 +713,11 @@
         msg_success: "✔ Ticket / Pass successfully purchased and saved to system!",
         err_sms_login: "You must be signed in with Google to send SMS!",
         err_sms_fields: "Fill in both recipient and message!",
-        err_driver_pin: "Incorrect PIN code for the Driver section!"
+        err_driver_pin: "Incorrect PIN code for the Driver section!",
+        err_revizor_login: "Incorrect Inspector username or PIN!",
+        msg_revizor_locked: "🚨 Inspector logged in! Ticket purchase locked for 4 minutes.",
+        err_locked_by_revizor: "🔒 Ticket purchase is currently locked by the Inspector!",
+        err_invalid_verify_code: "❌ Incorrect verification code!"
       }
     };
 
@@ -658,6 +752,50 @@
       }
     }
 
+    /* PŘIHLÁŠENÍ REVIZORA & ZAMKNUTÍ NÁKUPU NA 4 MINUTY */
+    function loginRevizor() {
+      const u = document.getElementById('revizor-username').value.trim();
+      const p = document.getElementById('revizor-pin').value.trim();
+
+      if (u === 'revizor10271' && p === '90162') {
+        window.currentUser = { email: 'revizor10271@pid.cz (REVIZOR)', isRevizor: true };
+        updateAuthUI();
+        
+        // Uzamčení na 4 minuty (240 sekund)
+        revizorLockEndTime = Date.now() + 4 * 60 * 1000;
+        startRevizorLockCountdown();
+        alert(translations[currentLang].msg_revizor_locked);
+      } else {
+        alert(translations[currentLang].err_revizor_login);
+      }
+    }
+
+    function startRevizorLockCountdown() {
+      const banner = document.getElementById('revizor-lock-banner');
+      const timerSpan = document.getElementById('lock-timer');
+      const payBtn = document.getElementById('btn-pay-action');
+
+      banner.style.display = 'block';
+      payBtn.disabled = true;
+      payBtn.style.opacity = '0.5';
+
+      clearInterval(revizorLockTimer);
+      revizorLockTimer = setInterval(() => {
+        const remaining = Math.max(0, Math.ceil((revizorLockEndTime - Date.now()) / 1000));
+        
+        const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+        const s = String(remaining % 60).padStart(2, '0');
+        timerSpan.textContent = `${m}:${s}`;
+
+        if (remaining <= 0) {
+          clearInterval(revizorLockTimer);
+          banner.style.display = 'none';
+          payBtn.disabled = false;
+          payBtn.style.opacity = '1';
+        }
+      }, 1000);
+    }
+
     function openApp(appId) {
       document.querySelectorAll('.app-window').forEach(win => win.style.display = 'none');
       document.getElementById(appId).style.display = 'flex';
@@ -676,10 +814,30 @@
       document.getElementById('final-price').textContent = `${translations[currentLang].price_tag}${finalPrice} ${unit}`;
     }
 
+    /* OVĚŘENÍ PŘES EMAIL */
+    function toggleVerifyCodeInput() {
+      const val = document.getElementById('pref-verify-email').value;
+      document.getElementById('email-verify-box').style.display = (val === 'ano') ? 'block' : 'none';
+    }
+
+    function sendVerificationEmailCode() {
+      if (!window.currentUser) {
+        alert(translations[currentLang].err_login_required);
+        return;
+      }
+      generatedVerifyCode = String(Math.floor(1000 + Math.random() * 9000));
+      alert(`📩 Ověřovací kód byl zaslán na ${window.currentUser.email}:\n\nKÓD: ${generatedVerifyCode}`);
+    }
+
     /* PLATBA & PIN */
     let currentPaymentPin = "";
 
     function startTicketPayment() {
+      if (Date.now() < revizorLockEndTime) {
+        alert(translations[currentLang].err_locked_by_revizor);
+        return;
+      }
+
       if (!window.currentUser) {
         alert(translations[currentLang].err_login_required);
         return;
@@ -691,6 +849,15 @@
       if (!dNick || !rNick) {
         alert(translations[currentLang].err_fill_nicks);
         return;
+      }
+
+      const needVerify = document.getElementById('pref-verify-email').value;
+      if (needVerify === 'ano') {
+        const inputCode = document.getElementById('input-verify-code').value.trim();
+        if (!generatedVerifyCode || inputCode !== generatedVerifyCode) {
+          alert(translations[currentLang].err_invalid_verify_code);
+          return;
+        }
       }
 
       currentPaymentPin = "";
@@ -733,8 +900,12 @@
       const rNick = document.getElementById('ticket-roblox').value;
       const baseSelect = document.getElementById('ticket-base-price');
       const opt = baseSelect.options[baseSelect.selectedIndex];
+      const isSubscription = opt.getAttribute('data-is-sub') === 'true';
       const category = document.getElementById('passenger-category').options[document.getElementById('passenger-category').selectedIndex].text;
       const priceText = document.getElementById('final-price').textContent;
+      const showEmailChoice = document.getElementById('pref-show-email').value;
+
+      const displayedEmail = (showEmailChoice === 'ano') ? window.currentUser.email : "[SKRYTO / ANONYMNÍ]";
       
       const ticketId = 'TCK-' + Math.floor(100000 + Math.random() * 900000);
       
@@ -751,6 +922,7 @@
         discord: dNick,
         roblox: rNick,
         type: opt.text,
+        isSubscription: isSubscription,
         category: category,
         price: priceText,
         time: new Date().toLocaleTimeString()
@@ -762,10 +934,10 @@
       const payload = {
         username: "Fiktivní PID - Jízdenky & Kupóny",
         embeds: [{
-          title: "🎫 Zakoupena Jízdenka / Předplatné",
-          color: 3066993,
+          title: isSubscription ? "👑 Zakoupeno Dlouhodobé Předplatné" : "🎫 Zakoupena Jízdenka",
+          color: isSubscription ? 15844367 : 3066993,
           fields: [
-            { name: "👤 Google Účet", value: window.currentUser.email, inline: false },
+            { name: "👤 Google / Účet", value: displayedEmail, inline: false },
             { name: "💬 Discord", value: dNick, inline: true },
             { name: "🎮 Roblox", value: rNick, inline: true },
             { name: "🎟️ Typ / Platnost", value: opt.text, inline: true },
@@ -790,24 +962,42 @@
       }
     }
 
-    /* ZOBRAZENÍ JÍZDENEK PRO ŘIDIČE */
+    /* ZOBRAZENÍ JÍZDENEK A PŘEDPLATNÝCH PRO ŘIDIČE */
     function renderDriverTickets() {
-      const container = document.getElementById('passenger-tickets-list');
-      if (!container) return;
+      const containerAll = document.getElementById('passenger-tickets-list');
+      const containerSubs = document.getElementById('passenger-subscriptions-list');
+      if (!containerAll || !containerSubs) return;
 
+      // 1. Přehled všech jízdenek
       if (globalTicketsList.length === 0) {
-        container.innerHTML = `<p style="color: var(--text-sub); font-size: 0.8rem;">${translations[currentLang].no_tickets_yet}</p>`;
-        return;
+        containerAll.innerHTML = `<p style="color: var(--text-sub); font-size: 0.8rem;">${translations[currentLang].no_tickets_yet}</p>`;
+      } else {
+        containerAll.innerHTML = globalTicketsList.map(t => `
+          <div class="ticket-inspect-card">
+            <strong style="color: var(--accent-gold);">${t.id}</strong> (${t.time})<br>
+            <b>Roblox:</b> ${t.roblox} | <b>Discord:</b> ${t.discord}<br>
+            <b>Typ:</b> ${t.type}<br>
+            <b>Účet:</b> ${t.userEmail}
+          </div>
+        `).join('');
       }
 
-      container.innerHTML = globalTicketsList.map(t => `
-        <div class="ticket-inspect-card">
-          <strong style="color: var(--accent-gold);">${t.id}</strong> (${t.time})<br>
-          <b>Roblox:</b> ${t.roblox} | <b>Discord:</b> ${t.discord}<br>
-          <b>Typ:</b> ${t.type}<br>
-          <b>Kat:</b> ${t.category} | <b>Účet:</b> ${t.userEmail}
-        </div>
-      `).join('');
+      // 2. Přehled UŽIVATELŮ S DLOUHODOBÝM PŘEDPLATNÝM
+      const subsOnly = globalTicketsList.filter(t => t.isSubscription);
+      if (subsOnly.length === 0) {
+        containerSubs.innerHTML = `<p style="color: var(--text-sub); font-size: 0.8rem;">${translations[currentLang].no_subs_yet}</p>`;
+      } else {
+        containerSubs.innerHTML = subsOnly.map(s => `
+          <div class="driver-card" style="border-color: var(--accent-green);">
+            <strong style="color: var(--accent-green);">👑 PŘEDPLATITEL: ${s.roblox}</strong><br>
+            <span style="font-size:0.8rem; color:white;">
+              <b>Discord:</b> ${s.discord}<br>
+              <b>Kupón:</b> ${s.type}<br>
+              <b>E-mail:</b> ${s.userEmail}
+            </span>
+          </div>
+        `).join('');
+      }
     }
 
     /* SMS CHAT */
