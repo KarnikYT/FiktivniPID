@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiktivní PID Mobile OS</title>
+  <style>
+    :root {
+      --phone-bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #2563eb;
+      --accent-green: #10b981;
+      --text: #f8fafc;
+      --text-sub: #94a3b8;
+    }
+
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+
+    body {
+      background: #020617;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* Rámčík mobilu */
+    .phone-container {
+      width: 380px;
+      height: 740px;
+      background: var(--phone-bg);
+      border: 12px solid #334155;
+      border-radius: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Notch / Výřez */
+    .notch {
+      width: 140px;
+      height: 20px;
+      background: #334155;
+      margin: 0 auto;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      z-index: 100;
+    }
+
+    /* Plocha mobilu */
+    .screen {
+      flex: 1;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Mřížka aplikací na ploše */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .app-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .icon-box {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.8rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .app-name {
+      color: var(--text);
+      font-size: 0.75rem;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* Okno otveřené aplikace */
+    .app-window {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--phone-bg);
+      z-index: 50;
+      padding: 40px 15px 20px 15px;
+      display: none;
+      flex-direction: column;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .btn-back {
+      background: #334155;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Formuláře a prvky */
+    label { font-size: 0.8rem; color: var(--text-sub); margin-top: 10px; display: block; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: white;
+      margin-top: 4px;
+    }
+
+    .btn-action {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    .price-tag {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-green);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    /* SMS zprávy chat */
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px;
+      background: #020617;
+      margin-bottom: 10px;
+    }
+
+    .msg-item {
+      background: #1e293b;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-container">
+    <div class="notch"></div>
+
+    <div class="screen">
+      <h2 style="color: var(--text); font-size: 1.1rem; text-align: center; margin-top: 10px;">Fiktivní PID Phone</h2>
+      
+      <!-- Plocha aplikací -->
+      <div class="app-grid">
+        <div class="app-icon" onclick="openApp('app-auth')">
+          <div class="icon-box" style="background: #e11d48;">👤</div>
+          <span class="app-name">Účet</span>
+        </div>
+        <div class="app-icon" onclick="openApp('app-tickets')">
+          <div class="icon-box" style="background: #2563eb;">🎫</div>
+          <span class="app-name">Jízdenky</span>
+        </div>
+        <div class="app-icon" onclick="openApp('app-sms')">
+          <div class="icon-box" style="background: #10b981;">💬</div>
+          <span class="app-name">SMS Zprávy</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. APLIKACE: PŘIHLAŠOVÁNÍ -->
+    <div id="app-auth" class="app-window">
+      <div class="app-header">
+        <button class="btn-back" onclick="closeApps()">← Zpět</button>
+        <strong style="color: white;">Můj Účet</strong>
+      </div>
+      <p id="auth-status" style="color: var(--text-sub); font-size: 0.9rem;">Status: Nepřihlášen</p>
+      <button class="btn-action" id="btn-login">Přihlásit přes Google</button>
+    </div>
+
+    <!-- 2. APLIKACE: JÍZDENKY & SLEVY -->
+    <div id="app-tickets" class="app-window">
+      <div class="app-header">
+        <button class="btn-back" onclick="closeApps()">← Zpět</button>
+        <strong style="color: white;">Koupit Jízdenku</strong>
+      </div>
+      
+      <label>Typ jízdenky</label>
+      <select id="ticket-base-price" onchange="calculateDiscount()">
+        <option value="24">30 minut (24 Kč)</option>
+        <option value="32">60 minut (32 Kč)</option>
+        <option value="100">24 hodin (100 Kč)</option>
+      </select>
+
+      <label>Kategorie cestujícího</label>
+      <select id="passenger-category" onchange="calculateDiscount()">
+        <option value="1">Základní 15+ (Bez slevy)</option>
+        <option value="0.5">Dítě / žák 6-15 let (Sleva 50%)</option>
+        <option value="0.5">Senior 65+ (Sleva 50%)</option>
+      </select>
+
+      <div class="price-tag" id="final-price">Cena po slevě: 24 Kč</div>
+
+      <button class="btn-action" style="background: var(--accent-green);" onclick="buyTicket()">Koupit Jízdenku</button>
+    </div>
+
+    <!-- 3. APLIKACE: SMS PŘES EMAIL -->
+    <div id="app-sms" class="app-window">
+      <div class="app-header">
+        <button class="btn-back" onclick="closeApps()">← Zpět</button>
+        <strong style="color: white;">SMS přes Email</strong>
+      </div>
+
+      <div class="chat-box" id="sms-history">
+        <div class="msg-item"><i>Žádné nové zprávy</i></div>
+      </div>
+
+      <label>E-mail příjemce</label>
+      <input type="email" id="sms-target" placeholder="uzivatel@gmail.com">
+
+      <label>Zpráva</label>
+      <textarea id="sms-text" rows="2" placeholder="Napiš zprávu..."></textarea>
+
+      <button class="btn-action" onclick="sendSms()">Odeslat SMS</button>
+    </div>
+
+  </div>
+
+  <!-- FIREBASE SCRIPT -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCA8xhs3qS9NH7XoedqDjdL2WY7gh0_-WE",
+      authDomain: "fiktivnipid.firebaseapp.com",
+      projectId: "fiktivnipid",
+      storageBucket: "fiktivnipid.firebasestorage.app",
+      messagingSenderId: "858723196116",
+      appId: "1:858723196116:web:05dbbe2f8684277e30af41"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    window.currentUser = null;
+
+    const loginBtn = document.getElementById('btn-login');
+    const authStatus = document.getElementById('auth-status');
+
+    loginBtn.addEventListener('click', () => {
+      if (window.currentUser) {
+        signOut(auth);
+      } else {
+        signInWithPopup(auth, provider);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      window.currentUser = user;
+      if (user) {
+        authStatus.textContent = `Přihlášen: ${user.email}`;
+        loginBtn.textContent = 'Odhlásit se';
+      } else {
+        authStatus.textContent = 'Status: Nepřihlášen';
+        loginBtn.textContent = 'Přihlásit přes Google';
+      }
+    });
+  </script>
+
+  <!-- MOBILNÍ LOGIKA -->
+  <script>
+    function openApp(appId) {
+      document.querySelectorAll('.app-window').forEach(win => win.style.display = 'none');
+      document.getElementById(appId).style.display = 'flex';
+    }
+
+    function closeApps() {
+      document.querySelectorAll('.app-window').forEach(win => win.style.display = 'none');
+    }
+
+    /* Výpočet slevy pro 6-15 a 65+ */
+    function calculateDiscount() {
+      const base = parseFloat(document.getElementById('ticket-base-price').value);
+      const discountRatio = parseFloat(document.getElementById('passenger-category').value);
+      const finalPrice = Math.round(base * discountRatio);
+      
+      document.getElementById('final-price').textContent = `Cena po slevě: ${finalPrice} Kč`;
+    }
+
+    function buyTicket() {
+      alert("Jízdenka úspěšně zakoupena!");
+    }
+
+    /* SMS přes e-mail */
+    function sendSms() {
+      const target = document.getElementById('sms-target').value;
+      const text = document.getElementById('sms-text').value;
+
+      if (!window.currentUser) {
+        alert("Pro odesílání SMS musíte být přihlášeni!");
+        return;
+      }
+
+      if (!target || !text) {
+        alert("Vyplňte e-mail příjemce i zprávu!");
+        return;
+      }
+
+      const chatBox = document.getElementById('sms-history');
+      const msg = document.createElement('div');
+      msg.className = 'msg-item';
+      msg.innerHTML = `<strong>Pro (${target}):</strong> ${text}`;
+      chatBox.appendChild(msg);
+
+      document.getElementById('sms-text').value = '';
+      alert(`SMS zpráva odeslána na e-mail: ${target}`);
+    }
+  </script>
+</body>
+</html>
