@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prague Community | Hlavní Stránka</title>
+  <title>Prague Community | Domovská Stránka</title>
   <style>
     :root {
       --bg-dark: #0f172a;
@@ -11,6 +11,7 @@
       --accent-blue: #2563eb;
       --accent-green: #10b981;
       --accent-red: #ef4444;
+      --accent-gray: #64748b;
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
       --border-color: #334155;
@@ -91,6 +92,7 @@
     .btn-discord { background: #5865F2; }
     .btn-eshop { background: var(--accent-green); }
     .btn-roblox { background: var(--accent-red); }
+    .btn-privacy { background: var(--accent-gray); }
 
     /* Statistiky Discordu */
     .stats-card {
@@ -191,6 +193,16 @@
       font-size: 0.9rem;
       width: 100%;
     }
+
+    footer a {
+      color: var(--text-sub);
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    footer a:hover {
+      color: var(--text-main);
+    }
   </style>
 </head>
 <body>
@@ -205,8 +217,8 @@
       <div class="nav-buttons">
         <a href="https://discord.gg/A3FwDyvNdd" target="_blank" class="btn btn-discord">💬 Discord Server</a>
         <a href="https://karnikyt.github.io/FiktivniPID/e-shop" target="_blank" class="btn btn-eshop">🛒 E-Shop PID</a>
-        <!-- Roblox odkaz později k doplnění -->
         <a href="#" class="btn btn-roblox" onclick="alert('Odkaz na Roblox hru bude doplněn již brzy!'); return false;">🎮 Roblox Hra</a>
+        <a href="https://karnikyt.github.io/FiktivniPID/zasady" target="_blank" class="btn btn-privacy">🔒 Zásady soukromí</a>
       </div>
     </div>
 
@@ -261,13 +273,11 @@
 
   <!-- Patička -->
   <footer>
-    &copy; Prague Community 2026. Všechna práva vyhrazena.
+    &copy; Prague Community 2026. Všechna práva vyhrazena. | <a href="https://karnikyt.github.io/FiktivniPID/zasady" target="_blank">Zásady ochrany soukromí</a>
   </footer>
 
   <!-- Script pro načtení živých dat z Discord API -->
   <script>
-    const DISCORD_GUILD_ID = "1138865664971264020"; // ID serveru z pozvánky A3FwDyvNdd
-
     async function loadDiscordStats() {
       try {
         const response = await fetch(`https://discord.com/api/v9/invites/A3FwDyvNdd?with_counts=true`);
@@ -284,7 +294,6 @@
       }
     }
 
-    // Načíst při otevření stránky
     loadDiscordStats();
   </script>
 </body>
