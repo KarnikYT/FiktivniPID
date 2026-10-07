@@ -3,390 +3,282 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fiktivní PID & ČD Portal</title>
+  <title>E-Shop | Fiktivní PID (Prague Community)</title>
   <style>
     :root {
       --bg-dark: #0f172a;
       --card-bg: #1e293b;
       --accent-blue: #2563eb;
-      --accent-cd: #0284c7;
       --accent-green: #10b981;
+      --accent-gold: #f59e0b;
       --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --text-sub: #94a3b8;
       --border-color: #334155;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
     body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-dark);
+      background: var(--bg-dark);
       color: var(--text-main);
-      padding-bottom: 50px;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
     }
 
-    header {
-      background-color: var(--accent-blue);
-      padding: 15px 20px;
+    .shop-container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      height: fit-content;
+    }
+
+    .header {
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      color: var(--text-main);
+    }
+
+    .header p {
+      margin: 5px 0 0;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+
+    .auth-section {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      position: sticky;
-      top: 0;
-      z-index: 50;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .auth-status {
+      font-size: 0.85rem;
+      color: var(--text-sub);
     }
 
-    .user-panel {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    button {
-      background-color: var(--accent-blue);
+    .btn {
+      background: var(--accent-blue);
       color: white;
       border: none;
       padding: 10px 16px;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
-    }
-
-    button:hover {
-      opacity: 0.95;
-    }
-
-    button:active {
-      transform: scale(0.98);
-    }
-
-    .btn-green {
-      background-color: var(--accent-green);
       width: 100%;
-      padding: 14px;
-      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+
+    .btn-auth {
+      width: auto;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+    }
+
+    .btn-pay {
+      background: var(--accent-green);
+      font-size: 1.05rem;
       margin-top: 15px;
-    }
-
-    .container {
-      max-width: 650px;
-      margin: 20px auto;
-      padding: 0 15px;
-    }
-
-    .card {
-      background-color: var(--card-bg);
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .card h2 {
-      margin-top: 0;
-      font-size: 1.15rem;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card h3 {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      margin-top: 15px;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    li {
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    li:last-child {
-      border-bottom: none;
-    }
-
-    .badge {
-      background: #334155;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 0.85rem;
-      color: #38bdf8;
-    }
-
-    .badge-train {
-      background: #0284c7;
-      color: white;
     }
 
     label {
+      font-size: 0.85rem;
+      color: var(--text-sub);
       display: block;
       margin-top: 12px;
-      margin-bottom: 6px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      margin-bottom: 4px;
     }
 
-    select, input[type="text"], input[type="password"] {
+    input, select {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
       border: 1px solid var(--border-color);
-      background-color: #0f172a;
+      background: var(--bg-dark);
       color: white;
       font-size: 0.95rem;
     }
 
-    /* Modal / Payment overlay */
-    .modal {
+    .price-box {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--accent-green);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .price-amount {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--accent-green);
+    }
+
+    /* Modal Okno Tadx Pay */
+    .modal-overlay {
       display: none;
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
       justify-content: center;
-      align-items: flex-end;
-      z-index: 100;
-      backdrop-filter: blur(4px);
+      align-items: center;
+      padding: 15px;
     }
 
-    .modal-content {
-      background-color: var(--card-bg);
+    .tadx-pay-card {
+      background: #0f172a;
+      border: 2px solid var(--accent-gold);
       width: 100%;
-      max-width: 500px;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-      padding: 25px;
-      animation: slideUp 0.3s ease-out;
+      max-width: 400px;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
     }
 
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
+    .tadx-logo {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--accent-gold);
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .pin-display {
+      font-size: 2rem;
+      letter-spacing: 8px;
+      color: var(--accent-green);
+      margin: 15px 0;
+      min-height: 40px;
     }
 
     .pin-pad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 10px;
       margin-top: 15px;
     }
 
     .pin-btn {
-      background-color: #334155;
-      font-size: 1.3rem;
-      padding: 16px;
-      border-radius: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: white;
+      padding: 12px;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
     }
 
-    .ticket-box {
-      border: 2px dashed var(--accent-blue);
-      border-radius: 14px;
-      padding: 20px;
+    .pin-btn:active { background: var(--border-color); }
+
+    .result-box {
+      display: none;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--accent-green);
+      padding: 15px;
+      border-radius: 10px;
       text-align: center;
       margin-top: 20px;
-      background: rgba(37, 99, 235, 0.05);
-    }
-
-    .qr-container {
-      background: white;
-      padding: 12px;
-      display: inline-block;
-      border-radius: 10px;
-      margin: 15px 0;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
-  <header>
-    <h1>🚌 IDOS / Fiktivní PID</h1>
-    <div class="user-panel">
-      <span id="user-email-header" style="font-size: 0.85rem; color: #e2e8f0;"></span>
-      <button class="auth-trigger-btn">Přihlásit</button>
-    </div>
-  </header>
-
-  <div class="container">
-
-    <!-- 1. VOZY -->
-    <div class="card">
-      <h2>🚍 Vozový Park</h2>
-      
-      <div id="fleet-lock">
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0;">Pro zobrazení seznamu vozidel zadejte PIN kód (8162).</p>
-        <input type="password" id="fleet-pin" placeholder="Zadejte PIN pro odemknutí">
-        <button onclick="unlockFleet()" style="width: 100%; margin-top: 10px;">Odemknout vozy</button>
-      </div>
-
-      <div id="fleet-content" style="display: none;">
-        <h3>Zatím nedostupné</h3>
-        <ul>
-          <li>Iveco Crossway 12 LE</li>
-        </ul>
-
-        <h3>Dostupné</h3>
-        <ul>
-          <li>SOR CN12</li>
-          <li>SOR NB12</li>
-          <li>SOR NS12</li>
-          <li>Irisbus Citelis 12</li>
-          <li>Irisbus Citelis 18</li>
-          <li>SOR TNS12</li>
-          <li>Škoda 30tr</li>
-          <li>Setra</li>
-          <li>SOR C12</li>
-        </ul>
-
-        <h3>Ve hře</h3>
-        <p style="color: var(--text-muted); font-style: italic; margin: 5px 0;">( žádný )</p>
-      </div>
+  <div class="shop-container">
+    <div class="header">
+      <h1>E-Shop Fiktivní PID</h1>
+      <p>Prague Community – Kupónový Portál</p>
     </div>
 
-    <!-- 2. JÍZDENKY -->
-    <div class="card">
-      <h2>🎫 Virtuální Jízdenky</h2>
-      
-      <label for="discord-nick">Discord uživatelské jméno *</label>
+    <!-- Firebase Auth sekce -->
+    <div class="auth-section">
+      <div class="auth-status" id="auth-user">Status: Nepřihlášen</div>
+      <button class="btn btn-auth" id="btn-login">Přihlásit Google</button>
+    </div>
+
+    <!-- Formulář objednávky -->
+    <div id="shop-form">
+      <label for="discord-nick">Discord uživatelské jméno</label>
       <input type="text" id="discord-nick" placeholder="např. uzivatel_123">
 
-      <label for="roblox-nick">Roblox uživatelské jméno *</label>
+      <label for="roblox-nick">Roblox uživatelské jméno</label>
       <input type="text" id="roblox-nick" placeholder="např. RobloxPlayerCZ">
 
-      <label for="ticket-type">Vyberte typ jízdenky</label>
-      <select id="ticket-type">
-        <optgroup label="Jednotlivé jízdenky">
-          <option value="24" data-minutes="30">30 minutová – 24 Kč</option>
-          <option value="32" data-minutes="60">60 minutová – 32 Kč</option>
-          <option value="100" data-minutes="1440">24 hodinová – 100 Kč</option>
-        </optgroup>
-        <optgroup label="Předplatné">
-          <option value="250" data-minutes="10080">Týdenní – 250 Kč</option>
-          <option value="550" data-minutes="43200">Měsíční – 550 Kč</option>
-          <option value="2750" data-minutes="259200">6 měsíční – 2750 Kč</option>
-          <option value="3650" data-minutes="525600">Roční – 3650 Kč</option>
-        </optgroup>
+      <label for="pass-duration">Doba platnosti předplatného</label>
+      <select id="pass-duration" onchange="recalculatePrice()">
+        <option value="220" data-days="7">Týdenní kupón (7 dní)</option>
+        <option value="550" data-days="30">Měsíční kupón (30 dní)</option>
+        <option value="2800" data-days="180">6 měsíců kupón (180 dní)</option>
+        <option value="3650" data-days="365">Roční kupón (365 dní)</option>
+        <option value="9900" data-days="1095">3 roky kupón (1095 dní)</option>
       </select>
 
-      <label for="passenger-type">Kategorie cestujícího</label>
-      <select id="passenger-type">
-        <option value="Základní (15+)">Základní (15+)</option>
-        <option value="Dítě / žák (6-15 let)">Dítě / žák (6-15 let)</option>
-        <option value="Senior (65+)">Senior (65+)</option>
+      <label for="pass-category">Věková kategorie cestujícího</label>
+      <select id="pass-category" onchange="recalculatePrice()">
+        <option value="0" data-discount="100">Dítě 0-6 let (Zdarma - 100% sleva)</option>
+        <option value="0.5" data-discount="50">Dítě / žák 6-15 let (Sleva 50%)</option>
+        <option value="0.5" data-discount="50">Student 15-26 let (Sleva 50%)</option>
+        <option value="1" data-discount="0">Dospělý 15+ (Plné jízdné)</option>
+        <option value="0.5" data-discount="50">Senior 65+ (Sleva 50%)</option>
       </select>
 
-      <!-- Volba pro sdílení e-mailu -->
-      <div style="margin-top: 15px; display: flex; align-items: center; gap: 8px;">
-        <input type="checkbox" id="share-email-check" style="width: auto; cursor: pointer;">
-        <label for="share-email-check" style="margin: 0; cursor: pointer; color: #f8fafc; font-size: 0.9rem;">
-          Zveřejnit můj Google e-mail v Discord embedu
-        </label>
+      <label for="pay-method">Způsob platby</label>
+      <select id="pay-method">
+        <option value="Tadx Pay">💳 Tadx Pay (Virtuální karta)</option>
+        <option value="Bankovní převod">🏦 Bankovní převod</option>
+      </select>
+
+      <div class="price-box">
+        <div style="font-size: 0.85rem; color: var(--text-sub);">Výsledná cena kuponu:</div>
+        <div class="price-amount" id="final-price-display">0 Kč</div>
       </div>
 
-      <button class="btn-green" id="buy-btn" onclick="openPayment()">💳 Koupit jízdenku</button>
-
-      <div id="active-ticket" class="ticket-box" style="display: none;">
-        <h3 style="color: var(--accent-green); margin:0; font-size: 1.1rem;">✔ PLATNÁ JÍZDENKA</h3>
-        <p id="ticket-info" style="font-weight: bold; font-size: 1.1rem; margin: 10px 0 2px 0;"></p>
-        <p id="passenger-info" style="color: var(--text-muted); margin: 0; font-size: 0.9rem;"></p>
-        <p id="user-nicks-info" style="color: #38bdf8; margin: 5px 0 0 0; font-size: 0.85rem; font-weight: 500;"></p>
-        
-        <div class="qr-container">
-          <div id="qrcode"></div>
-        </div>
-        
-        <p id="ticket-id" style="font-family: monospace; font-size: 1rem; font-weight: bold; margin: 5px 0;"></p>
-        <p id="ticket-validity" style="font-size: 0.85rem; color: var(--text-muted); white-space: pre-line;"></p>
-      </div>
+      <button class="btn btn-pay" onclick="initiateTadxPay()">Zaplatit přes Tadx Pay</button>
     </div>
 
-    <!-- 3. PŘIHLÁŠENÍ -->
-    <div class="card">
-      <h2>👤 Uživatelský Účet</h2>
-      <div id="user-status-card">
-        <p style="color: var(--text-muted); margin-top: 0;">Status: <strong id="account-status-text" style="color: #f87171;">Nepřihlášen</strong></p>
-        <button class="auth-trigger-btn" style="width: 100%;">Přihlásit přes Google</button>
-      </div>
+    <!-- Výsledek po úspěšné platbě -->
+    <div class="result-box" id="result-box">
+      <h3 style="color: var(--accent-green); margin:0 0 10px 0;">✔ PŘEDPLATNÉ AKTIVNÍ</h3>
+      <div id="qrcode" style="display: flex; justify-content: center; background: white; padding: 10px; border-radius: 8px; margin: 10px 0;"></div>
+      <p style="font-family: monospace; font-weight: bold; margin: 5px 0;" id="ticket-id-text"></p>
+      <p style="font-size:0.8rem; color: var(--text-sub);">Potvrzení bylo úspěšně odesláno na Discord!</p>
     </div>
-
-    <!-- 4. INFO -->
-    <div class="card">
-      <h2>ℹ️ Informace o systému</h2>
-      <p style="margin-top: 0; color: var(--text-muted); line-height: 1.5;">
-        Vítejte v oficiálním portálu <strong>Fiktivního PID & ČD</strong>.
-      </p>
-      <ul>
-        <li><span><strong>Platba:</strong> Brána TadxPay (Simulace)</span></li>
-        <li><span><strong>Ověření:</strong> Google Firebase Authentication</span></li>
-        <li><span><strong>Oznámení:</strong> Integrováno s Discord Webhook</span></li>
-      </ul>
-    </div>
-
-    <!-- 5. LINKY ČD -->
-    <div class="card">
-      <h2>🚆 Linky České Dráhy (ČD)</h2>
-      <ul>
-        <li><span><strong>S1:</strong> Praha, Smíchovské Nádraží – Slaný</span> <span class="badge badge-train">Vlak</span></li>
-        <li><span><strong>R23:</strong> Praha, Smíchovské Nádraží – Žižice</span> <span class="badge badge-train">Rychlík</span></li>
-        <li><span><strong>S2:</strong> Žižice – Praha, Smíchovské Nádraží</span> <span class="badge badge-train">Vlak</span></li>
-      </ul>
-    </div>
-
-    <!-- 6. LINKY PID -->
-    <div class="card">
-      <h2>🚏 Linky PID</h2>
-      <ul>
-        <li><span><strong>123:</strong> Na Knížecí – Šmukýřka</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>772:</strong> Na Knížecí – Smíchovské Nádraží</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>773:</strong> Šmukýřka – Slaný, Aut. Nádr.</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>774:</strong> Slaný, Pražská – Slaný ČSAD</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>775:</strong> Slaný, ČSAD – Slaný, Šultysova</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>776:</strong> Slaný, Aut. Nádr. – Žižice, Drnov</span> <span class="badge">Autobus</span></li>
-        <li><span><strong>334</strong></span> <span class="badge">Autobus</span></li>
-      </ul>
-    </div>
-
   </div>
 
-  <!-- Platební Modal -->
-  <div id="payment-modal" class="modal">
-    <div class="modal-content">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <strong style="color: var(--accent-blue); font-size: 1.1rem;">⚡ TadxPay</strong>
-        <span style="background: #334155; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">SIMULACE</span>
+  <!-- Tadx Pay Brána (Modal) -->
+  <div class="modal-overlay" id="tadx-modal">
+    <div class="tadx-pay-card">
+      <div class="tadx-logo">💳 TADX PAY GATEWAY</div>
+      <p style="font-size: 0.85rem; color: var(--text-sub); margin: 5px 0;">Fiktivní PID (Prague Community)</p>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin: 10px 0;">
+        <span style="font-size: 0.8rem; color: var(--text-sub);">Částka k úhradě:</span>
+        <div style="font-size: 1.3rem; font-weight: bold; color: var(--accent-gold);" id="tadx-amount">0 Kč</div>
       </div>
-      <p style="margin: 15px 0 5px 0; font-size: 1rem;">Celkem k úhradě: <strong id="pay-amount" style="color: var(--accent-green);">0 Kč</strong></p>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">Zadejte libovolný 4místný PIN pro potvrzení platby</p>
 
-      <div style="text-align: center; font-size: 1.8rem; letter-spacing: 8px; margin: 15px 0;" id="pin-display">••••</div>
+      <p style="font-size: 0.8rem; margin-top: 10px;">Zadejte 4místný PIN karty Tadx Pay:</p>
+      <div class="pin-display" id="pin-display">••••</div>
 
       <div class="pin-pad">
         <button class="pin-btn" onclick="pressPin('1')">1</button>
@@ -398,24 +290,18 @@
         <button class="pin-btn" onclick="pressPin('7')">7</button>
         <button class="pin-btn" onclick="pressPin('8')">8</button>
         <button class="pin-btn" onclick="pressPin('9')">9</button>
-        <button class="pin-btn" onclick="clearPin()">✕</button>
+        <button class="pin-btn" style="background: #ef4444;" onclick="clearPin()">✕</button>
         <button class="pin-btn" onclick="pressPin('0')">0</button>
-        <button class="pin-btn" style="background: var(--accent-green);" onclick="processPayment()">✓</button>
+        <button class="pin-btn" style="background: var(--accent-green);" onclick="confirmPayment()">✓</button>
       </div>
-      <button style="width: 100%; margin-top: 15px; background: transparent; color: var(--text-muted);" onclick="closePayment()">Zrušit</button>
+      <button onclick="closeTadxModal()" style="background: transparent; border: none; color: var(--text-sub); margin-top: 15px; cursor: pointer; font-size: 0.8rem;">Zrušit platbu</button>
     </div>
   </div>
 
-  <!-- FIREBASE AUTHENTICATION (iOS / SAFARI POPUP METHOD) -->
+  <!-- FIREBASE AUTH MODULE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { 
-      getAuth, 
-      GoogleAuthProvider, 
-      signInWithPopup, 
-      signOut, 
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCA8xhs3qS9NH7XoedqDjdL2WY7gh0_-WE",
@@ -423,213 +309,162 @@
       projectId: "fiktivnipid",
       storageBucket: "fiktivnipid.firebasestorage.app",
       messagingSenderId: "858723196116",
-      appId: "1:858723196116:web:05dbbe2f8684277e30af41",
-      measurementId: "G-Y3R4KFDNQ3"
+      appId: "1:858723196116:web:05dbbe2f8684277e30af41"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    const authBtns = document.querySelectorAll('.auth-trigger-btn');
-    const userEmailHeader = document.getElementById('user-email-header');
-    const accountStatusText = document.getElementById('account-status-text');
-
     window.currentUser = null;
 
-    authBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (window.currentUser) {
-          signOut(auth);
-        } else {
-          accountStatusText.textContent = "Načítám přihlášení...";
-          signInWithPopup(auth, provider).catch(error => {
-            console.error("Popup Error:", error);
-            accountStatusText.textContent = "Chyba při přihlášení!";
-            accountStatusText.style.color = '#f87171';
-          });
-        }
-      });
+    const loginBtn = document.getElementById('btn-login');
+    const authStatus = document.getElementById('auth-user');
+
+    loginBtn.addEventListener('click', () => {
+      if (window.currentUser) {
+        signOut(auth);
+      } else {
+        signInWithPopup(auth, provider);
+      }
     });
 
     onAuthStateChanged(auth, (user) => {
-      window.currentUser = user;
       if (user) {
-        const displayName = user.displayName || user.email;
-        userEmailHeader.textContent = displayName;
-        accountStatusText.textContent = `Přihlášen jako: ${displayName}`;
-        accountStatusText.style.color = '#10b981';
-        authBtns.forEach(btn => btn.textContent = 'Odhlásit');
+        window.currentUser = user;
+        authStatus.textContent = "Přihlášen: " + user.email;
+        loginBtn.textContent = "Odhlásit";
       } else {
-        userEmailHeader.textContent = '';
-        accountStatusText.textContent = 'Nepřihlášen';
-        accountStatusText.style.color = '#f87171';
-        authBtns.forEach(btn => btn.textContent = 'Přihlásit přes Google');
+        window.currentUser = null;
+        authStatus.textContent = "Status: Nepřihlášen";
+        loginBtn.textContent = "Přihlásit Google";
       }
     });
   </script>
 
-  <!-- LOGIKA TICKETŮ A DISCORD EMBEDU -->
+  <!-- HLAVNÍ LOGIKA E-SHOPU A TADX PAY -->
   <script>
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1556007148226617457/6qHdHDfYEg6TjVxFzdSU4S_ZUrVfnbOfDl6pbo5hesyxTuhLi9R2DjhFuGpRSp51bNjt";
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1557415618313982022/ybSNIbxCfbWFrNLLE_7HkaNqgqYCk-YejNcS-ks2bPt0tfsiuyjDT91qVXOVjPPLZTnJ";
 
-    function unlockFleet() {
-      const pin = document.getElementById('fleet-pin').value;
-      if (pin === '8162') {
-        document.getElementById('fleet-content').style.display = 'block';
-        document.getElementById('fleet-lock').style.display = 'none';
-      } else {
-        alert('Nesprávný PIN kód!');
-      }
+    let enteredPin = "";
+    let calculatedPrice = 0;
+
+    function recalculatePrice() {
+      const basePrice = parseFloat(document.getElementById('pass-duration').value);
+      const ratio = parseFloat(document.getElementById('pass-category').value);
+      calculatedPrice = Math.round(basePrice * ratio);
+      
+      document.getElementById('final-price-display').textContent = `${calculatedPrice} Kč`;       document.getElementById('tadx-amount').textContent = `${calculatedPrice} Kč`;
     }
 
-    let currentPin = "";
-
-    function openPayment() {
-      const discordNick = document.getElementById('discord-nick').value.trim();
-      const robloxNick = document.getElementById('roblox-nick').value.trim();
-
-      if (!discordNick || !robloxNick) {
-        alert('Vyplňte prosím své Discord i Roblox uživatelské jméno!');
+    function initiateTadxPay() {
+      if (!window.currentUser) {
+        alert("🔒 Pro nákup se musíte nejprve přihlásit přes Google!");
         return;
       }
 
-      const select = document.getElementById('ticket-type');
-      const price = select.value;
-      document.getElementById('pay-amount').textContent = price + " Kč";
-      document.getElementById('payment-modal').style.display = 'flex';
-      clearPin();
-    }
+      const discord = document.getElementById('discord-nick').value.trim();
+      const roblox = document.getElementById('roblox-nick').value.trim();
 
-    function closePayment() {
-      document.getElementById('payment-modal').style.display = 'none';
+      if (!discord || !roblox) {
+        alert("Vyplňte prosím své Discord a Roblox uživatelské jméno!");
+        return;
+      }
+
+      enteredPin = "";
+      updatePinDisplay();
+      document.getElementById('tadx-modal').style.display = "flex";
     }
 
     function pressPin(num) {
-      if (currentPin.length < 4) {
-        currentPin += num;
+      if (enteredPin.length < 4) {
+        enteredPin += num;
         updatePinDisplay();
       }
     }
 
     function clearPin() {
-      currentPin = "";
+      enteredPin = "";
       updatePinDisplay();
     }
 
     function updatePinDisplay() {
-      document.getElementById('pin-display').textContent = '•'.repeat(currentPin.length) || '••••';
+      document.getElementById('pin-display').textContent = '•'.repeat(enteredPin.length) || '••••';
     }
 
-    function processPayment() {
-      if (currentPin.length !== 4) {
-        alert('Zadejte 4místný PIN pro dokončení platby!');
+    function closeTadxModal() {
+      document.getElementById('tadx-modal').style.display = "none";
+    }
+
+    async function confirmPayment() {
+      if (enteredPin.length !== 4) {
+        alert("Zadejte kompletní 4místný PIN kód!");
         return;
       }
 
-      closePayment();
-      generateTicket();
+      closeTadxModal();
+      await processOrder();
     }
 
-    function generateTicket() {
-      const discordNick = document.getElementById('discord-nick').value.trim();
-      const robloxNick = document.getElementById('roblox-nick').value.trim();
+    async function processOrder() {
+      const discord = document.getElementById('discord-nick').value.trim();
+      const roblox = document.getElementById('roblox-nick').value.trim();
       
-      const ticketTypeSelect = document.getElementById('ticket-type');
-      const selectedOption = ticketTypeSelect.options[ticketTypeSelect.selectedIndex];
-      const selectedOptionText = selectedOption.text;
-      const minutesValid = parseInt(selectedOption.getAttribute('data-minutes')) || 30;
-      const passengerType = document.getElementById('passenger-type').value;
+      const durationSelect = document.getElementById('pass-duration');
+      const durationText = durationSelect.options[durationSelect.selectedIndex].text;
 
-      document.getElementById('ticket-info').textContent = selectedOptionText;
-      document.getElementById('passenger-info').textContent = passengerType;
-      document.getElementById('user-nicks-info').textContent = `Discord: ${discordNick} | Roblox: ${robloxNick}`;
+      const categorySelect = document.getElementById('pass-category');
+      const categoryText = categorySelect.options[categorySelect.selectedIndex].text;
 
-      const ticketId = 'TCK-' + Math.floor(100000 + Math.random() * 900000);
-      document.getElementById('ticket-id').textContent = 'ID: ' + ticketId;
+      const payMethod = document.getElementById('pay-method').value;
 
-      const now = new Date();
-      const validUntil = new Date(now.getTime() + minutesValid * 60000);
-      
-      const timeBoughtStr = `${now.toLocaleDateString('cs-CZ')} ${now.toLocaleTimeString('cs-CZ')}`;
-      const timeValidStr = `${validUntil.toLocaleDateString('cs-CZ')} ${validUntil.toLocaleTimeString('cs-CZ')}`;
+      const ticketId = "PID-" + Math.floor(100000 + Math.random() * 900000);
 
-      document.getElementById('ticket-validity').textContent = 
-        `Zakoupeno: ${timeBoughtStr}\nPlatnost do: ${timeValidStr}`;
-
+      // Generování QR kódu
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = "";
-      new QRCode(qrContainer, {
-        text: ticketId,
-        width: 140,
-        height: 140
-      });
+      new QRCode(qrContainer, { text: ticketId, width: 120, height: 120 });
+      
+      document.getElementById('ticket-id-text').textContent = ticketId;
+      document.getElementById('result-box').style.display = "block";
 
-      document.getElementById('active-ticket').style.display = 'block';
-
-      sendDiscordEmbed(ticketId, selectedOptionText, passengerType, discordNick, robloxNick, timeBoughtStr, timeValidStr);
-    }
-
-    async function sendDiscordEmbed(ticketId, ticketName, passenger, discordNick, robloxNick, boughtAt, validUntil) {
-      if (!DISCORD_WEBHOOK_URL) return;
-
-      // Ochrana e-mailu: Zkontrolujeme checkbox PŘÍMO PŘED odesláním
-      const shareCheckbox = document.getElementById('share-email-check');
-      const isChecked = shareCheckbox ? shareCheckbox.checked : false;
-
-      let googleAccount = "Nepřihlášen";
-
-      if (window.currentUser && window.currentUser.email) {
-        if (isChecked === true) {
-          googleAccount = window.currentUser.email;
-        } else {
-          googleAccount = "🔒 Skryto uživatelem";
-        }
-      }
-
+      // Odeslání Discord Embedu
       const payload = {
-        username: "Fiktivní PID - Jízdenky",
-        embeds: [
-          {
-            title: "🎫 Zakoupena nová jízdenka",
-            description: "Nákup byl zpracován přes **TadxPay**.",
-            color: 3887002,
-            fields: [
-              { name: "💬 Discord", value: discordNick, inline: true },
-              { name: "🎮 Roblox", value: robloxNick, inline: true },
-              { name: "👤 Google Účet", value: googleAccount, inline: false },
-              { name: "🎟️ Jízdenka", value: ticketName, inline: true },
-              { name: "👥 Kategorie", value: passenger, inline: true },
-              { name: "🆔 Kód", value: ticketId, inline: false },
-              { name: "📅 Zakoupeno", value: boughtAt, inline: true },
-              { name: "⏳ Platí do", value: validUntil, inline: true }
-            ],
-            footer: { text: "Fiktivní PID Portal" },
-            timestamp: new Date().toISOString()
-          }
-        ]
+        username: "Fiktivní PID - E-Shop Bot",
+        avatar_url: "https://i.imgur.com/4M34gB0.png",
+        embeds: [{
+          title: "👑 Zakoupeno Dlouhodobé Předplatné PID",
+          color: 1610753, // Zelená barva
+          description: "Vytvořena nová objednávka v E-Shopu Prague Community.",
+          fields: [
+            { name: "👤 Google Účet", value: window.currentUser.email, inline: false },
+            { name: "💬 Discord Uživatel", value: discord, inline: true },
+            { name: "🎮 Roblox Uživatel", value: roblox, inline: true },
+            { name: "🎟️ Typ Předplatného", value: durationText, inline: false },
+            { name: "👥 Věková Kategorie", value: categoryText, inline: false },
+            { name: "💳 Platba & Částka", value: `${payMethod} (${calculatedPrice} Kč)`, inline: true },
+            { name: "🆔 ID Jízdenky", value: `\`${ticketId}\``, inline: true }
+          ],
+          footer: { text: "Fiktivní PID • Prague Community E-Shop" },
+          timestamp: new Date().toISOString()
+        }]
       };
 
-      const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(DISCORD_WEBHOOK_URL.trim());
-
       try {
-        let res = await fetch(proxyUrl, {
+        await fetch(DISCORD_WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-
-        if (!res.ok) {
-          await fetch(DISCORD_WEBHOOK_URL.trim(), {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-        }
+        alert("✔ Platba přes Tadx Pay proběhla úspěšně a jízdenka je aktivní!");
       } catch (err) {
-        console.error("Chyba při odesílání Webhooku:", err);
+        console.error("Chyba při odesílání webhooku:", err);
+        alert("✔ Jízdenka aktivována!");
       }
     }
+
+    // Inicializace výchozí ceny
+    recalculatePrice();
   </script>
 </body>
 </html>
