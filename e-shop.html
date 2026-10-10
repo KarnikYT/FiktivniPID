@@ -2,303 +2,460 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#070b16">
   <title>E-Shop | Fiktivní PID (Prague Community)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
-      --bg-dark: #0f172a;
-      --card-bg: #1e293b;
-      --accent-blue: #2563eb;
-      --accent-green: #10b981;
-      --accent-gold: #f59e0b;
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --border-color: #334155;
+      --bg: #070b16;
+      --surface: rgba(255, 255, 255, 0.045);
+      --surface-2: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.10);
+      --border-strong: rgba(255, 255, 255, 0.18);
+      --text: #f1f5f9;
+      --muted: #8b98ad;
+      --primary: #4f7cff;
+      --primary-2: #8b5cf6;
+      --success: #22c55e;
+      --gold: #f5b942;
+      --danger: #ef4444;
+      --radius: 18px;
+      --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
     }
 
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
 
     body {
-      background: var(--bg-dark);
-      color: var(--text-main);
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-    }
-
-    .shop-container {
-      width: 100%;
-      max-width: 500px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-      height: fit-content;
-    }
-
-    .header {
-      text-align: center;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 16px;
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 1.4rem;
-      color: var(--text-main);
-    }
-
-    .header p {
-      margin: 5px 0 0;
-      font-size: 0.85rem;
-      color: var(--text-sub);
-    }
-
-    .auth-section {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--border-color);
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 20px;
+      min-height: 100dvh;
+      padding: max(20px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom));
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .auth-status {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-    }
-
-    .btn {
-      background: var(--accent-blue);
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s;
-    }
-
-    .btn:hover { opacity: 0.9; }
-
-    .btn-auth {
-      width: auto;
-      font-size: 0.8rem;
-      padding: 6px 12px;
-    }
-
-    .btn-pay {
-      background: var(--accent-green);
-      font-size: 1.05rem;
-      margin-top: 15px;
-    }
-
-    label {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      display: block;
-      margin-top: 12px;
-      margin-bottom: 4px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-dark);
-      color: white;
-      font-size: 0.95rem;
-    }
-
-    .price-box {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid var(--accent-green);
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .price-amount {
-      font-size: 1.6rem;
-      font-weight: bold;
-      color: var(--accent-green);
-    }
-
-    /* Modal Okno Tadx Pay */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.85);
-      z-index: 1000;
       justify-content: center;
-      align-items: center;
-      padding: 15px;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .tadx-pay-card {
-      background: #0f172a;
-      border: 2px solid var(--accent-gold);
-      width: 100%;
-      max-width: 400px;
-      border-radius: 16px;
+    svg.lucide { width: 1.15em; height: 1.15em; stroke-width: 2; flex-shrink: 0; }
+
+    /* ---------- Pozadí ---------- */
+    .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.45; animation: float 18s ease-in-out infinite; }
+    .blob.b1 { width: 420px; height: 420px; background: var(--primary); top: -140px; left: -120px; }
+    .blob.b2 { width: 380px; height: 380px; background: var(--primary-2); bottom: -140px; right: -100px; animation-delay: -6s; }
+    .blob.b3 { width: 260px; height: 260px; background: #0ea5e9; top: 45%; left: 55%; opacity: 0.22; animation-delay: -11s; }
+    .grid-overlay {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 10%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 10%, transparent 70%);
+      opacity: 0.35;
+    }
+    @keyframes float {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(40px, 30px, 0) scale(1.1); }
+    }
+
+    /* ---------- Layout ---------- */
+    .shell { position: relative; z-index: 1; width: 100%; max-width: 540px; display: flex; flex-direction: column; gap: 14px; }
+
+    .reveal { opacity: 0; transform: translateY(16px); animation: rise 0.7s var(--ease) forwards; animation-delay: calc(var(--i, 0) * 80ms); }
+    @keyframes rise { to { opacity: 1; transform: none; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       padding: 20px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.6);
     }
 
-    .tadx-logo {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: var(--accent-gold);
-      margin-bottom: 10px;
-      letter-spacing: 1px;
+    /* ---------- Hlavička ---------- */
+    .brand { display: flex; align-items: center; gap: 14px; padding: 6px 4px 2px; }
+    .logo {
+      width: 52px; height: 52px; border-radius: 16px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 10px 30px -8px rgba(79, 124, 255, 0.7);
+      font-size: 1.5rem;
+    }
+    .brand h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
+    .brand p { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+
+    /* ---------- Auth ---------- */
+    .auth { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 12px; overflow: hidden;
+      display: grid; place-items: center; background: var(--surface-2);
+      border: 1px solid var(--border); color: var(--muted); flex-shrink: 0;
+      transition: all 0.35s var(--ease);
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar.on { color: var(--success); border-color: rgba(34, 197, 94, 0.5); background: rgba(34, 197, 94, 0.12); }
+    .auth-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .auth-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .auth-text strong { font-size: 0.92rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ---------- Tlačítka ---------- */
+    .btn {
+      position: relative; overflow: hidden;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      border: none; cursor: pointer; font: inherit; font-weight: 600; color: #fff;
+      padding: 13px 18px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 12px 28px -10px rgba(79, 124, 255, 0.8);
+      transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), filter 0.25s;
+    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .btn:active { transform: translateY(0) scale(0.98); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-block { width: 100%; }
+    .btn-sm { padding: 9px 14px; font-size: 0.82rem; border-radius: 11px; }
+    .btn-ghost { background: var(--surface-2); border: 1px solid var(--border); box-shadow: none; }
+    .btn-ghost:hover { border-color: var(--border-strong); }
+    .btn-pay { background: linear-gradient(135deg, #16a34a, #22c55e); box-shadow: 0 14px 30px -10px rgba(34, 197, 94, 0.7); font-size: 1.02rem; padding: 15px 18px; }
+    .btn-pay.locked { background: var(--surface-2); border: 1px solid var(--border); box-shadow: none; color: var(--muted); }
+    .btn .ripple {
+      position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.35);
+      transform: scale(0); animation: ripple 0.6s ease-out forwards; pointer-events: none;
+    }
+    @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+    /* ---------- Formulář ---------- */
+    .section + .section { margin-top: 22px; }
+    .section-title { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 10px; }
+    .section-title .num {
+      width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #fff; font-size: 0.68rem; letter-spacing: 0;
     }
 
-    .pin-display {
-      font-size: 2rem;
-      letter-spacing: 8px;
-      color: var(--accent-green);
-      margin: 15px 0;
-      min-height: 40px;
+    .field { position: relative; margin-bottom: 10px; }
+    .field > svg.lucide { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); transition: color 0.25s; pointer-events: none; }
+    .field input {
+      width: 100%; padding: 14px 14px 14px 42px; border-radius: 13px;
+      border: 1px solid var(--border); background: rgba(0, 0, 0, 0.25);
+      color: var(--text); font: inherit; font-size: 0.95rem; outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
     }
+    .field input::placeholder { color: #566177; }
+    .field input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 124, 255, 0.18); background: rgba(0, 0, 0, 0.35); }
+    .field:focus-within > svg.lucide { color: var(--primary); }
+    .field input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15); animation: shake 0.4s; }
 
-    .pin-pad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 15px;
+    .options { display: grid; gap: 8px; }
+    .options.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .option { position: relative; display: block; cursor: pointer; }
+    .option input { position: absolute; opacity: 0; pointer-events: none; }
+    .option-body {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      border: 1px solid var(--border); border-radius: 14px; background: rgba(0, 0, 0, 0.2);
+      transition: all 0.3s var(--ease);
     }
+    .option:hover .option-body { border-color: var(--border-strong); transform: translateY(-1px); }
+    .option input:focus-visible + .option-body { box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.4); }
+    .option input:checked + .option-body {
+      border-color: var(--primary); background: linear-gradient(135deg, rgba(79, 124, 255, 0.16), rgba(139, 92, 246, 0.12));
+      box-shadow: 0 8px 24px -12px rgba(79, 124, 255, 0.8);
+    }
+    .opt-icon { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--surface-2); color: var(--muted); transition: all 0.3s var(--ease); flex-shrink: 0; }
+    .option input:checked + .option-body .opt-icon { background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #fff; }
+    .opt-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .opt-text b { font-size: 0.92rem; font-weight: 600; }
+    .opt-text small { font-size: 0.76rem; color: var(--muted); margin-top: 1px; }
+    .opt-price { font-weight: 700; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+    .badge { font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: rgba(34, 197, 94, 0.15); color: var(--success); white-space: nowrap; }
+    .badge.neutral { background: var(--surface-2); color: var(--muted); }
 
+    .method .option-body { flex-direction: column; text-align: center; gap: 8px; padding: 14px 10px; }
+    .method .opt-text { align-items: center; }
+
+    /* ---------- Cena ---------- */
+    .summary {
+      margin-top: 22px; padding: 18px; border-radius: 16px;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04));
+      border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+    .sum-row { display: flex; justify-content: space-between; font-size: 0.84rem; color: var(--muted); padding: 3px 0; }
+    .sum-row span:last-child { color: var(--text); font-variant-numeric: tabular-nums; }
+    .sum-total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; padding-top: 12px; border-top: 1px dashed rgba(34, 197, 94, 0.35); }
+    .sum-total span { font-size: 0.85rem; color: var(--muted); }
+    .price-amount { font-size: 2rem; font-weight: 800; color: var(--success); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+    .pay-wrap { margin-top: 14px; }
+    .secure-note { display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 0.74rem; color: var(--muted); margin-top: 12px; }
+
+    /* ---------- Jízdenka ---------- */
+    .view { transition: opacity 0.3s var(--ease), transform 0.3s var(--ease); }
+    .view.out { opacity: 0; transform: translateY(10px) scale(0.99); }
+    .view[hidden] { display: none; }
+    .view.in { animation: pop 0.6s var(--ease) both; }
+    @keyframes pop { from { opacity: 0; transform: translateY(18px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+    .ticket { padding: 0; overflow: hidden; border-color: rgba(34, 197, 94, 0.4); }
+    .ticket-head { padding: 18px 20px; display: flex; align-items: center; gap: 12px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.22), rgba(79, 124, 255, 0.14)); }
+    .ticket-head .check { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--success); color: #04210f; animation: checkpop 0.7s var(--ease) 0.2s both; }
+    @keyframes checkpop { from { transform: scale(0) rotate(-90deg); } to { transform: none; } }
+    .ticket-head h3 { font-size: 1rem; font-weight: 700; color: var(--success); letter-spacing: 0.02em; }
+    .ticket-head p { font-size: 0.78rem; color: var(--muted); }
+    .ticket-body { padding: 20px; }
+    .qr-wrap { display: flex; justify-content: center; }
+    #qrcode { background: #fff; padding: 12px; border-radius: 16px; box-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.7); line-height: 0; }
+    .ticket-id { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 16px 0 4px; }
+    .ticket-id code { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 1.15rem; letter-spacing: 0.06em; }
+    .ticket-cut { position: relative; border-top: 2px dashed var(--border-strong); margin: 0 -20px; }
+    .ticket-cut::before, .ticket-cut::after { content: ""; position: absolute; top: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); border: 1px solid rgba(34, 197, 94, 0.4); }
+    .ticket-cut::before { left: -11px; } .ticket-cut::after { right: -11px; }
+    .ticket-info { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; margin-top: 20px; }
+    .ticket-info div { min-width: 0; }
+    .ticket-info small { display: block; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .ticket-info b { font-size: 0.88rem; font-weight: 600; word-break: break-word; }
+    .ticket-info .wide { grid-column: 1 / -1; }
+    .ticket-foot { padding: 0 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .discord-state { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.78rem; color: var(--muted); }
+    .discord-state.ok { color: var(--success); } .discord-state.err { color: var(--gold); }
+
+    /* ---------- Modal ---------- */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 16px;
+      background: rgba(3, 6, 14, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease), visibility 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+    .tadx-card {
+      width: 100%; max-width: 380px; border-radius: 24px; padding: 24px; text-align: center; outline: none;
+      background: linear-gradient(160deg, #141b2e, #0b1020);
+      border: 1px solid rgba(245, 185, 66, 0.45);
+      box-shadow: 0 0 0 1px rgba(245, 185, 66, 0.08), 0 30px 80px -20px rgba(245, 185, 66, 0.25), 0 30px 60px -20px #000;
+      transform: translateY(24px) scale(0.94); opacity: 0; transition: transform 0.45s var(--ease), opacity 0.35s var(--ease);
+    }
+    .modal-overlay.open .tadx-card { transform: none; opacity: 1; }
+    .tadx-logo { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: 0.12em; color: var(--gold); font-size: 0.95rem; }
+    .tadx-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+    .tadx-amount { margin: 16px 0 6px; padding: 12px; border-radius: 14px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); }
+    .tadx-amount small { display: block; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .tadx-amount b { font-size: 1.6rem; color: var(--gold); font-weight: 800; font-variant-numeric: tabular-nums; }
+    .pin-label { font-size: 0.82rem; color: var(--muted); margin-top: 14px; }
+    .pin-dots { display: flex; justify-content: center; gap: 14px; margin: 14px 0 6px; }
+    .pin-dots.shake { animation: shake 0.4s; }
+    .pin-dots span { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-strong); transition: all 0.25s var(--ease); }
+    .pin-dots span.filled { background: var(--gold); border-color: var(--gold); transform: scale(1.15); box-shadow: 0 0 14px rgba(245, 185, 66, 0.6); }
+    .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
     .pin-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      color: white;
-      padding: 12px;
-      font-size: 1.2rem;
-      border-radius: 8px;
-      cursor: pointer;
+      height: 56px; display: grid; place-items: center; font: inherit; font-size: 1.25rem; font-weight: 600; color: var(--text);
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; cursor: pointer;
+      transition: transform 0.15s var(--ease), background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent;
     }
+    .pin-btn:hover { border-color: var(--border-strong); background: rgba(255, 255, 255, 0.12); }
+    .pin-btn:active { transform: scale(0.92); }
+    .pin-btn.action-clear { color: #fca5a5; }
+    .pin-btn.action-ok { background: linear-gradient(135deg, #16a34a, #22c55e); border: none; color: #fff; }
+    .modal-cancel { margin-top: 14px; background: none; border: none; color: var(--muted); cursor: pointer; font: inherit; font-size: 0.82rem; padding: 8px 12px; border-radius: 10px; transition: color 0.2s; }
+    .modal-cancel:hover { color: var(--text); }
+    .processing { display: none; padding: 36px 0 20px; }
+    .processing .spin { font-size: 2.4rem; color: var(--gold); animation: spin 1s linear infinite; display: inline-block; }
+    .processing p { margin-top: 14px; color: var(--muted); font-size: 0.9rem; }
+    .tadx-card.busy .pin-ui { display: none; }
+    .tadx-card.busy .processing { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
 
-    .pin-btn:active { background: var(--border-color); }
+    /* ---------- Toasty ---------- */
+    .toasts { position: fixed; z-index: 2000; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; flex-direction: column; gap: 10px; width: calc(100% - 32px); max-width: 420px; pointer-events: none; }
+    .toast {
+      display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-radius: 14px; font-size: 0.88rem; font-weight: 500;
+      background: rgba(20, 27, 46, 0.95); border: 1px solid var(--border-strong); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7); animation: toastIn 0.45s var(--ease) both;
+    }
+    .toast.success svg { color: var(--success); } .toast.error svg { color: var(--danger); } .toast.warn svg { color: var(--gold); } .toast.info svg { color: var(--primary); }
+    .toast.leaving { animation: toastOut 0.35s var(--ease) forwards; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: none; } }
+    @keyframes toastOut { to { opacity: 0; transform: translateY(10px) scale(0.95); } }
 
-    .result-box {
-      display: none;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid var(--accent-green);
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      margin-top: 20px;
+    .foot { text-align: center; font-size: 0.74rem; color: #566177; padding: 6px 0 0; }
+
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    @media (max-width: 420px) {
+      .card { padding: 16px; }
+      .options.cols-2 { grid-template-columns: 1fr 1fr; }
+      .ticket-info { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    // Lucide ikony: zkouší více CDN postupně, aby ikony fungovaly i při blokaci jednoho z nich
+    (function () {
+      var sources = [
+        "https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js",
+        "https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/lucide/0.469.0/umd/lucide.min.js"
+      ];
+      function load(i) {
+        if (i >= sources.length) { console.warn("Lucide se nepodařilo načíst z žádného CDN."); return; }
+        var s = document.createElement("script");
+        s.src = sources[i];
+        s.onload = function () {
+          if (window.lucide) window.lucide.createIcons();
+          else load(i + 1);
+        };
+        s.onerror = function () { s.remove(); load(i + 1); };
+        document.head.appendChild(s);
+      }
+      load(0);
+    })();
+  </script>
 </head>
 <body>
 
-  <div class="shop-container">
-    <div class="header">
-      <h1>E-Shop Fiktivní PID</h1>
-      <p>Prague Community – Kupónový Portál</p>
-    </div>
+  <div class="bg" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <main class="shell">
+
+    <header class="brand reveal" style="--i:0">
+      <div class="logo"><i data-lucide="train-front"></i></div>
+      <div>
+        <h1>E-Shop Fiktivní PID</h1>
+        <p>Prague Community – Kupónový portál</p>
+      </div>
+    </header>
 
     <!-- Firebase Auth sekce -->
-    <div class="auth-section">
-      <div class="auth-status" id="auth-user">Status: Nepřihlášen</div>
-      <button class="btn btn-auth" id="btn-login">Přihlásit Google</button>
-    </div>
+    <section class="card auth reveal" style="--i:1">
+      <div class="avatar" id="auth-avatar"><i data-lucide="user-round"></i></div>
+      <div class="auth-text">
+        <span class="auth-label">Účet</span>
+        <strong id="auth-user">Nepřihlášen</strong>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="btn-login" type="button">
+        <i data-lucide="log-in"></i><span>Přihlásit Google</span>
+      </button>
+    </section>
 
     <!-- Formulář objednávky -->
-    <div id="shop-form">
-      <label for="discord-nick">Discord uživatelské jméno</label>
-      <input type="text" id="discord-nick" placeholder="např. uzivatel_123">
+    <section class="card view reveal" style="--i:2" id="shop-form">
 
-      <label for="roblox-nick">Roblox uživatelské jméno</label>
-      <input type="text" id="roblox-nick" placeholder="např. RobloxPlayerCZ">
-
-      <label for="pass-duration">Doba platnosti předplatného</label>
-      <select id="pass-duration" onchange="recalculatePrice()">
-        <option value="220" data-days="7">Týdenní kupón (7 dní)</option>
-        <option value="550" data-days="30">Měsíční kupón (30 dní)</option>
-        <option value="2800" data-days="180">6 měsíců kupón (180 dní)</option>
-        <option value="3650" data-days="365">Roční kupón (365 dní)</option>
-        <option value="9900" data-days="1095">3 roky kupón (1095 dní)</option>
-      </select>
-
-      <label for="pass-category">Věková kategorie cestujícího</label>
-      <select id="pass-category" onchange="recalculatePrice()">
-        <option value="0" data-discount="100">Dítě 0-6 let (Zdarma - 100% sleva)</option>
-        <option value="0.5" data-discount="50">Dítě / žák 6-15 let (Sleva 50%)</option>
-        <option value="0.5" data-discount="50">Student 15-26 let (Sleva 50%)</option>
-        <option value="1" data-discount="0">Dospělý 15+ (Plné jízdné)</option>
-        <option value="0.5" data-discount="50">Senior 65+ (Sleva 50%)</option>
-      </select>
-
-      <label for="pay-method">Způsob platby</label>
-      <select id="pay-method">
-        <option value="Tadx Pay">💳 Tadx Pay (Virtuální karta)</option>
-        <option value="Bankovní převod">🏦 Bankovní převod</option>
-      </select>
-
-      <div class="price-box">
-        <div style="font-size: 0.85rem; color: var(--text-sub);">Výsledná cena kuponu:</div>
-        <div class="price-amount" id="final-price-display">0 Kč</div>
+      <div class="section">
+        <div class="section-title"><span class="num">1</span>Tvoje údaje</div>
+        <div class="field">
+          <i data-lucide="message-circle"></i>
+          <input type="text" id="discord-nick" placeholder="Discord uživatelské jméno" autocomplete="off" maxlength="40" aria-label="Discord uživatelské jméno">
+        </div>
+        <div class="field">
+          <i data-lucide="gamepad-2"></i>
+          <input type="text" id="roblox-nick" placeholder="Roblox uživatelské jméno" autocomplete="off" maxlength="40" aria-label="Roblox uživatelské jméno">
+        </div>
       </div>
 
-      <button class="btn btn-pay" onclick="initiateTadxPay()">Zaplatit přes Tadx Pay</button>
-    </div>
+      <div class="section">
+        <div class="section-title"><span class="num">2</span>Doba platnosti</div>
+        <div class="options" id="duration-options" role="radiogroup" aria-label="Doba platnosti předplatného"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="num">3</span>Věková kategorie</div>
+        <div class="options" id="category-options" role="radiogroup" aria-label="Věková kategorie cestujícího"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><span class="num">4</span>Způsob platby</div>
+        <div class="options cols-2 method" id="method-options" role="radiogroup" aria-label="Způsob platby"></div>
+      </div>
+
+      <div class="summary">
+        <div class="sum-row"><span>Základní cena</span><span id="sum-base">0 Kč</span></div>
+        <div class="sum-row"><span>Sleva</span><span id="sum-discount">0 Kč</span></div>
+        <div class="sum-row"><span>Platnost do</span><span id="sum-until">–</span></div>
+        <div class="sum-total">
+          <span>Výsledná cena kuponu</span>
+          <div class="price-amount" id="final-price-display">0 Kč</div>
+        </div>
+      </div>
+
+      <div class="pay-wrap">
+        <button class="btn btn-pay btn-block" id="btn-pay" type="button"></button>
+        <div class="secure-note"><i data-lucide="shield-check"></i>Fiktivní platba ve hře – žádné skutečné peníze</div>
+      </div>
+    </section>
 
     <!-- Výsledek po úspěšné platbě -->
-    <div class="result-box" id="result-box">
-      <h3 style="color: var(--accent-green); margin:0 0 10px 0;">✔ PŘEDPLATNÉ AKTIVNÍ</h3>
-      <div id="qrcode" style="display: flex; justify-content: center; background: white; padding: 10px; border-radius: 8px; margin: 10px 0;"></div>
-      <p style="font-family: monospace; font-weight: bold; margin: 5px 0;" id="ticket-id-text"></p>
-      <p style="font-size:0.8rem; color: var(--text-sub);">Potvrzení bylo úspěšně odesláno na Discord!</p>
-    </div>
-  </div>
+    <section class="card ticket view" id="result-box" hidden>
+      <div class="ticket-head">
+        <div class="check"><i data-lucide="check"></i></div>
+        <div>
+          <h3>PŘEDPLATNÉ AKTIVNÍ</h3>
+          <p>Tvoje jízdenka je připravená</p>
+        </div>
+      </div>
+      <div class="ticket-body">
+        <div class="qr-wrap"><div id="qrcode"></div></div>
+        <div class="ticket-id">
+          <code id="ticket-id-text"></code>
+          <button class="btn btn-ghost btn-sm" id="btn-copy" type="button" aria-label="Zkopírovat ID jízdenky"><i data-lucide="copy"></i></button>
+        </div>
+        <div class="ticket-cut" style="margin-top:18px"></div>
+        <div class="ticket-info">
+          <div><small>Discord</small><b id="t-discord"></b></div>
+          <div><small>Roblox</small><b id="t-roblox"></b></div>
+          <div class="wide"><small>Typ předplatného</small><b id="t-type"></b></div>
+          <div class="wide"><small>Kategorie</small><b id="t-category"></b></div>
+          <div><small>Platí od</small><b id="t-from"></b></div>
+          <div><small>Platí do</small><b id="t-until"></b></div>
+        </div>
+      </div>
+      <div class="ticket-foot">
+        <div class="discord-state" id="discord-state"><i data-lucide="loader-circle"></i><span>Odesílám potvrzení na Discord…</span></div>
+        <button class="btn btn-ghost btn-block" id="btn-new" type="button"><i data-lucide="plus"></i>Nový nákup</button>
+      </div>
+    </section>
+
+    <p class="foot reveal" style="--i:3">Fiktivní PID • Prague Community E-Shop</p>
+  </main>
 
   <!-- Tadx Pay Brána (Modal) -->
-  <div class="modal-overlay" id="tadx-modal">
-    <div class="tadx-pay-card">
-      <div class="tadx-logo">💳 TADX PAY GATEWAY</div>
-      <p style="font-size: 0.85rem; color: var(--text-sub); margin: 5px 0;">Fiktivní PID (Prague Community)</p>
-      
-      <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin: 10px 0;">
-        <span style="font-size: 0.8rem; color: var(--text-sub);">Částka k úhradě:</span>
-        <div style="font-size: 1.3rem; font-weight: bold; color: var(--accent-gold);" id="tadx-amount">0 Kč</div>
+  <div class="modal-overlay" id="tadx-modal" aria-hidden="true">
+    <div class="tadx-card" id="tadx-card" role="dialog" aria-modal="true" aria-labelledby="tadx-title" tabindex="-1">
+      <div class="tadx-logo" id="tadx-title"><i data-lucide="credit-card"></i>TADX PAY GATEWAY</div>
+      <div class="tadx-sub">Fiktivní PID (Prague Community)</div>
+
+      <div class="pin-ui">
+        <div class="tadx-amount">
+          <small>Částka k úhradě</small>
+          <b id="tadx-amount">0 Kč</b>
+        </div>
+        <p class="pin-label">Zadejte 4místný PIN karty Tadx Pay</p>
+        <div class="pin-dots" id="pin-dots" aria-live="polite"><span></span><span></span><span></span><span></span></div>
+        <div class="pin-pad" id="pin-pad"></div>
+        <button class="modal-cancel" id="btn-cancel" type="button">Zrušit platbu</button>
       </div>
 
-      <p style="font-size: 0.8rem; margin-top: 10px;">Zadejte 4místný PIN karty Tadx Pay:</p>
-      <div class="pin-display" id="pin-display">••••</div>
-
-      <div class="pin-pad">
-        <button class="pin-btn" onclick="pressPin('1')">1</button>
-        <button class="pin-btn" onclick="pressPin('2')">2</button>
-        <button class="pin-btn" onclick="pressPin('3')">3</button>
-        <button class="pin-btn" onclick="pressPin('4')">4</button>
-        <button class="pin-btn" onclick="pressPin('5')">5</button>
-        <button class="pin-btn" onclick="pressPin('6')">6</button>
-        <button class="pin-btn" onclick="pressPin('7')">7</button>
-        <button class="pin-btn" onclick="pressPin('8')">8</button>
-        <button class="pin-btn" onclick="pressPin('9')">9</button>
-        <button class="pin-btn" style="background: #ef4444;" onclick="clearPin()">✕</button>
-        <button class="pin-btn" onclick="pressPin('0')">0</button>
-        <button class="pin-btn" style="background: var(--accent-green);" onclick="confirmPayment()">✓</button>
+      <div class="processing" aria-live="polite">
+        <i data-lucide="loader-circle" class="spin"></i>
+        <p>Ověřuji platbu…</p>
       </div>
-      <button onclick="closeTadxModal()" style="background: transparent; border: none; color: var(--text-sub); margin-top: 15px; cursor: pointer; font-size: 0.8rem;">Zrušit platbu</button>
     </div>
   </div>
 
-  <!-- FIREBASE AUTH MODULE -->
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- FIREBASE AUTH MODULE (konfigurace i chování beze změny) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -319,152 +476,474 @@
     window.currentUser = null;
 
     const loginBtn = document.getElementById('btn-login');
-    const authStatus = document.getElementById('auth-user');
+    let authBusy = false;
 
-    loginBtn.addEventListener('click', () => {
-      if (window.currentUser) {
-        signOut(auth);
-      } else {
-        signInWithPopup(auth, provider);
+    loginBtn.addEventListener('click', async () => {
+      if (authBusy) return;
+      authBusy = true;
+      loginBtn.disabled = true;
+      try {
+        if (window.currentUser) {
+          await signOut(auth);
+        } else {
+          await signInWithPopup(auth, provider);
+        }
+      } catch (err) {
+        console.error("Chyba přihlášení:", err);
+        window.dispatchEvent(new CustomEvent('pid-auth-error', { detail: err && err.code ? err.code : String(err) }));
+      } finally {
+        authBusy = false;
+        loginBtn.disabled = false;
       }
     });
 
     onAuthStateChanged(auth, (user) => {
-      if (user) {
-        window.currentUser = user;
-        authStatus.textContent = "Přihlášen: " + user.email;
-        loginBtn.textContent = "Odhlásit";
-      } else {
-        window.currentUser = null;
-        authStatus.textContent = "Status: Nepřihlášen";
-        loginBtn.textContent = "Přihlásit Google";
-      }
+      window.currentUser = user || null;
+      window.dispatchEvent(new CustomEvent('pid-auth', { detail: user || null }));
     });
   </script>
 
   <!-- HLAVNÍ LOGIKA E-SHOPU A TADX PAY -->
   <script>
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1557415618313982022/ybSNIbxCfbWFrNLLE_7HkaNqgqYCk-YejNcS-ks2bPt0tfsiuyjDT91qVXOVjPPLZTnJ";
+    (() => {
+      "use strict";
 
-    let enteredPin = "";
-    let calculatedPrice = 0;
+      const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1557415618313982022/ybSNIbxCfbWFrNLLE_7HkaNqgqYCk-YejNcS-ks2bPt0tfsiuyjDT91qVXOVjPPLZTnJ";
 
-    function recalculatePrice() {
-      const basePrice = parseFloat(document.getElementById('pass-duration').value);
-      const ratio = parseFloat(document.getElementById('pass-category').value);
-      calculatedPrice = Math.round(basePrice * ratio);
-      
-      document.getElementById('final-price-display').textContent = `${calculatedPrice} Kč`;       document.getElementById('tadx-amount').textContent = `${calculatedPrice} Kč`;
-    }
+      /* ---------- Data ---------- */
+      const DURATIONS = [
+        { id: "d7",    label: "Týdenní kupón",   sub: "7 dní",    days: 7,    price: 220,  icon: "calendar" },
+        { id: "d30",   label: "Měsíční kupón",   sub: "30 dní",   days: 30,   price: 550,  icon: "calendar-days" },
+        { id: "d180",  label: "6 měsíců kupón",  sub: "180 dní",  days: 180,  price: 2800, icon: "calendar-range" },
+        { id: "d365",  label: "Roční kupón",     sub: "365 dní",  days: 365,  price: 3650, icon: "calendar-check" },
+        { id: "d1095", label: "3 roky kupón",    sub: "1095 dní", days: 1095, price: 9900, icon: "infinity" }
+      ];
 
-    function initiateTadxPay() {
-      if (!window.currentUser) {
-        alert("🔒 Pro nákup se musíte nejprve přihlásit přes Google!");
-        return;
-      }
+      const CATEGORIES = [
+        { id: "c0",  label: "Dítě 0–6 let",       text: "Dítě 0-6 let (Zdarma - 100% sleva)",     ratio: 0,   badge: "Zdarma", icon: "baby" },
+        { id: "c1",  label: "Dítě / žák 6–15 let", text: "Dítě / žák 6-15 let (Sleva 50%)",        ratio: 0.5, badge: "−50 %",  icon: "backpack" },
+        { id: "c2",  label: "Student 15–26 let",  text: "Student 15-26 let (Sleva 50%)",          ratio: 0.5, badge: "−50 %",  icon: "graduation-cap" },
+        { id: "c3",  label: "Dospělý 15+",        text: "Dospělý 15+ (Plné jízdné)",              ratio: 1,   badge: "Plné",   icon: "user-round", neutral: true },
+        { id: "c4",  label: "Senior 65+",         text: "Senior 65+ (Sleva 50%)",                 ratio: 0.5, badge: "−50 %",  icon: "heart" }
+      ];
 
-      const discord = document.getElementById('discord-nick').value.trim();
-      const roblox = document.getElementById('roblox-nick').value.trim();
+      const METHODS = [
+        { id: "tadx", value: "Tadx Pay",        label: "Tadx Pay",        sub: "Virtuální karta", icon: "credit-card" },
+        { id: "bank", value: "Bankovní převod", label: "Bankovní převod", sub: "Převod z účtu",   icon: "landmark" }
+      ];
 
-      if (!discord || !roblox) {
-        alert("Vyplňte prosím své Discord a Roblox uživatelské jméno!");
-        return;
-      }
-
-      enteredPin = "";
-      updatePinDisplay();
-      document.getElementById('tadx-modal').style.display = "flex";
-    }
-
-    function pressPin(num) {
-      if (enteredPin.length < 4) {
-        enteredPin += num;
-        updatePinDisplay();
-      }
-    }
-
-    function clearPin() {
-      enteredPin = "";
-      updatePinDisplay();
-    }
-
-    function updatePinDisplay() {
-      document.getElementById('pin-display').textContent = '•'.repeat(enteredPin.length) || '••••';
-    }
-
-    function closeTadxModal() {
-      document.getElementById('tadx-modal').style.display = "none";
-    }
-
-    async function confirmPayment() {
-      if (enteredPin.length !== 4) {
-        alert("Zadejte kompletní 4místný PIN kód!");
-        return;
-      }
-
-      closeTadxModal();
-      await processOrder();
-    }
-
-    async function processOrder() {
-      const discord = document.getElementById('discord-nick').value.trim();
-      const roblox = document.getElementById('roblox-nick').value.trim();
-      
-      const durationSelect = document.getElementById('pass-duration');
-      const durationText = durationSelect.options[durationSelect.selectedIndex].text;
-
-      const categorySelect = document.getElementById('pass-category');
-      const categoryText = categorySelect.options[categorySelect.selectedIndex].text;
-
-      const payMethod = document.getElementById('pay-method').value;
-
-      const ticketId = "PID-" + Math.floor(100000 + Math.random() * 900000);
-
-      // Generování QR kódu
-      const qrContainer = document.getElementById('qrcode');
-      qrContainer.innerHTML = "";
-      new QRCode(qrContainer, { text: ticketId, width: 120, height: 120 });
-      
-      document.getElementById('ticket-id-text').textContent = ticketId;
-      document.getElementById('result-box').style.display = "block";
-
-      // Odeslání Discord Embedu
-      const payload = {
-        username: "Fiktivní PID - E-Shop Bot",
-        avatar_url: "https://i.imgur.com/4M34gB0.png",
-        embeds: [{
-          title: "👑 Zakoupeno Dlouhodobé Předplatné PID",
-          color: 1610753, // Zelená barva
-          description: "Vytvořena nová objednávka v E-Shopu Prague Community.",
-          fields: [
-            { name: "👤 Google Účet", value: window.currentUser.email, inline: false },
-            { name: "💬 Discord Uživatel", value: discord, inline: true },
-            { name: "🎮 Roblox Uživatel", value: roblox, inline: true },
-            { name: "🎟️ Typ Předplatného", value: durationText, inline: false },
-            { name: "👥 Věková Kategorie", value: categoryText, inline: false },
-            { name: "💳 Platba & Částka", value: `${payMethod} (${calculatedPrice} Kč)`, inline: true },
-            { name: "🆔 ID Jízdenky", value: `\`${ticketId}\``, inline: true }
-          ],
-          footer: { text: "Fiktivní PID • Prague Community E-Shop" },
-          timestamp: new Date().toISOString()
-        }]
+      const state = {
+        duration: DURATIONS[0],
+        category: CATEGORIES[3],
+        method: METHODS[0],
+        price: 0,
+        pin: "",
+        busy: false,
+        lastFocus: null,
+        shownPrice: 0
       };
 
-      try {
-        await fetch(DISCORD_WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        alert("✔ Platba přes Tadx Pay proběhla úspěšně a jízdenka je aktivní!");
-      } catch (err) {
-        console.error("Chyba při odesílání webhooku:", err);
-        alert("✔ Jízdenka aktivována!");
-      }
-    }
+      /* ---------- Helpers ---------- */
+      const $ = (id) => document.getElementById(id);
+      const kc = (n) => `${n.toLocaleString("cs-CZ")} Kč`;
+      const fmtDate = (d) => d.toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric" });
+      const icons = () => { if (window.lucide) window.lucide.createIcons(); };
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const clip = (s, n = 1000) => String(s).slice(0, n);
 
-    // Inicializace výchozí ceny
-    recalculatePrice();
+      const store = {
+        get(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } },
+        set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignorováno */ } }
+      };
+
+      function toast(message, type = "info", ms = 3600) {
+        const iconMap = { success: "circle-check", error: "circle-x", warn: "triangle-alert", info: "info" };
+        const el = document.createElement("div");
+        el.className = `toast ${type}`;
+        el.innerHTML = `<i data-lucide="${iconMap[type] || "info"}"></i><span></span>`;
+        el.querySelector("span").textContent = message;
+        $("toasts").appendChild(el);
+        icons();
+        setTimeout(() => { el.classList.add("leaving"); setTimeout(() => el.remove(), 380); }, ms);
+      }
+
+      /* ---------- Ripple efekt ---------- */
+      document.addEventListener("pointerdown", (e) => {
+        const btn = e.target.closest(".btn");
+        if (!btn || btn.disabled) return;
+        const r = btn.getBoundingClientRect();
+        const size = Math.max(r.width, r.height);
+        const dot = document.createElement("span");
+        dot.className = "ripple";
+        dot.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left - size / 2}px;top:${e.clientY - r.top - size / 2}px`;
+        btn.appendChild(dot);
+        setTimeout(() => dot.remove(), 650);
+      });
+
+      /* ---------- Vykreslení voleb ---------- */
+      function renderOptions() {
+        $("duration-options").innerHTML = DURATIONS.map((d) => `
+          <label class="option">
+            <input type="radio" name="duration" value="${d.id}" ${d.id === state.duration.id ? "checked" : ""}>
+            <span class="option-body">
+              <span class="opt-icon"><i data-lucide="${d.icon}"></i></span>
+              <span class="opt-text"><b>${d.label}</b><small>${d.sub}</small></span>
+              <span class="opt-price">${kc(d.price)}</span>
+            </span>
+          </label>`).join("");
+
+        $("category-options").innerHTML = CATEGORIES.map((c) => `
+          <label class="option">
+            <input type="radio" name="category" value="${c.id}" ${c.id === state.category.id ? "checked" : ""}>
+            <span class="option-body">
+              <span class="opt-icon"><i data-lucide="${c.icon}"></i></span>
+              <span class="opt-text"><b>${c.label}</b></span>
+              <span class="badge ${c.neutral ? "neutral" : ""}">${c.badge}</span>
+            </span>
+          </label>`).join("");
+
+        $("method-options").innerHTML = METHODS.map((m) => `
+          <label class="option">
+            <input type="radio" name="method" value="${m.id}" ${m.id === state.method.id ? "checked" : ""}>
+            <span class="option-body">
+              <span class="opt-icon"><i data-lucide="${m.icon}"></i></span>
+              <span class="opt-text"><b>${m.label}</b><small>${m.sub}</small></span>
+            </span>
+          </label>`).join("");
+
+        icons();
+      }
+
+      $("duration-options").addEventListener("change", (e) => {
+        state.duration = DURATIONS.find((d) => d.id === e.target.value) || state.duration;
+        recalculatePrice();
+      });
+      $("category-options").addEventListener("change", (e) => {
+        state.category = CATEGORIES.find((c) => c.id === e.target.value) || state.category;
+        recalculatePrice();
+      });
+      $("method-options").addEventListener("change", (e) => {
+        state.method = METHODS.find((m) => m.id === e.target.value) || state.method;
+        updatePayButton();
+      });
+
+      /* ---------- Cena ---------- */
+      function animateNumber(from, to, onTick, duration = 550) {
+        const start = performance.now();
+        const step = (now) => {
+          const t = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          onTick(Math.round(from + (to - from) * eased));
+          if (t < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+
+      function recalculatePrice() {
+        const base = state.duration.price;
+        const total = Math.round(base * state.category.ratio);
+        const until = new Date(Date.now() + state.duration.days * 86400000);
+
+        $("sum-base").textContent = kc(base);
+        $("sum-discount").textContent = total === base ? "–" : `−${kc(base - total)}`;
+        $("sum-until").textContent = fmtDate(until);
+
+        const prev = state.shownPrice;
+        state.price = total;
+        state.shownPrice = total;
+        animateNumber(prev, total, (v) => { $("final-price-display").textContent = kc(v); });
+        $("tadx-amount").textContent = kc(total);
+        updatePayButton();
+      }
+
+      function updatePayButton() {
+        const btn = $("btn-pay");
+        let icon, text, locked = false;
+        if (!window.currentUser) { icon = "lock"; text = "Přihlaste se pro nákup"; locked = true; }
+        else if (state.price === 0) { icon = "ticket"; text = "Aktivovat zdarma"; }
+        else if (state.method.id === "tadx") { icon = "credit-card"; text = "Zaplatit přes Tadx Pay"; }
+        else { icon = "landmark"; text = "Pokračovat k platbě"; }
+        btn.classList.toggle("locked", locked);
+        btn.innerHTML = `<i data-lucide="${icon}"></i><span>${text}</span>`;
+        icons();
+      }
+
+      /* ---------- Auth UI ---------- */
+      function updateAuthUI(user) {
+        const label = $("auth-user");
+        const avatar = $("auth-avatar");
+        const btn = $("btn-login");
+        if (user) {
+          label.textContent = user.email || user.displayName || "Přihlášen";
+          avatar.classList.add("on");
+          if (user.photoURL) {
+            avatar.innerHTML = "";
+            const img = document.createElement("img");
+            img.src = user.photoURL; img.alt = ""; img.referrerPolicy = "no-referrer";
+            img.onerror = () => { avatar.innerHTML = '<i data-lucide="user-round-check"></i>'; icons(); };
+            avatar.appendChild(img);
+          } else {
+            avatar.innerHTML = '<i data-lucide="user-round-check"></i>';
+          }
+          btn.innerHTML = '<i data-lucide="log-out"></i><span>Odhlásit</span>';
+        } else {
+          label.textContent = "Nepřihlášen";
+          avatar.classList.remove("on");
+          avatar.innerHTML = '<i data-lucide="user-round"></i>';
+          btn.innerHTML = '<i data-lucide="log-in"></i><span>Přihlásit Google</span>';
+        }
+        icons();
+        updatePayButton();
+      }
+
+      let firstAuthEvent = true;
+      window.addEventListener("pid-auth", (e) => {
+        const user = e.detail;
+        const wasLoggedIn = !!state.wasLoggedIn;
+        state.wasLoggedIn = !!user;
+        updateAuthUI(user);
+        if (!firstAuthEvent) {
+          if (user && !wasLoggedIn) toast("Přihlášení proběhlo úspěšně", "success");
+          if (!user && wasLoggedIn) toast("Byli jste odhlášeni", "info");
+        }
+        firstAuthEvent = false;
+      });
+
+      window.addEventListener("pid-auth-error", (e) => {
+        const code = String(e.detail || "");
+        if (code.includes("popup-closed-by-user") || code.includes("cancelled-popup-request")) return;
+        if (code.includes("popup-blocked")) toast("Prohlížeč zablokoval přihlašovací okno. Povolte vyskakovací okna.", "warn", 5000);
+        else if (code.includes("network")) toast("Chyba sítě – zkontrolujte připojení.", "error");
+        else toast("Přihlášení se nezdařilo. Zkuste to prosím znovu.", "error");
+      });
+
+      $("btn-pay").addEventListener("click", initiateTadxPay);
+
+      /* ---------- Validace a start platby ---------- */
+      function markInvalid(input) {
+        input.setAttribute("aria-invalid", "true");
+        input.focus();
+        input.addEventListener("input", () => input.removeAttribute("aria-invalid"), { once: true });
+      }
+
+      function initiateTadxPay() {
+        if (state.busy) return;
+
+        if (!window.currentUser) {
+          toast("Pro nákup se musíte nejprve přihlásit přes Google!", "warn");
+          return;
+        }
+
+        const discordEl = $("discord-nick");
+        const robloxEl = $("roblox-nick");
+        const discord = discordEl.value.trim();
+        const roblox = robloxEl.value.trim();
+
+        if (!discord || !roblox) {
+          if (!discord) markInvalid(discordEl); else markInvalid(robloxEl);
+          toast("Vyplňte prosím své Discord a Roblox uživatelské jméno!", "warn");
+          return;
+        }
+
+        store.set("pid.discord", discord);
+        store.set("pid.roblox", roblox);
+
+        if (state.price === 0) { processOrder(); return; }
+        openModal();
+      }
+
+      /* ---------- Tadx Pay modal ---------- */
+      function buildPinPad() {
+        const keys = ["1","2","3","4","5","6","7","8","9","clear","0","ok"];
+        $("pin-pad").innerHTML = keys.map((k) => {
+          if (k === "clear") return '<button class="pin-btn action-clear" type="button" data-key="back" aria-label="Smazat poslední číslici"><i data-lucide="delete"></i></button>';
+          if (k === "ok") return '<button class="pin-btn action-ok" type="button" data-key="ok" aria-label="Potvrdit platbu"><i data-lucide="check"></i></button>';
+          return `<button class="pin-btn" type="button" data-key="${k}">${k}</button>`;
+        }).join("");
+      }
+
+      $("pin-pad").addEventListener("click", (e) => {
+        const b = e.target.closest(".pin-btn");
+        if (!b) return;
+        const k = b.dataset.key;
+        if (k === "back") backPin();
+        else if (k === "ok") confirmPayment();
+        else pressPin(k);
+      });
+
+      function updatePinDisplay() {
+        [...$("pin-dots").children].forEach((d, i) => d.classList.toggle("filled", i < state.pin.length));
+      }
+      function pressPin(n) { if (state.pin.length < 4) { state.pin += n; updatePinDisplay(); } }
+      function backPin() { state.pin = state.pin.slice(0, -1); updatePinDisplay(); }
+      function clearPin() { state.pin = ""; updatePinDisplay(); }
+
+      function openModal() {
+        clearPin();
+        state.lastFocus = document.activeElement;
+        $("tadx-card").classList.remove("busy");
+        $("tadx-amount").textContent = kc(state.price);
+        const m = $("tadx-modal");
+        m.classList.add("open");
+        m.setAttribute("aria-hidden", "false");
+        setTimeout(() => $("tadx-card").focus(), 50);
+      }
+
+      function closeTadxModal() {
+        const m = $("tadx-modal");
+        m.classList.remove("open");
+        m.setAttribute("aria-hidden", "true");
+        clearPin();
+        if (state.lastFocus && state.lastFocus.focus) state.lastFocus.focus();
+      }
+
+      async function confirmPayment() {
+        if (state.busy) return;
+        if (state.pin.length !== 4) {
+          const dots = $("pin-dots");
+          dots.classList.remove("shake"); void dots.offsetWidth; dots.classList.add("shake");
+          toast("Zadejte kompletní 4místný PIN kód!", "warn", 2400);
+          return;
+        }
+        state.busy = true;
+        $("tadx-card").classList.add("busy");
+        await sleep(1300);
+        closeTadxModal();
+        state.busy = false;
+        await processOrder();
+      }
+
+      $("btn-cancel").addEventListener("click", () => { if (!state.busy) closeTadxModal(); });
+      $("tadx-modal").addEventListener("click", (e) => { if (e.target.id === "tadx-modal" && !state.busy) closeTadxModal(); });
+
+      document.addEventListener("keydown", (e) => {
+        if (!$("tadx-modal").classList.contains("open") || state.busy) return;
+        if (/^[0-9]$/.test(e.key)) pressPin(e.key);
+        else if (e.key === "Backspace") backPin();
+        else if (e.key === "Enter") { e.preventDefault(); confirmPayment(); }
+        else if (e.key === "Escape") closeTadxModal();
+      });
+
+      /* ---------- Zpracování objednávky ---------- */
+      function swapView(hideEl, showEl) {
+        hideEl.classList.add("out");
+        setTimeout(() => {
+          hideEl.hidden = true;
+          hideEl.classList.remove("out");
+          showEl.hidden = false;
+          showEl.classList.remove("in"); void showEl.offsetWidth; showEl.classList.add("in");
+          showEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 300);
+      }
+
+      function setDiscordState(kind, text, icon) {
+        const el = $("discord-state");
+        el.className = `discord-state ${kind}`;
+        el.innerHTML = `<i data-lucide="${icon}"></i><span>${text}</span>`;
+        icons();
+      }
+
+      async function processOrder() {
+        if (state.busy) return;
+        const user = window.currentUser;
+        if (!user) { toast("Přihlášení vypršelo, přihlaste se prosím znovu.", "warn"); return; }
+        state.busy = true;
+
+        const discord = $("discord-nick").value.trim();
+        const roblox = $("roblox-nick").value.trim();
+        const durationText = `${state.duration.label} (${state.duration.sub})`;
+        const categoryText = state.category.text;
+        const payMethod = state.method.value;
+        const price = state.price;
+        const now = new Date();
+        const until = new Date(now.getTime() + state.duration.days * 86400000);
+        const ticketId = "PID-" + (crypto.getRandomValues ? (100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000)) : Math.floor(100000 + Math.random() * 900000));
+
+        // Jízdenka
+        $("ticket-id-text").textContent = ticketId;
+        $("t-discord").textContent = discord;
+        $("t-roblox").textContent = roblox;
+        $("t-type").textContent = durationText;
+        $("t-category").textContent = categoryText;
+        $("t-from").textContent = fmtDate(now);
+        $("t-until").textContent = fmtDate(until);
+
+        const qrContainer = $("qrcode");
+        qrContainer.innerHTML = "";
+        if (window.QRCode) {
+          new QRCode(qrContainer, { text: ticketId, width: 140, height: 140, colorDark: "#0b1020", colorLight: "#ffffff" });
+        } else {
+          qrContainer.textContent = ticketId;
+        }
+
+        setDiscordState("", "Odesílám potvrzení na Discord…", "loader-circle");
+        swapView($("shop-form"), $("result-box"));
+        icons();
+        toast(price === 0 ? "Jízdenka aktivována!" : "Platba proběhla úspěšně, jízdenka je aktivní!", "success");
+
+        // Discord Embed
+        const payload = {
+          username: "Fiktivní PID - E-Shop Bot",
+          avatar_url: "https://i.imgur.com/4M34gB0.png",
+          allowed_mentions: { parse: [] },
+          embeds: [{
+            title: "👑 Zakoupeno Dlouhodobé Předplatné PID",
+            color: 1610753,
+            description: "Vytvořena nová objednávka v E-Shopu Prague Community.",
+            fields: [
+              { name: "💬 Discord Uživatel", value: clip(discord, 200), inline: true },
+              { name: "🎮 Roblox Uživatel", value: clip(roblox, 200), inline: true },
+              { name: "🎟️ Typ Předplatného", value: clip(durationText, 200), inline: false },
+              { name: "👥 Věková Kategorie", value: clip(categoryText, 200), inline: false },
+              { name: "📅 Platnost", value: `${fmtDate(now)} – ${fmtDate(until)}`, inline: false },
+              { name: "💳 Platba & Částka", value: `${payMethod} (${price} Kč)`, inline: true },
+              { name: "🆔 ID Jízdenky", value: `\`${ticketId}\``, inline: true }
+            ],
+            footer: { text: "Fiktivní PID • Prague Community E-Shop" },
+            timestamp: now.toISOString()
+          }]
+        };
+
+        try {
+          const res = await fetch(DISCORD_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          setDiscordState("ok", "Potvrzení bylo úspěšně odesláno na Discord!", "circle-check");
+        } catch (err) {
+          console.error("Chyba při odesílání webhooku:", err);
+          setDiscordState("err", "Jízdenka je aktivní, ale potvrzení na Discord se nepodařilo odeslat.", "triangle-alert");
+        } finally {
+          state.busy = false;
+        }
+      }
+
+      /* ---------- Ostatní akce ---------- */
+      $("btn-copy").addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText($("ticket-id-text").textContent);
+          toast("ID jízdenky zkopírováno", "success", 2200);
+        } catch (e) {
+          toast("Kopírování se nezdařilo", "error", 2200);
+        }
+      });
+
+      $("btn-new").addEventListener("click", () => {
+        swapView($("result-box"), $("shop-form"));
+        recalculatePrice();
+      });
+
+      /* ---------- Inicializace ---------- */
+      $("discord-nick").value = store.get("pid.discord");
+      $("roblox-nick").value = store.get("pid.roblox");
+      buildPinPad();
+      renderOptions();
+      recalculatePrice();
+      updateAuthUI(window.currentUser || null);
+      icons();
+    })();
   </script>
 </body>
 </html>
