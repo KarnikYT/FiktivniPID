@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#070b16">
+  <meta name="theme-color" content="#050505">
   <title>E-Shop | Fiktivní PID (Prague Community)</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,18 +12,18 @@
 
   <style>
     :root {
-      --bg: #070b16;
+      --bg: #050505;
       --surface: rgba(255, 255, 255, 0.045);
       --surface-2: rgba(255, 255, 255, 0.08);
       --border: rgba(255, 255, 255, 0.10);
       --border-strong: rgba(255, 255, 255, 0.18);
-      --text: #f1f5f9;
-      --muted: #8b98ad;
-      --primary: #4f7cff;
-      --primary-2: #8b5cf6;
-      --success: #22c55e;
-      --gold: #f5b942;
-      --danger: #ef4444;
+      --text: #f5f5f5;
+      --muted: #a39a9b;
+      --primary: #e11d2e;
+      --primary-2: #8f0f1c;
+      --success: #ff3b4a;
+      --gold: #ff8a93;
+      --danger: #ff5c5c;
       --radius: 18px;
       --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
     }
@@ -51,7 +51,7 @@
     .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.45; animation: float 18s ease-in-out infinite; }
     .blob.b1 { width: 420px; height: 420px; background: var(--primary); top: -140px; left: -120px; }
     .blob.b2 { width: 380px; height: 380px; background: var(--primary-2); bottom: -140px; right: -100px; animation-delay: -6s; }
-    .blob.b3 { width: 260px; height: 260px; background: #0ea5e9; top: 45%; left: 55%; opacity: 0.22; animation-delay: -11s; }
+    .blob.b3 { width: 260px; height: 260px; background: #b3001b; top: 45%; left: 55%; opacity: 0.22; animation-delay: -11s; }
     .grid-overlay {
       position: absolute; inset: 0;
       background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
@@ -87,7 +87,7 @@
       width: 52px; height: 52px; border-radius: 16px;
       display: grid; place-items: center;
       background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 10px 30px -8px rgba(79, 124, 255, 0.7);
+      box-shadow: 0 10px 30px -8px rgba(225, 29, 46, 0.7);
       font-size: 1.5rem;
     }
     .brand h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
@@ -102,7 +102,7 @@
       transition: all 0.35s var(--ease);
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .avatar.on { color: var(--success); border-color: rgba(34, 197, 94, 0.5); background: rgba(34, 197, 94, 0.12); }
+    .avatar.on { color: var(--success); border-color: rgba(255, 59, 74, 0.5); background: rgba(255, 59, 74, 0.12); }
     .auth-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
     .auth-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
     .auth-text strong { font-size: 0.92rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -114,7 +114,7 @@
       border: none; cursor: pointer; font: inherit; font-weight: 600; color: #fff;
       padding: 13px 18px; border-radius: 14px;
       background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 12px 28px -10px rgba(79, 124, 255, 0.8);
+      box-shadow: 0 12px 28px -10px rgba(225, 29, 46, 0.8);
       transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), filter 0.25s;
     }
     .btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
@@ -124,7 +124,7 @@
     .btn-sm { padding: 9px 14px; font-size: 0.82rem; border-radius: 11px; }
     .btn-ghost { background: var(--surface-2); border: 1px solid var(--border); box-shadow: none; }
     .btn-ghost:hover { border-color: var(--border-strong); }
-    .btn-pay { background: linear-gradient(135deg, #16a34a, #22c55e); box-shadow: 0 14px 30px -10px rgba(34, 197, 94, 0.7); font-size: 1.02rem; padding: 15px 18px; }
+    .btn-pay { background: linear-gradient(135deg, #b3101f, #ef3340); box-shadow: 0 14px 30px -10px rgba(255, 59, 74, 0.7); font-size: 1.02rem; padding: 15px 18px; }
     .btn-pay.locked { background: var(--surface-2); border: 1px solid var(--border); box-shadow: none; color: var(--muted); }
     .btn .ripple {
       position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.35);
@@ -148,10 +148,10 @@
       color: var(--text); font: inherit; font-size: 0.95rem; outline: none;
       transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
     }
-    .field input::placeholder { color: #566177; }
-    .field input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 124, 255, 0.18); background: rgba(0, 0, 0, 0.35); }
+    .field input::placeholder { color: #6f6566; }
+    .field input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(225, 29, 46, 0.18); background: rgba(0, 0, 0, 0.35); }
     .field:focus-within > svg.lucide { color: var(--primary); }
-    .field input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15); animation: shake 0.4s; }
+    .field input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 4px rgba(255, 92, 92, 0.15); animation: shake 0.4s; }
 
     .options { display: grid; gap: 8px; }
     .options.cols-2 { grid-template-columns: repeat(2, 1fr); }
@@ -163,10 +163,10 @@
       transition: all 0.3s var(--ease);
     }
     .option:hover .option-body { border-color: var(--border-strong); transform: translateY(-1px); }
-    .option input:focus-visible + .option-body { box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.4); }
+    .option input:focus-visible + .option-body { box-shadow: 0 0 0 3px rgba(225, 29, 46, 0.4); }
     .option input:checked + .option-body {
-      border-color: var(--primary); background: linear-gradient(135deg, rgba(79, 124, 255, 0.16), rgba(139, 92, 246, 0.12));
-      box-shadow: 0 8px 24px -12px rgba(79, 124, 255, 0.8);
+      border-color: var(--primary); background: linear-gradient(135deg, rgba(225, 29, 46, 0.16), rgba(143, 15, 28, 0.12));
+      box-shadow: 0 8px 24px -12px rgba(225, 29, 46, 0.8);
     }
     .opt-icon { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--surface-2); color: var(--muted); transition: all 0.3s var(--ease); flex-shrink: 0; }
     .option input:checked + .option-body .opt-icon { background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #fff; }
@@ -174,7 +174,7 @@
     .opt-text b { font-size: 0.92rem; font-weight: 600; }
     .opt-text small { font-size: 0.76rem; color: var(--muted); margin-top: 1px; }
     .opt-price { font-weight: 700; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
-    .badge { font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: rgba(34, 197, 94, 0.15); color: var(--success); white-space: nowrap; }
+    .badge { font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: rgba(255, 59, 74, 0.15); color: var(--success); white-space: nowrap; }
     .badge.neutral { background: var(--surface-2); color: var(--muted); }
 
     .method .option-body { flex-direction: column; text-align: center; gap: 8px; padding: 14px 10px; }
@@ -183,12 +183,12 @@
     /* ---------- Cena ---------- */
     .summary {
       margin-top: 22px; padding: 18px; border-radius: 16px;
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04));
-      border: 1px solid rgba(34, 197, 94, 0.35);
+      background: linear-gradient(135deg, rgba(255, 59, 74, 0.12), rgba(255, 59, 74, 0.04));
+      border: 1px solid rgba(255, 59, 74, 0.35);
     }
     .sum-row { display: flex; justify-content: space-between; font-size: 0.84rem; color: var(--muted); padding: 3px 0; }
     .sum-row span:last-child { color: var(--text); font-variant-numeric: tabular-nums; }
-    .sum-total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; padding-top: 12px; border-top: 1px dashed rgba(34, 197, 94, 0.35); }
+    .sum-total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; padding-top: 12px; border-top: 1px dashed rgba(255, 59, 74, 0.35); }
     .sum-total span { font-size: 0.85rem; color: var(--muted); }
     .price-amount { font-size: 2rem; font-weight: 800; color: var(--success); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
     .pay-wrap { margin-top: 14px; }
@@ -201,9 +201,9 @@
     .view.in { animation: pop 0.6s var(--ease) both; }
     @keyframes pop { from { opacity: 0; transform: translateY(18px) scale(0.97); } to { opacity: 1; transform: none; } }
 
-    .ticket { padding: 0; overflow: hidden; border-color: rgba(34, 197, 94, 0.4); }
-    .ticket-head { padding: 18px 20px; display: flex; align-items: center; gap: 12px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.22), rgba(79, 124, 255, 0.14)); }
-    .ticket-head .check { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--success); color: #04210f; animation: checkpop 0.7s var(--ease) 0.2s both; }
+    .ticket { padding: 0; overflow: hidden; border-color: rgba(255, 59, 74, 0.4); }
+    .ticket-head { padding: 18px 20px; display: flex; align-items: center; gap: 12px; background: linear-gradient(135deg, rgba(255, 59, 74, 0.22), rgba(225, 29, 46, 0.14)); }
+    .ticket-head .check { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--success); color: #fff; animation: checkpop 0.7s var(--ease) 0.2s both; }
     @keyframes checkpop { from { transform: scale(0) rotate(-90deg); } to { transform: none; } }
     .ticket-head h3 { font-size: 1rem; font-weight: 700; color: var(--success); letter-spacing: 0.02em; }
     .ticket-head p { font-size: 0.78rem; color: var(--muted); }
@@ -213,7 +213,7 @@
     .ticket-id { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 16px 0 4px; }
     .ticket-id code { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 1.15rem; letter-spacing: 0.06em; }
     .ticket-cut { position: relative; border-top: 2px dashed var(--border-strong); margin: 0 -20px; }
-    .ticket-cut::before, .ticket-cut::after { content: ""; position: absolute; top: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); border: 1px solid rgba(34, 197, 94, 0.4); }
+    .ticket-cut::before, .ticket-cut::after { content: ""; position: absolute; top: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); border: 1px solid rgba(255, 59, 74, 0.4); }
     .ticket-cut::before { left: -11px; } .ticket-cut::after { right: -11px; }
     .ticket-info { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; margin-top: 20px; }
     .ticket-info div { min-width: 0; }
@@ -227,15 +227,15 @@
     /* ---------- Modal ---------- */
     .modal-overlay {
       position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 16px;
-      background: rgba(3, 6, 14, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease), visibility 0.3s;
     }
     .modal-overlay.open { opacity: 1; visibility: visible; }
     .tadx-card {
       width: 100%; max-width: 380px; border-radius: 24px; padding: 24px; text-align: center; outline: none;
-      background: linear-gradient(160deg, #141b2e, #0b1020);
-      border: 1px solid rgba(245, 185, 66, 0.45);
-      box-shadow: 0 0 0 1px rgba(245, 185, 66, 0.08), 0 30px 80px -20px rgba(245, 185, 66, 0.25), 0 30px 60px -20px #000;
+      background: linear-gradient(160deg, #1a1113, #0a0606);
+      border: 1px solid rgba(255, 138, 147, 0.45);
+      box-shadow: 0 0 0 1px rgba(255, 138, 147, 0.08), 0 30px 80px -20px rgba(255, 138, 147, 0.25), 0 30px 60px -20px #000;
       transform: translateY(24px) scale(0.94); opacity: 0; transition: transform 0.45s var(--ease), opacity 0.35s var(--ease);
     }
     .modal-overlay.open .tadx-card { transform: none; opacity: 1; }
@@ -248,7 +248,7 @@
     .pin-dots { display: flex; justify-content: center; gap: 14px; margin: 14px 0 6px; }
     .pin-dots.shake { animation: shake 0.4s; }
     .pin-dots span { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-strong); transition: all 0.25s var(--ease); }
-    .pin-dots span.filled { background: var(--gold); border-color: var(--gold); transform: scale(1.15); box-shadow: 0 0 14px rgba(245, 185, 66, 0.6); }
+    .pin-dots span.filled { background: var(--gold); border-color: var(--gold); transform: scale(1.15); box-shadow: 0 0 14px rgba(255, 138, 147, 0.6); }
     .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
     .pin-btn {
       height: 56px; display: grid; place-items: center; font: inherit; font-size: 1.25rem; font-weight: 600; color: var(--text);
@@ -258,7 +258,7 @@
     .pin-btn:hover { border-color: var(--border-strong); background: rgba(255, 255, 255, 0.12); }
     .pin-btn:active { transform: scale(0.92); }
     .pin-btn.action-clear { color: #fca5a5; }
-    .pin-btn.action-ok { background: linear-gradient(135deg, #16a34a, #22c55e); border: none; color: #fff; }
+    .pin-btn.action-ok { background: linear-gradient(135deg, #b3101f, #ef3340); border: none; color: #fff; }
     .modal-cancel { margin-top: 14px; background: none; border: none; color: var(--muted); cursor: pointer; font: inherit; font-size: 0.82rem; padding: 8px 12px; border-radius: 10px; transition: color 0.2s; }
     .modal-cancel:hover { color: var(--text); }
     .processing { display: none; padding: 36px 0 20px; }
@@ -273,7 +273,7 @@
     .toasts { position: fixed; z-index: 2000; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; flex-direction: column; gap: 10px; width: calc(100% - 32px); max-width: 420px; pointer-events: none; }
     .toast {
       display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-radius: 14px; font-size: 0.88rem; font-weight: 500;
-      background: rgba(20, 27, 46, 0.95); border: 1px solid var(--border-strong); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: rgba(22, 12, 14, 0.95); border: 1px solid var(--border-strong); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7); animation: toastIn 0.45s var(--ease) both;
     }
     .toast.success svg { color: var(--success); } .toast.error svg { color: var(--danger); } .toast.warn svg { color: var(--gold); } .toast.info svg { color: var(--primary); }
@@ -281,7 +281,141 @@
     @keyframes toastIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: none; } }
     @keyframes toastOut { to { opacity: 0; transform: translateY(10px) scale(0.95); } }
 
-    .foot { text-align: center; font-size: 0.74rem; color: #566177; padding: 6px 0 0; }
+    .foot { text-align: center; font-size: 0.74rem; color: #6f6566; padding: 6px 0 0; }
+
+    [hidden] { display: none !important; }
+    body.no-scroll { overflow: hidden; }
+
+    /* ---------- Hamburger ---------- */
+    .burger {
+      margin-left: auto; flex-shrink: 0; width: 46px; height: 46px; border-radius: 14px;
+      border: 1px solid var(--border); background: var(--surface-2); cursor: pointer;
+      display: grid; place-content: center; gap: 5px; -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.25s, transform 0.25s var(--ease);
+    }
+    .burger:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+    .burger span { display: block; width: 20px; height: 2px; border-radius: 2px; background: var(--text); transition: transform 0.35s var(--ease), opacity 0.25s, width 0.3s var(--ease); }
+    .burger span:nth-child(2) { width: 14px; margin-left: auto; }
+    .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; transform: translateX(8px); }
+    .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ---------- Drawer ---------- */
+    .drawer-overlay {
+      position: fixed; inset: 0; z-index: 1500; background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      opacity: 0; visibility: hidden; transition: opacity 0.35s var(--ease), visibility 0.35s;
+    }
+    .drawer-overlay.open { opacity: 1; visibility: visible; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 1600; width: min(340px, 86vw);
+      padding: max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
+      display: flex; flex-direction: column; gap: 18px; outline: none;
+      background: linear-gradient(170deg, #151012, #070505);
+      border-left: 1px solid var(--border-strong); box-shadow: -30px 0 80px -20px rgba(0, 0, 0, 0.8);
+      transform: translateX(104%); visibility: hidden; transition: transform 0.5s var(--ease), visibility 0.5s;
+    }
+    .drawer.open { transform: none; visibility: visible; }
+    .drawer-head { display: flex; align-items: center; gap: 12px; }
+    .drawer-head .logo { width: 40px; height: 40px; border-radius: 12px; font-size: 1.15rem; }
+    .drawer-head b { flex: 1; font-size: 1.05rem; }
+    .icon-btn { width: 38px; height: 38px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); display: grid; place-items: center; cursor: pointer; transition: border-color 0.25s, transform 0.25s var(--ease); }
+    .icon-btn:hover { border-color: var(--border-strong); transform: rotate(90deg); }
+    .drawer-nav { display: flex; flex-direction: column; gap: 6px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 14px;
+      border: 1px solid transparent; border-radius: 14px; background: none; color: var(--muted);
+      font: inherit; font-weight: 600; cursor: pointer; text-align: left;
+      transition: background 0.3s var(--ease), color 0.3s, border-color 0.3s;
+    }
+    .nav-item span { flex: 1; }
+    .nav-item:hover { background: var(--surface-2); color: var(--text); }
+    .nav-item.active { background: linear-gradient(135deg, rgba(225, 29, 46, 0.18), rgba(143, 15, 28, 0.14)); border-color: rgba(225, 29, 46, 0.5); color: var(--text); }
+    .nav-item.active svg { color: var(--primary); }
+    .drawer.open .nav-item { animation: navIn 0.5s var(--ease) both; animation-delay: calc(var(--i, 0) * 55ms + 120ms); }
+    @keyframes navIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+    .nav-count { font-style: normal; font-size: 0.72rem; font-weight: 700; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; display: grid; place-items: center; background: var(--success); color: #fff; }
+    .drawer-foot { margin-top: auto; font-size: 0.74rem; color: #6f6566; text-align: center; }
+
+    /* ---------- Stránky ---------- */
+    .page { display: flex; flex-direction: column; gap: 14px; }
+    .page.in { animation: pop 0.5s var(--ease) both; }
+    .page.out { opacity: 0; transform: translateY(8px); transition: opacity 0.22s, transform 0.22s; }
+    .stack { display: flex; flex-direction: column; gap: 14px; }
+    .page-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .ph-ico { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; background: linear-gradient(135deg, var(--primary), var(--primary-2)); font-size: 1.2rem; flex-shrink: 0; }
+    .page-head h2 { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.01em; }
+    .page-head p { font-size: 0.8rem; color: var(--muted); margin-top: 1px; }
+    .hint { font-size: 0.76rem; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+
+    .empty { text-align: center; padding: 22px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .empty .e-ico { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; background: var(--surface-2); color: var(--muted); font-size: 1.5rem; }
+    .empty h3 { font-size: 1rem; }
+    .empty p { font-size: 0.84rem; color: var(--muted); max-width: 32ch; line-height: 1.5; }
+
+    .tickets-list { display: flex; flex-direction: column; gap: 8px; }
+    .t-item {
+      display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px;
+      border: 1px solid var(--border); border-radius: 14px; background: rgba(0, 0, 0, 0.2);
+      color: var(--text); font: inherit; text-align: left; cursor: pointer;
+      transition: border-color 0.3s var(--ease), transform 0.3s var(--ease), background 0.3s;
+      animation: itemIn 0.5s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 50ms);
+    }
+    .t-item:hover { border-color: var(--primary); transform: translateY(-2px); background: rgba(225, 29, 46, 0.08); }
+    @keyframes itemIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .t-ico { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: linear-gradient(135deg, var(--primary), var(--primary-2)); flex-shrink: 0; }
+    .t-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .t-main b { font-size: 0.92rem; font-weight: 600; }
+    .t-main small { font-size: 0.76rem; color: var(--muted); }
+
+    #d-qrcode { background: #fff; padding: 12px; border-radius: 16px; box-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.7); line-height: 0; }
+    .ticket.expired { border-color: var(--border-strong); }
+    .ticket.expired .ticket-head { background: var(--surface-2); }
+    .ticket.expired .ticket-head h3 { color: var(--muted); }
+    .ticket.expired .check { background: var(--muted); }
+    .ticket.expired #d-qrcode { opacity: 0.5; }
+
+    .profile { display: flex; align-items: center; gap: 14px; }
+    .profile .avatar { width: 64px; height: 64px; border-radius: 20px; font-size: 1.6rem; }
+    .profile h3 { font-size: 1.05rem; word-break: break-word; }
+    .profile p { font-size: 0.82rem; color: var(--muted); word-break: break-all; }
+    .chip-ok { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: rgba(255, 59, 74, 0.15); color: var(--success); margin-top: 6px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 18px; }
+    .stat { padding: 12px 6px; border-radius: 14px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border); text-align: center; }
+    .stat b { display: block; font-size: 1.1rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .stat small { font-size: 0.66rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-row .btn { flex: 1; min-width: 140px; }
+    .btn-danger { background: rgba(255, 92, 92, 0.12); border: 1px solid rgba(255, 92, 92, 0.4); color: #fca5a5; box-shadow: none; }
+    .btn-danger.confirm { background: var(--danger); color: #fff; animation: shake 0.4s; }
+
+    /* ---------- Chat ---------- */
+    .chat-card { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .chat-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(255, 138, 147, 0.12), rgba(143, 15, 28, 0.1)); }
+    .bot-ava { position: relative; width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(135deg, var(--gold), var(--primary)); color: #fff; font-size: 1.25rem; }
+    .bot-ava::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2px solid #0b0b0b; }
+    .chat-head b { display: block; font-size: 0.98rem; }
+    .chat-head small { font-size: 0.74rem; color: var(--muted); }
+    .chat-log { height: min(56vh, 440px); overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .msg { display: flex; animation: msgIn 0.4s var(--ease) backwards; }
+    .msg.user { justify-content: flex-end; }
+    .bubble { max-width: 86%; padding: 10px 14px; border-radius: 16px; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+    .msg.bot .bubble { background: var(--surface-2); border: 1px solid var(--border); border-bottom-left-radius: 5px; }
+    .msg.user .bubble { background: linear-gradient(135deg, var(--primary), var(--primary-2)); border-bottom-right-radius: 5px; }
+    .bubble.typing { display: flex; gap: 5px; align-items: center; padding: 14px; }
+    .bubble.typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite; }
+    .bubble.typing span:nth-child(2) { animation-delay: 0.18s; }
+    .bubble.typing span:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes blink { 0%, 60%, 100% { opacity: 0.25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-4px); } }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+    .chips { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 12px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip { flex-shrink: 0; white-space: nowrap; padding: 8px 13px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: border-color 0.25s, background 0.25s, transform 0.25s var(--ease); }
+    .chip:hover { border-color: var(--primary); background: rgba(225, 29, 46, 0.12); transform: translateY(-1px); }
+    .chat-form { display: flex; gap: 8px; padding: 12px 16px 16px; border-top: 1px solid var(--border); }
+    .chat-form input { flex: 1; min-width: 0; padding: 13px 14px; border-radius: 13px; border: 1px solid var(--border); background: rgba(0, 0, 0, 0.25); color: var(--text); font: inherit; font-size: 1rem; outline: none; transition: border-color 0.25s, box-shadow 0.25s; }
+    .chat-form input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(225, 29, 46, 0.18); }
+    .chat-form .btn { padding: 0 16px; border-radius: 13px; }
 
     :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
@@ -335,6 +469,9 @@
         <h1>E-Shop Fiktivní PID</h1>
         <p>Prague Community – Kupónový portál</p>
       </div>
+      <button class="burger" id="burger" type="button" aria-label="Otevřít menu" aria-expanded="false" aria-controls="drawer">
+        <span></span><span></span><span></span>
+      </button>
     </header>
 
     <!-- Firebase Auth sekce -->
@@ -348,6 +485,9 @@
         <i data-lucide="log-in"></i><span>Přihlásit Google</span>
       </button>
     </section>
+
+    <!-- ===== STRÁNKA: OBCHOD ===== -->
+    <div class="page" id="page-shop">
 
     <!-- Formulář objednávky -->
     <section class="card view reveal" style="--i:2" id="shop-form">
@@ -426,8 +566,133 @@
       </div>
     </section>
 
+    </div>
+
+    <!-- ===== STRÁNKA: MOJE JÍZDENKY ===== -->
+    <div class="page" id="page-tickets" hidden>
+      <section class="card" id="tickets-main">
+        <div class="page-head">
+          <div class="ph-ico"><i data-lucide="ticket"></i></div>
+          <div><h2>Moje jízdenky</h2><p id="tickets-sub"></p></div>
+        </div>
+        <div class="tickets-list" id="tickets-list"></div>
+        <p class="hint">Jízdenky se ukládají k tvému účtu pouze v tomto prohlížeči.</p>
+      </section>
+
+      <section class="card ticket view" id="ticket-detail" hidden>
+        <div class="ticket-head">
+          <div class="check"><i data-lucide="ticket"></i></div>
+          <div><h3 id="d-title">PŘEDPLATNÉ AKTIVNÍ</h3><p id="d-sub"></p></div>
+        </div>
+        <div class="ticket-body">
+          <div class="qr-wrap"><div id="d-qrcode"></div></div>
+          <div class="ticket-id">
+            <code id="d-id"></code>
+            <button class="btn btn-ghost btn-sm" id="d-copy" type="button" aria-label="Zkopírovat ID jízdenky"><i data-lucide="copy"></i></button>
+          </div>
+          <div class="ticket-cut" style="margin-top:18px"></div>
+          <div class="ticket-info">
+            <div><small>Discord</small><b id="d-discord"></b></div>
+            <div><small>Roblox</small><b id="d-roblox"></b></div>
+            <div class="wide"><small>Typ předplatného</small><b id="d-type"></b></div>
+            <div class="wide"><small>Kategorie</small><b id="d-category"></b></div>
+            <div><small>Platí od</small><b id="d-from"></b></div>
+            <div><small>Platí do</small><b id="d-until"></b></div>
+          </div>
+        </div>
+        <div class="ticket-foot">
+          <button class="btn btn-ghost btn-block" id="d-back" type="button"><i data-lucide="arrow-left"></i>Zpět na jízdenky</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== STRÁNKA: ÚČET ===== -->
+    <div class="page" id="page-account" hidden>
+      <section class="card" id="acc-guest">
+        <div class="empty">
+          <div class="e-ico"><i data-lucide="lock"></i></div>
+          <h3>Nejste přihlášeni</h3>
+          <p>Přihlaste se přes Google a uvidíte svůj účet, jízdenky a uložené přezdívky.</p>
+          <button class="btn btn-sm" id="acc-login" type="button"><i data-lucide="log-in"></i>Přihlásit přes Google</button>
+        </div>
+      </section>
+
+      <div class="stack" id="acc-user" hidden>
+        <section class="card">
+          <div class="profile">
+            <div class="avatar on" id="acc-avatar"></div>
+            <div>
+              <h3 id="acc-name"></h3>
+              <p id="acc-email"></p>
+              <span class="chip-ok"><i data-lucide="shield-check"></i>Přihlášen přes Google</span>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat"><b id="acc-stat-total">0</b><small>Jízdenek</small></div>
+            <div class="stat"><b id="acc-stat-active">0</b><small>Aktivních</small></div>
+            <div class="stat"><b id="acc-stat-spent">0 Kč</b><small>Utraceno</small></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title">Uložené přezdívky</div>
+          <div class="field">
+            <i data-lucide="message-circle"></i>
+            <input type="text" id="acc-discord" placeholder="Discord uživatelské jméno" autocomplete="off" maxlength="40" aria-label="Discord uživatelské jméno">
+          </div>
+          <div class="field">
+            <i data-lucide="gamepad-2"></i>
+            <input type="text" id="acc-roblox" placeholder="Roblox uživatelské jméno" autocomplete="off" maxlength="40" aria-label="Roblox uživatelské jméno">
+          </div>
+          <button class="btn btn-block" id="acc-save" type="button"><i data-lucide="save"></i>Uložit přezdívky</button>
+          <p class="hint">Uložené přezdívky se předvyplní při nákupu.</p>
+        </section>
+
+        <section class="card">
+          <div class="btn-row">
+            <button class="btn btn-ghost" id="acc-logout" type="button"><i data-lucide="log-out"></i>Odhlásit</button>
+            <button class="btn btn-danger" id="acc-wipe" type="button"><i data-lucide="trash-2"></i><span>Smazat místní data</span></button>
+          </div>
+          <p class="hint">Smazání odstraní uložené přezdívky a jízdenky z tohoto prohlížeče. Nic to nemění na Discordu.</p>
+        </section>
+      </div>
+    </div>
+
+    <!-- ===== STRÁNKA: PODPORA ===== -->
+    <div class="page" id="page-support" hidden>
+      <section class="card chat-card">
+        <div class="chat-head">
+          <div class="bot-ava"><i data-lucide="bot"></i></div>
+          <div><b>TadxSupport</b><small>Automatický asistent · online</small></div>
+        </div>
+        <div class="chat-log" id="chat-log" aria-live="polite"></div>
+        <div class="chips" id="chat-chips"></div>
+        <form class="chat-form" id="chat-form" autocomplete="off">
+          <input type="text" id="chat-input" maxlength="300" placeholder="Napiš zprávu…" aria-label="Zpráva pro TadxSupport">
+          <button class="btn btn-sm" id="chat-send" type="submit" aria-label="Odeslat"><i data-lucide="send"></i></button>
+        </form>
+      </section>
+    </div>
+
     <p class="foot reveal" style="--i:3">Fiktivní PID • Prague Community E-Shop</p>
   </main>
+
+  <!-- Navigační menu (hamburger) -->
+  <div class="drawer-overlay" id="drawer-overlay" aria-hidden="true"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Hlavní menu" tabindex="-1">
+    <div class="drawer-head">
+      <div class="logo"><i data-lucide="train-front"></i></div>
+      <b>Menu</b>
+      <button class="icon-btn" id="drawer-close" type="button" aria-label="Zavřít menu"><i data-lucide="x"></i></button>
+    </div>
+    <nav class="drawer-nav">
+      <button class="nav-item active" type="button" data-nav="shop" style="--i:0"><i data-lucide="shopping-bag"></i><span>Obchod</span></button>
+      <button class="nav-item" type="button" data-nav="tickets" style="--i:1"><i data-lucide="ticket"></i><span>Moje jízdenky</span><em class="nav-count" id="nav-ticket-count" hidden></em></button>
+      <button class="nav-item" type="button" data-nav="account" style="--i:2"><i data-lucide="user-round"></i><span>Účet</span></button>
+      <button class="nav-item" type="button" data-nav="support" style="--i:3"><i data-lucide="life-buoy"></i><span>Podpora</span></button>
+    </nav>
+    <div class="drawer-foot">Fiktivní PID • Prague Community</div>
+  </aside>
 
   <!-- Tadx Pay Brána (Modal) -->
   <div class="modal-overlay" id="tadx-modal" aria-hidden="true">
@@ -694,6 +959,7 @@
         }
         icons();
         updatePayButton();
+        refreshUserBits();
       }
 
       let firstAuthEvent = true;
@@ -868,10 +1134,15 @@
         $("t-from").textContent = fmtDate(now);
         $("t-until").textContent = fmtDate(until);
 
+        saveTicket({
+          id: ticketId, discord, roblox, type: durationText, category: categoryText,
+          method: payMethod, price, from: now.toISOString(), until: until.toISOString()
+        });
+
         const qrContainer = $("qrcode");
         qrContainer.innerHTML = "";
         if (window.QRCode) {
-          new QRCode(qrContainer, { text: ticketId, width: 140, height: 140, colorDark: "#0b1020", colorLight: "#ffffff" });
+          new QRCode(qrContainer, { text: ticketId, width: 140, height: 140, colorDark: "#0a0a0a", colorLight: "#ffffff" });
         } else {
           qrContainer.textContent = ticketId;
         }
@@ -933,6 +1204,390 @@
       $("btn-new").addEventListener("click", () => {
         swapView($("result-box"), $("shop-form"));
         recalculatePrice();
+      });
+
+      /* ---------- Navigace (hamburger) ---------- */
+      const pages = { shop: $("page-shop"), tickets: $("page-tickets"), account: $("page-account"), support: $("page-support") };
+      const burger = $("burger");
+      const drawer = $("drawer");
+      const overlay = $("drawer-overlay");
+      let currentPage = "shop";
+      let navTimer = null;
+      let drawerFocus = null;
+
+      function openDrawer() {
+        drawerFocus = document.activeElement;
+        drawer.classList.add("open");
+        overlay.classList.add("open");
+        burger.classList.add("open");
+        burger.setAttribute("aria-expanded", "true");
+        burger.setAttribute("aria-label", "Zavřít menu");
+        drawer.setAttribute("aria-hidden", "false");
+        document.body.classList.add("no-scroll");
+        setTimeout(() => drawer.focus(), 60);
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove("open");
+        overlay.classList.remove("open");
+        burger.classList.remove("open");
+        burger.setAttribute("aria-expanded", "false");
+        burger.setAttribute("aria-label", "Otevřít menu");
+        drawer.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("no-scroll");
+        if (drawerFocus && drawerFocus.focus) drawerFocus.focus();
+      }
+
+      function updateNav() {
+        drawer.querySelectorAll("[data-nav]").forEach((b) => {
+          const on = b.dataset.nav === currentPage;
+          b.classList.toggle("active", on);
+          if (on) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+        });
+      }
+
+      function showPage(name) {
+        if (!pages[name]) return;
+        clearTimeout(navTimer);
+        const next = pages[name];
+        Object.keys(pages).forEach((k) => {
+          if (k !== name && k !== currentPage) { pages[k].hidden = true; pages[k].classList.remove("out", "in"); }
+        });
+        const cur = pages[currentPage];
+        currentPage = name;
+        updateNav();
+        if (cur === next) { onEnter(name); return; }
+        cur.classList.add("out");
+        navTimer = setTimeout(() => {
+          cur.hidden = true;
+          cur.classList.remove("out", "in");
+          next.hidden = false;
+          next.classList.remove("in"); void next.offsetWidth; next.classList.add("in");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          onEnter(name);
+        }, 220);
+      }
+
+      function onEnter(name) {
+        if (name === "tickets") renderTickets();
+        else if (name === "account") renderAccount();
+        else if (name === "support" && !chat.greeted) { chat.greeted = true; addMsg("bot", GREETING); }
+        icons();
+      }
+
+      burger.addEventListener("click", () => (drawer.classList.contains("open") ? closeDrawer() : openDrawer()));
+      overlay.addEventListener("click", closeDrawer);
+      $("drawer-close").addEventListener("click", closeDrawer);
+      drawer.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-nav]");
+        if (!b) return;
+        closeDrawer();
+        showPage(b.dataset.nav);
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && drawer.classList.contains("open")) closeDrawer();
+      });
+
+      /* ---------- Moje jízdenky ---------- */
+      const TICKETS_MAX = 50;
+      const ticketKey = () => (window.currentUser ? "pid.tickets.v1." + window.currentUser.uid : null);
+      const isActive = (t) => new Date(t.until).getTime() > Date.now();
+
+      function loadTickets() {
+        const k = ticketKey();
+        if (!k) return [];
+        try {
+          const a = JSON.parse(store.get(k) || "[]");
+          return Array.isArray(a) ? a : [];
+        } catch (e) { return []; }
+      }
+
+      function saveTicket(t) {
+        const k = ticketKey();
+        if (!k) return;
+        const list = loadTickets();
+        list.unshift(t);
+        store.set(k, JSON.stringify(list.slice(0, TICKETS_MAX)));
+        updateNavCount();
+      }
+
+      function updateNavCount() {
+        const n = loadTickets().filter(isActive).length;
+        const el = $("nav-ticket-count");
+        el.textContent = n ? String(n) : "";
+        el.hidden = !n;
+      }
+
+      function refreshUserBits() {
+        updateNavCount();
+        if (currentPage === "tickets") renderTickets();
+        if (currentPage === "account") renderAccount();
+      }
+
+      function emptyState(icon, title, text, btnText, onClick) {
+        const d = document.createElement("div");
+        d.className = "empty";
+        d.innerHTML = `<div class="e-ico"><i data-lucide="${icon}"></i></div><h3></h3><p></p><button class="btn btn-sm" type="button"></button>`;
+        d.querySelector("h3").textContent = title;
+        d.querySelector("p").textContent = text;
+        const b = d.querySelector("button");
+        b.textContent = btnText;
+        b.addEventListener("click", onClick);
+        return d;
+      }
+
+      function renderTickets() {
+        const list = $("tickets-list");
+        const sub = $("tickets-sub");
+        $("ticket-detail").hidden = true;
+        $("tickets-main").hidden = false;
+        list.innerHTML = "";
+
+        if (!window.currentUser) {
+          sub.textContent = "Pro zobrazení se přihlaste.";
+          list.appendChild(emptyState("lock", "Nejste přihlášeni", "Jízdenky se ukládají k vašemu Google účtu v tomto prohlížeči.", "Přihlásit se", () => $("btn-login").click()));
+          icons();
+          return;
+        }
+
+        const items = loadTickets();
+        if (!items.length) {
+          sub.textContent = "Zatím tu nic není.";
+          list.appendChild(emptyState("ticket", "Zatím žádné jízdenky", "Po nákupu se tu objeví tvoje jízdenky i s QR kódem.", "Koupit jízdenku", () => showPage("shop")));
+          icons();
+          return;
+        }
+
+        sub.textContent = `${items.length} celkem · ${items.filter(isActive).length} aktivních`;
+        items.forEach((t, i) => {
+          const act = isActive(t);
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "t-item";
+          b.style.setProperty("--i", i);
+          b.innerHTML = '<span class="t-ico"><i data-lucide="ticket"></i></span><span class="t-main"><b></b><small></small></span><span class="badge"></span>';
+          b.querySelector("b").textContent = t.type || "Jízdenka";
+          b.querySelector("small").textContent = `${t.id} · do ${fmtDate(new Date(t.until))}`;
+          const bd = b.querySelector(".badge");
+          bd.textContent = act ? "Aktivní" : "Vypršela";
+          if (!act) bd.classList.add("neutral");
+          b.addEventListener("click", () => openTicket(t.id));
+          list.appendChild(b);
+        });
+        icons();
+      }
+
+      function openTicket(id) {
+        const t = loadTickets().find((x) => x.id === id);
+        if (!t) return;
+        const act = isActive(t);
+        const d = $("ticket-detail");
+        d.classList.toggle("expired", !act);
+        $("d-title").textContent = act ? "PŘEDPLATNÉ AKTIVNÍ" : "PŘEDPLATNÉ VYPRŠELO";
+        $("d-sub").textContent = act ? "Tvoje jízdenka je platná" : "Platnost jízdenky skončila";
+        $("d-id").textContent = t.id;
+        $("d-discord").textContent = t.discord || "–";
+        $("d-roblox").textContent = t.roblox || "–";
+        $("d-type").textContent = t.type || "–";
+        $("d-category").textContent = t.category || "–";
+        $("d-from").textContent = fmtDate(new Date(t.from));
+        $("d-until").textContent = fmtDate(new Date(t.until));
+
+        const qr = $("d-qrcode");
+        qr.innerHTML = "";
+        if (window.QRCode) new QRCode(qr, { text: String(t.id), width: 140, height: 140, colorDark: "#0a0a0a", colorLight: "#ffffff" });
+        else qr.textContent = t.id;
+
+        $("tickets-main").hidden = true;
+        d.hidden = false;
+        d.classList.remove("in"); void d.offsetWidth; d.classList.add("in");
+        icons();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      $("d-back").addEventListener("click", () => { $("ticket-detail").hidden = true; $("tickets-main").hidden = false; });
+      $("d-copy").addEventListener("click", async () => {
+        try { await navigator.clipboard.writeText($("d-id").textContent); toast("ID jízdenky zkopírováno", "success", 2200); }
+        catch (e) { toast("Kopírování se nezdařilo", "error", 2200); }
+      });
+
+      /* ---------- Účet ---------- */
+      function renderAccount() {
+        const u = window.currentUser;
+        $("acc-guest").hidden = !!u;
+        $("acc-user").hidden = !u;
+        if (!u) return;
+
+        $("acc-name").textContent = u.displayName || "Uživatel";
+        $("acc-email").textContent = u.email || "";
+        const av = $("acc-avatar");
+        av.innerHTML = "";
+        if (u.photoURL) {
+          const img = document.createElement("img");
+          img.src = u.photoURL; img.alt = ""; img.referrerPolicy = "no-referrer";
+          img.onerror = () => { av.innerHTML = '<i data-lucide="user-round-check"></i>'; icons(); };
+          av.appendChild(img);
+        } else {
+          av.innerHTML = '<i data-lucide="user-round-check"></i>';
+        }
+
+        const items = loadTickets();
+        $("acc-stat-total").textContent = String(items.length);
+        $("acc-stat-active").textContent = String(items.filter(isActive).length);
+        $("acc-stat-spent").textContent = kc(items.reduce((s, t) => s + (Number(t.price) || 0), 0));
+        $("acc-discord").value = store.get("pid.discord");
+        $("acc-roblox").value = store.get("pid.roblox");
+        icons();
+      }
+
+      $("acc-login").addEventListener("click", () => $("btn-login").click());
+      $("acc-logout").addEventListener("click", () => $("btn-login").click());
+
+      $("acc-save").addEventListener("click", () => {
+        const d = $("acc-discord").value.trim().slice(0, 40);
+        const r = $("acc-roblox").value.trim().slice(0, 40);
+        store.set("pid.discord", d);
+        store.set("pid.roblox", r);
+        $("discord-nick").value = d;
+        $("roblox-nick").value = r;
+        toast("Přezdívky uloženy", "success", 2200);
+      });
+
+      let wipeTimer = null;
+      function resetWipe() {
+        const b = $("acc-wipe");
+        b.classList.remove("confirm");
+        b.innerHTML = '<i data-lucide="trash-2"></i><span>Smazat místní data</span>';
+        icons();
+      }
+      $("acc-wipe").addEventListener("click", () => {
+        const b = $("acc-wipe");
+        if (!b.classList.contains("confirm")) {
+          b.classList.add("confirm");
+          b.textContent = "Opravdu smazat? Klikni znovu";
+          wipeTimer = setTimeout(resetWipe, 4000);
+          return;
+        }
+        clearTimeout(wipeTimer);
+        resetWipe();
+        const k = ticketKey();
+        try {
+          if (k) localStorage.removeItem(k);
+          localStorage.removeItem("pid.discord");
+          localStorage.removeItem("pid.roblox");
+        } catch (e) { /* ignorováno */ }
+        $("discord-nick").value = "";
+        $("roblox-nick").value = "";
+        updateNavCount();
+        renderAccount();
+        toast("Místní data byla smazána", "success");
+      });
+
+      /* ---------- Podpora: TadxSupport (bez API klíče, odpovědi podle klíčových slov) ---------- */
+      const chat = { greeted: false, busy: false };
+      const GREETING = "Ahoj! Jsem TadxSupport, automatický asistent e-shopu. Odpovídám na běžné otázky o nákupu, cenách, slevách a jízdenkách. Na co se chceš zeptat?";
+      const CONTACT = "Obrať se prosím na administrátory Prague Community na Discordu a uveď ID jízdenky.";
+      const FALLBACK = "Tomu úplně nerozumím. Zkus se zeptat na ceny, slevy, platbu, jízdenky nebo přihlášení. Jestli jde o něco jiného, " + CONTACT.charAt(0).toLowerCase() + CONTACT.slice(1);
+
+      const KB = [
+        { keys: ["kdo jsi", "co jsi", "jsi bot", "jsi ai", "jsi clovek", "jsi robot", "umela inteligence"],
+          reply: () => "Jsem TadxSupport, automatický asistent. Neběžím na žádném AI modelu, odpovídám podle předpřipravených odpovědí. Složitější věci řeší tým Prague Community." },
+        { keys: ["nedorazil", "neprisl", "neprislo", "potvrzeni", "webhook"],
+          reply: () => "Potvrzení se po zaplacení odesílá automaticky na Discord. Pokud nedorazilo, jízdenka je i tak uložená v sekci Moje jízdenky (pouze v tomto prohlížeči). " + CONTACT },
+        { keys: ["vratit", "vraceni", "storno", "refund", "penize zpet", "reklamac"],
+          reply: () => "Storno ani vrácení peněz neumím vyřídit sám. " + CONTACT },
+        { keys: ["clovek!", "admin", "moderator", "kontakt", "operator", "zamestnan", "pomoc!", "support"],
+          reply: () => "Jsem automatický asistent a nemohu předat konverzaci živému člověku. " + CONTACT },
+        { keys: ["ahoj", "cau!", "nazdar", "dobry den", "dobry vecer", "cus!", "hello", "hi!", "zdravim"],
+          reply: () => "Ahoj! S čím ti mohu pomoci? Zeptej se třeba na ceny, slevy nebo jak koupit jízdenku." },
+        { keys: ["dik", "dekuj", "thx", "thanks"],
+          reply: () => "Rádo se stalo! Kdyby cokoliv, jsem tu." },
+        { keys: ["jak koupit", "koupit", "kupit", "nakup", "objednav", "objednat", "postup", "jak to funguje"],
+          reply: () => "Nákup je jednoduchý:\n1) Přihlas se přes Google.\n2) Vyplň Discord a Roblox jméno.\n3) Vyber dobu platnosti a věkovou kategorii.\n4) Zvol způsob platby a potvrď ji PINem.\nJízdenku pak najdeš v menu v sekci Moje jízdenky." },
+        { keys: ["cena", "ceny", "cenik", "kolik stoji", "stoji", "kolik kc", "drah"],
+          reply: () => "Ceny kupónů (dospělý, plné jízdné):\n" + DURATIONS.map((d) => `• ${d.label} (${d.sub}): ${kc(d.price)}`).join("\n") + "\nSlevy se počítají z těchto cen." },
+        { keys: ["sleva", "slev", "dite", "deti", "student", "senior", "duchod", "zdarma", "zaci!", "zak!"],
+          reply: () => "Věkové kategorie:\n" + CATEGORIES.map((c) => `• ${c.label}: ${c.ratio === 0 ? "zdarma" : c.ratio === 1 ? "plná cena" : "sleva 50 %"}`).join("\n") },
+        { keys: ["platb", "zaplat", "tadx pay", "tadxpay", "pin!", "karta", "karty", "prevod", "banka", "bankovn"],
+          reply: () => "Platit můžeš přes Tadx Pay (virtuální karta, potvrzení 4místným PINem) nebo bankovním převodem. Platba je fiktivní a probíhá jen ve hře, žádné skutečné peníze se nestrhávají." },
+        { keys: ["prihlas", "odhlas", "google", "login", "firebase", "ucet"],
+          reply: () => {
+            const u = window.currentUser;
+            return u
+              ? `Jsi přihlášen jako ${u.email || "uživatel"}. Odhlásit se můžeš tlačítkem nahoře nebo v sekci Účet.`
+              : "Přihlásit se můžeš tlačítkem Přihlásit Google nahoře nebo v sekci Účet. Bez přihlášení nelze nakupovat.";
+          } },
+        { keys: ["nick", "prezdivk", "discord", "roblox", "uzivatelsk"],
+          reply: () => "Zadej přesně své Discord a Roblox uživatelské jméno, jsou součástí objednávky. V sekci Účet si je můžeš uložit, aby se při nákupu předvyplnily." },
+        { keys: ["jizdenk", "kupon", "qr", "platnost", "vyprs", "kde najdu", "aktivni", "predplatn"],
+          reply: () => {
+            const base = "Jízdenky najdeš v menu v sekci Moje jízdenky. Platnost začíná okamžikem nákupu.";
+            if (!window.currentUser) return base + " Po přihlášení tam uvidíš všechny své jízdenky.";
+            const items = loadTickets();
+            return base + ` Právě máš ${items.length} jízdenek, z toho ${items.filter(isActive).length} aktivních.`;
+          } }
+      ];
+
+      const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+      const mkKey = (k) => new RegExp("\\b" + k.replace(/!$/, "") + (k.endsWith("!") ? "\\b" : ""));
+      KB.forEach((e) => { e.res = e.keys.map(mkKey); });
+
+      function answerFor(text) {
+        const t = norm(text);
+        let best = null, score = 0;
+        KB.forEach((e) => {
+          const s = e.res.reduce((n, r) => n + (r.test(t) ? 1 : 0), 0);
+          if (s > score) { score = s; best = e; }
+        });
+        return best ? best.reply() : FALLBACK;
+      }
+
+      function scrollChat() {
+        const l = $("chat-log");
+        l.scrollTo({ top: l.scrollHeight, behavior: "smooth" });
+      }
+
+      function addMsg(role, text) {
+        const row = document.createElement("div");
+        row.className = "msg " + role;
+        const b = document.createElement("div");
+        b.className = "bubble";
+        b.textContent = text;
+        row.appendChild(b);
+        $("chat-log").appendChild(row);
+        scrollChat();
+      }
+
+      async function sendChat(raw) {
+        const text = String(raw || "").trim().slice(0, 300);
+        if (!text || chat.busy) return;
+        chat.busy = true;
+        $("chat-send").disabled = true;
+        addMsg("user", text);
+        $("chat-input").value = "";
+
+        const typing = document.createElement("div");
+        typing.className = "msg bot";
+        typing.innerHTML = '<div class="bubble typing"><span></span><span></span><span></span></div>';
+        $("chat-log").appendChild(typing);
+        scrollChat();
+
+        await sleep(550 + Math.min(900, text.length * 10));
+        typing.remove();
+        addMsg("bot", answerFor(text));
+        chat.busy = false;
+        $("chat-send").disabled = false;
+      }
+
+      $("chat-form").addEventListener("submit", (e) => { e.preventDefault(); sendChat($("chat-input").value); });
+
+      ["Jak koupit jízdenku?", "Kolik to stojí?", "Jaké jsou slevy?", "Kde najdu jízdenky?", "Potvrzení nedorazilo"].forEach((c) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "chip";
+        b.textContent = c;
+        b.addEventListener("click", () => sendChat(c));
+        $("chat-chips").appendChild(b);
       });
 
       /* ---------- Inicializace ---------- */
