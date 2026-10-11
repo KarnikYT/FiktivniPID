@@ -1,304 +1,351 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prague Community | Domovská Stránka</title>
-  <style>
-    :root {
-      --bg-dark: #0f172a;
-      --card-bg: #1e293b;
-      --accent-blue: #2563eb;
-      --accent-green: #10b981;
-      --accent-red: #ef4444;
-      --accent-gray: #64748b;
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --border-color: #334155;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prague Community | Domovská Stránka</title>
+<meta name="theme-color" content="#060a18">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060a18; --bg2:#0b1226; --card:rgba(16,24,48,.62); --line:rgba(148,163,184,.16);
+  --ink:#eef2ff; --sub:#8b9bc0; --red:#e8112d; --blue:#2f6bff; --cyan:#38d5ff;
+  --green:#19d38a; --amber:#ffb627; --discord:#5865F2;
+  --display:'Bricolage Grotesque',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--display);min-height:100vh;overflow-x:hidden;line-height:1.5}
+::selection{background:var(--red);color:#fff}
 
-    * {
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
+/* ---------- loader ---------- */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:100;display:grid;place-items:center;transition:opacity .7s,visibility .7s}
+#loader.done{opacity:0;visibility:hidden}
+.ld{width:min(260px,60vw);text-align:center;font-family:var(--mono);font-size:.8rem;color:var(--sub)}
+.ld-road{height:3px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:14px}
+.ld-road i{display:block;height:100%;width:40%;background:linear-gradient(90deg,transparent,var(--red),var(--amber));animation:ld 1s linear infinite}
+@keyframes ld{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
 
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
+/* ---------- background ---------- */
+.bg{position:fixed;inset:0;z-index:-2;overflow:hidden}
+.bg::before{content:"";position:absolute;inset:-20%;background:
+  radial-gradient(40% 40% at 20% 20%,rgba(47,107,255,.28),transparent 70%),
+  radial-gradient(35% 35% at 85% 15%,rgba(232,17,45,.22),transparent 70%),
+  radial-gradient(45% 45% at 60% 90%,rgba(56,213,255,.14),transparent 70%);
+  animation:aurora 22s ease-in-out infinite alternate}
+@keyframes aurora{to{transform:translate3d(4%,6%,0) rotate(8deg) scale(1.1)}}
+.bg::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(70% 60% at 50% 30%,#000,transparent);opacity:.5}
+#glow{position:fixed;width:520px;height:520px;border-radius:50%;pointer-events:none;z-index:-1;left:0;top:0;
+  background:radial-gradient(circle,rgba(56,213,255,.13),transparent 65%);transform:translate(-50%,-50%);transition:opacity .3s}
+.stars{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.stars span{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.0;animation:tw 4s infinite}
+@keyframes tw{50%{opacity:.7}}
 
-    /* Container */
-    .container {
-      width: 100%;
-      max-width: 900px;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+/* ---------- nav ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;
+  padding:calc(12px + env(safe-area-inset-top,0px)) clamp(16px,4vw,48px) 12px;backdrop-filter:blur(14px);
+  background:linear-gradient(var(--bg),transparent);transition:transform .4s}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;text-decoration:none;color:var(--ink)}
+.logo b{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--red);font-family:var(--mono);font-size:.8rem;
+  box-shadow:0 0 0 0 rgba(232,17,45,.6);animation:pulse 2.4s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 12px rgba(232,17,45,0)}100%{box-shadow:0 0 0 0 rgba(232,17,45,0)}}
+.navlinks{display:flex;gap:6px}
+.navlinks a{color:var(--sub);text-decoration:none;font-size:.9rem;padding:8px 14px;border-radius:99px;transition:.25s}
+.navlinks a:hover{color:var(--ink);background:var(--line)}
+@media(max-width:640px){.navlinks{display:none}}
 
-    /* Hero Sekce */
-    .hero {
-      text-align: center;
-      padding: 40px 20px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      margin-top: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
+/* ---------- hero ---------- */
+.wrap{width:100%;max-width:1160px;margin:0 auto;padding:0 clamp(16px,4vw,32px)}
+.hero{min-height:100svh;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:20px;padding-top:90px}
+.chip{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.75rem;color:var(--cyan);
+  border:1px solid rgba(56,213,255,.3);padding:6px 12px;border-radius:99px;background:rgba(56,213,255,.07)}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.2}}
+h1{font-size:clamp(2.8rem,8vw,6rem);line-height:.95;font-weight:800;letter-spacing:-.045em;margin:20px 0}
+h1 .l{display:inline-block;opacity:0;transform:translateY(60%) rotateX(-80deg);animation:up .8s cubic-bezier(.2,.9,.3,1.2) forwards}
+@keyframes up{to{opacity:1;transform:none}}
+h1 em{font-style:normal;background:linear-gradient(100deg,var(--red),var(--amber),var(--red));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
+@keyframes shine{to{background-position:-200% 0}}
+.lead{color:var(--sub);font-size:clamp(1rem,2.2vw,1.2rem);max-width:30em}
+.typed{font-family:var(--mono);color:var(--amber);font-size:.95rem;margin-top:14px;min-height:1.5em}
+.typed::after{content:"▍";animation:blink 1s infinite}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;padding:13px 20px;border-radius:12px;font-weight:600;
+  color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.12);transition:transform .25s,box-shadow .25s;will-change:transform}
+.btn::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .6s}
+.btn:hover::after{left:140%}
+.btn:hover{transform:translateY(-3px) scale(1.03)}
+.btn-discord{background:var(--discord);box-shadow:0 8px 26px -8px var(--discord)}
+.btn-eshop{background:#0f9e69;box-shadow:0 8px 26px -8px var(--green)}
+.btn-roblox{background:var(--red);box-shadow:0 8px 26px -8px var(--red)}
+.btn-privacy{background:#35405c}
 
-    .hero h1 {
-      margin: 0 0 10px 0;
-      font-size: 2.2rem;
-      color: var(--text-main);
-    }
+#bus3d{position:relative;height:min(68vh,560px);cursor:grab;touch-action:pan-y}
+#bus3d:active{cursor:grabbing}
+#bus3d canvas{display:block;width:100%!important;height:100%!important}
+#bus3d .hint{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.7rem;color:var(--sub);pointer-events:none;white-space:nowrap;animation:blink 3s infinite}
+#bus3d.nowebgl::before{content:"🚌";font-size:8rem;display:grid;place-items:center;height:100%;animation:drive 3s ease-in-out infinite alternate}
+@keyframes drive{from{transform:translateX(-30px)}to{transform:translateX(30px)}}
+@media(max-width:860px){.hero{grid-template-columns:1fr;padding-top:100px}#bus3d{height:340px;order:-1}}
 
-    .hero p {
-      margin: 0 0 25px 0;
-      color: var(--text-sub);
-      font-size: 1.1rem;
-    }
+/* ---------- ticker ---------- */
+.ticker{overflow:hidden;border-block:1px solid var(--line);background:rgba(11,18,38,.6);padding:14px 0;font-family:var(--mono);font-size:.85rem;color:var(--sub);white-space:nowrap}
+.ticker div{display:inline-flex;gap:46px;animation:mq 32s linear infinite;padding-left:46px}
+.ticker:hover div{animation-play-state:paused}
+.ticker b{color:var(--ink);background:var(--blue);padding:2px 8px;border-radius:5px;margin-right:8px}
+.ticker b.r{background:var(--red)}
+@keyframes mq{to{transform:translateX(-50%)}}
 
-    /* Tlačítka s odkazy */
-    .nav-buttons {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+/* ---------- sections ---------- */
+section{padding:clamp(60px,10vw,110px) 0}
+.eyebrow{font-family:var(--mono);font-size:.78rem;color:var(--red);letter-spacing:.14em;text-transform:uppercase}
+h2{font-size:clamp(1.9rem,4.5vw,3rem);letter-spacing:-.03em;line-height:1.05;margin:10px 0 34px}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
+.reveal.in{opacity:1;transform:none}
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-weight: 600;
-      text-decoration: none;
-      color: white;
-      transition: transform 0.2s, opacity 0.2s;
-    }
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;backdrop-filter:blur(12px);padding:28px;transform-style:preserve-3d;
+  transition:transform .15s,border-color .3s,box-shadow .3s;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(56,213,255,.14),transparent 60%);opacity:0;transition:opacity .3s}
+.card:hover{border-color:rgba(56,213,255,.4);box-shadow:0 20px 60px -20px rgba(47,107,255,.5)}
+.card:hover::before{opacity:1}
+.num{font-size:clamp(2.6rem,7vw,4.6rem);font-weight:800;letter-spacing:-.04em;line-height:1}
+.num.on{color:var(--green);text-shadow:0 0 30px rgba(25,211,138,.5)}
+.num.tot{color:var(--cyan);text-shadow:0 0 30px rgba(56,213,255,.45)}
+.lbl{color:var(--sub);margin-top:8px;font-size:.95rem}
 
-    .btn:hover {
-      transform: translateY(-2px);
-      opacity: 0.9;
-    }
+/* departure board */
+.board{border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#050813;box-shadow:0 30px 80px -30px #000}
+.board-h{display:flex;justify-content:space-between;padding:14px 22px;background:var(--blue);font-family:var(--mono);font-size:.8rem;font-weight:700}
+.row{display:grid;grid-template-columns:60px 1fr auto;gap:14px;align-items:center;padding:16px 22px;border-top:1px solid var(--line);font-family:var(--mono);transition:background .25s,padding-left .25s}
+.row:hover{background:rgba(255,182,39,.07);padding-left:32px}
+.row .ln{background:var(--red);color:#fff;text-align:center;border-radius:6px;padding:3px 0;font-weight:700;font-size:.85rem}
+.row .nm{font-family:var(--display);font-size:1.25rem;font-weight:600}
+.row .rl{color:var(--amber);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
 
-    .btn-discord { background: #5865F2; }
-    .btn-eshop { background: var(--accent-green); }
-    .btn-roblox { background: var(--accent-red); }
-    .btn-privacy { background: var(--accent-gray); }
+/* rules timeline */
+.route{position:relative;padding-left:62px}
+.route svg{position:absolute;left:14px;top:10px;height:calc(100% - 20px);width:12px;overflow:visible}
+.route .base{stroke:var(--line);stroke-width:4}
+.route .prog{stroke:var(--red);stroke-width:4;stroke-linecap:round;filter:drop-shadow(0 0 6px var(--red))}
+.stop{position:relative;margin-bottom:18px}
+.stop::before{content:attr(data-n);position:absolute;left:-62px;top:20px;width:30px;height:30px;border-radius:50%;background:var(--bg);border:3px solid var(--sub);
+  display:grid;place-items:center;font-family:var(--mono);font-size:.75rem;font-weight:700;transition:.5s}
+.stop.in::before{border-color:var(--red);background:var(--red);box-shadow:0 0 0 6px rgba(232,17,45,.2)}
+.stop h3{font-size:1.15rem;margin-bottom:6px}
+.stop p{color:var(--sub)}
 
-    /* Statistiky Discordu */
-    .stats-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 25px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      text-align: center;
-    }
+.cta{text-align:center}
+.cta .card{padding:clamp(34px,7vw,70px);background:linear-gradient(135deg,rgba(47,107,255,.25),rgba(232,17,45,.2))}
 
-    .stat-box .number {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: var(--accent-blue);
-    }
-
-    .stat-box .number.online {
-      color: var(--accent-green);
-    }
-
-    .stat-box .label {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      margin-top: 4px;
-    }
-
-    /* Sekce (Pravidla / Vývojáři) */
-    .section {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 25px;
-      margin-top: 25px;
-    }
-
-    .section h2 {
-      margin-top: 0;
-      font-size: 1.4rem;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 10px;
-    }
-
-    /* Pravidla */
-    .rules-list {
-      padding-left: 20px;
-      color: var(--text-sub);
-      line-height: 1.6;
-    }
-
-    .rules-list li {
-      margin-bottom: 10px;
-    }
-
-    .rules-list strong {
-      color: var(--text-main);
-    }
-
-    /* Členové týmu */
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .team-card {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--border-color);
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-    }
-
-    .team-card .role {
-      font-size: 0.75rem;
-      font-weight: bold;
-      color: var(--accent-blue);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 5px;
-    }
-
-    .team-card .name {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    /* Patička */
-    footer {
-      margin-top: auto;
-      padding: 30px 20px 20px;
-      text-align: center;
-      color: var(--text-sub);
-      font-size: 0.9rem;
-      width: 100%;
-    }
-
-    footer a {
-      color: var(--text-sub);
-      text-decoration: underline;
-      transition: color 0.2s;
-    }
-
-    footer a:hover {
-      color: var(--text-main);
-    }
-  </style>
+footer{border-top:1px solid var(--line);padding:34px 20px calc(30px + env(safe-area-inset-bottom,0px));text-align:center;color:var(--sub);font-size:.9rem}
+footer a{color:var(--sub);transition:color .2s}footer a:hover{color:var(--ink)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
+</style>
 </head>
 <body>
+<div id="loader"><div class="ld">PID · NAČÍTÁM LINKU…<div class="ld-road"><i></i></div></div></div>
+<div class="bg"></div><div class="stars" id="stars"></div><div id="glow"></div>
 
-  <div class="container">
-    
-    <!-- Hero / Hlavní hlavička -->
-    <div class="hero">
-      <h1>Prague Community</h1>
-      <p>Vítejte na oficiálním portálu komunity a fiktivního dopravního podniku.</p>
-      
-      <div class="nav-buttons">
-        <a href="https://discord.gg/A3FwDyvNdd" target="_blank" class="btn btn-discord">💬 Discord Server</a>
-        <a href="https://karnikyt.github.io/FiktivniPID/e-shop" target="_blank" class="btn btn-eshop">🛒 E-Shop PID</a>
-        <a href="#" class="btn btn-roblox" onclick="alert('Odkaz na Roblox hru bude doplněn již brzy!'); return false;">🎮 Roblox Hra</a>
-        <a href="https://karnikyt.github.io/FiktivniPID/zasady" target="_blank" class="btn btn-privacy">🔒 Zásady soukromí</a>
-      </div>
+<nav>
+  <a class="logo" href="#top"><b>PC</b>Prague Community</a>
+  <div class="navlinks"><a href="#stats">Statistiky</a><a href="#team">Tým</a><a href="#rules">Pravidla</a></div>
+</nav>
+
+<main id="top">
+<div class="wrap hero">
+  <div>
+    <span class="chip"><i></i>LINKA PROVOZ · NONSTOP</span>
+    <h1 id="title">Prague <em>Community</em></h1>
+    <p class="lead">Vítejte na oficiálním portálu komunity a fiktivního dopravního podniku.</p>
+    <div class="typed" id="typed"></div>
+    <div class="btns">
+      <a href="https://discord.gg/A3FwDyvNdd" target="_blank" rel="noopener" class="btn btn-discord">💬 Discord Server</a>
+      <a href="https://karnikyt.github.io/FiktivniPID/e-shop" target="_blank" rel="noopener" class="btn btn-eshop">🛒 E-Shop PID</a>
+      <a href="#" class="btn btn-roblox" onclick="alert('Odkaz na Roblox hru bude doplněn již brzy!'); return false;">🎮 Roblox Hra</a>
+      <a href="https://karnikyt.github.io/FiktivniPID/zasady" target="_blank" rel="noopener" class="btn btn-privacy">🔒 Zásady soukromí</a>
     </div>
-
-    <!-- Statistiky Discord Serveru -->
-    <div class="stats-card">
-      <div class="stat-box">
-        <div class="number online" id="discord-online">--</div>
-        <div class="label">🟢 Online Členů</div>
-      </div>
-      <div class="stat-box">
-        <div class="number" id="discord-total">--</div>
-        <div class="label">👥 Celkem Členů</div>
-      </div>
-    </div>
-
-    <!-- Vývojáři a Členové Projektu -->
-    <div class="section">
-      <h2>🛠️ Členové Projektu (DEV Tým)</h2>
-      <div class="team-grid">
-        <div class="team-card">
-          <div class="role">Developer</div>
-          <div class="name">Falax</div>
-        </div>
-        <div class="team-card">
-          <div class="role">Co-Owner</div>
-          <div class="name">sktypek</div>
-        </div>
-        <div class="team-card">
-          <div class="role">Owner</div>
-          <div class="name">Smatlina52</div>
-        </div>
-        <div class="team-card">
-          <div class="role">Developer</div>
-          <div class="name">David</div>
-        </div>
-        <div class="team-card">
-          <div class="role">Owner</div>
-          <div class="name">Martass</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Pravidla v Roblox Hře -->
-    <div class="section">
-      <h2>📜 Pravidla chování v Roblox hře</h2>
-      <ol class="rules-list">
-        <li><strong>Respekt k ostatním:</strong> Chovejte se ke všem hráčům i členům A-Týmu s úctou. Sprosté narušování hry nebo urážky nebudou tolerovány.</li>
-        <li><strong>Zákaz trollení a wreckingu:</strong> Je přísně zakázáno úmyslně nabourávat ostatní vozidla, blokovat silnice nebo kazit plynulost dopravy.</li>
-        <li><strong>Dodržování dopravních předpisů:</strong> Respektujte semafory, jízdní pruhy a pokyny dispečinku během provozu.</li>
-        <li><strong>Zákaz zneužívání chyby hry (Exploiting/Glitches):</strong> Jakékoliv zneužívání bugů nebo používání výhod třetích stran (hacker nástroje) vede k okamžitému banu.</li>
-        <li><strong>Respektování pokynů vývojářů a adminů:</strong> Příkazy vývojářů (Falax, sktypek, Smatlina52, David) a moderátorů jsou závazné.</li>
-      </ol>
-    </div>
-
   </div>
+  <div id="bus3d"><span class="hint">↔ otoč autobus myší / prstem</span></div>
+</div>
 
-  <!-- Patička -->
-  <footer>
-    &copy; Prague Community 2026. Všechna práva vyhrazena. | <a href="https://karnikyt.github.io/FiktivniPID/zasady" target="_blank">Zásady ochrany soukromí</a>
-  </footer>
+<div class="ticker"><div id="tk"></div></div>
 
-  <!-- Script pro načtení živých dat z Discord API -->
-  <script>
-    async function loadDiscordStats() {
-      try {
-        const response = await fetch(`https://discord.com/api/v9/invites/A3FwDyvNdd?with_counts=true`);
-        if (!response.ok) throw new Error("Chyba při načítání");
-        
-        const data = await response.json();
-        
-        document.getElementById('discord-online').textContent = data.approximate_presence_count.toLocaleString();
-        document.getElementById('discord-total').textContent = data.approximate_member_count.toLocaleString();
-      } catch (err) {
-        console.error("Nedostupné statistiky Discordu:", err);
-        document.getElementById('discord-online').textContent = "N/A";
-        document.getElementById('discord-total').textContent = "N/A";
-      }
-    }
+<section id="stats"><div class="wrap">
+  <div class="eyebrow reveal">Živě z Discordu</div>
+  <h2 class="reveal">Komunita v číslech</h2>
+  <div class="stats">
+    <div class="card tilt reveal"><div class="num on" id="discord-online">--</div><div class="lbl">🟢 Online členů</div></div>
+    <div class="card tilt reveal" style="--d:.12s"><div class="num tot" id="discord-total">--</div><div class="lbl">👥 Celkem členů</div></div>
+  </div>
+</div></section>
 
-    loadDiscordStats();
-  </script>
+<section id="team"><div class="wrap">
+  <div class="eyebrow reveal">Odjezdy</div>
+  <h2 class="reveal">🛠️ Členové projektu (DEV tým)</h2>
+  <div class="board reveal">
+    <div class="board-h"><span>TÝM · PRAGUE COMMUNITY</span><span id="clock">--:--:--</span></div>
+    <div class="row"><span class="ln">DEV</span><span class="nm">Falax</span><span class="rl">Developer</span></div>
+    <div class="row"><span class="ln">CO</span><span class="nm">sktypek</span><span class="rl">Co-Owner</span></div>
+    <div class="row"><span class="ln">OWN</span><span class="nm">Smatlina52</span><span class="rl">Owner</span></div>
+    <div class="row"><span class="ln">DEV</span><span class="nm">David</span><span class="rl">Developer</span></div>
+    <div class="row"><span class="ln">OWN</span><span class="nm">Martass</span><span class="rl">Owner</span></div>
+  </div>
+</div></section>
+
+<section id="rules"><div class="wrap">
+  <div class="eyebrow reveal">Jízdní řád chování</div>
+  <h2 class="reveal">📜 Pravidla chování v Roblox hře</h2>
+  <div class="route" id="route">
+    <svg><line class="base" x1="6" y1="0" x2="6" y2="100%"/><line class="prog" id="prog" x1="6" y1="0" x2="6" y2="100%" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+    <div class="card stop reveal" data-n="1"><h3>Respekt k ostatním</h3><p>Chovejte se ke všem hráčům i členům A-Týmu s úctou. Sprosté narušování hry nebo urážky nebudou tolerovány.</p></div>
+    <div class="card stop reveal" data-n="2"><h3>Zákaz trollení a wreckingu</h3><p>Je přísně zakázáno úmyslně nabourávat ostatní vozidla, blokovat silnice nebo kazit plynulost dopravy.</p></div>
+    <div class="card stop reveal" data-n="3"><h3>Dodržování dopravních předpisů</h3><p>Respektujte semafory, jízdní pruhy a pokyny dispečinku během provozu.</p></div>
+    <div class="card stop reveal" data-n="4"><h3>Zákaz zneužívání chyby hry (Exploiting/Glitches)</h3><p>Jakékoliv zneužívání bugů nebo používání výhod třetích stran (hacker nástroje) vede k okamžitému banu.</p></div>
+    <div class="card stop reveal" data-n="5"><h3>Respektování pokynů vývojářů a adminů</h3><p>Příkazy vývojářů (Falax, sktypek, Smatlina52, David) a moderátorů jsou závazné.</p></div>
+  </div>
+</div></section>
+
+<section class="cta"><div class="wrap"><div class="card reveal">
+  <h2 style="margin-bottom:12px">Nastup do komunity 🚌</h2>
+  <p class="lead" style="margin:0 auto 24px">Příští zastávka: náš Discord. Dveře se zavírají!</p>
+  <a href="https://discord.gg/A3FwDyvNdd" target="_blank" rel="noopener" class="btn btn-discord">💬 Připojit se</a>
+</div></div></section>
+</main>
+
+<footer>&copy; Prague Community 2026. Všechna práva vyhrazena. | <a href="https://karnikyt.github.io/FiktivniPID/zasady" target="_blank" rel="noopener">Zásady ochrany soukromí</a></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ---------- základ: loader, písmena, psaní, hvězdy, ticker, hodiny ---------- */
+addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('done'),500));
+const t=document.getElementById('title');let k=0;
+t.childNodes.forEach(n=>{ if(n.nodeType===3){const f=document.createDocumentFragment();[...n.textContent].forEach(c=>{const s=document.createElement('span');s.className='l';s.textContent=c===' '?'\u00a0':c;s.style.animationDelay=(.3+k++*.045)+'s';f.appendChild(s)});n.replaceWith(f)}
+  else if(n.tagName==='EM'){const tx=n.textContent;n.textContent='';[...tx].forEach(c=>{const s=document.createElement('span');s.className='l';s.textContent=c;s.style.animationDelay=(.3+k++*.045)+'s';n.appendChild(s)})}});
+const phrases=['> Linka 100 → Letiště Václava Havla','> Příští zastávka: Discord','> Vozidlo č. 6051 · nízkopodlažní','> Děkujeme, že jedete s námi'];
+let pi=0,ci=0,del=false;const ty=document.getElementById('typed');
+(function type(){const p=phrases[pi];ci+=del?-1:1;ty.textContent=p.slice(0,ci);let w=del?25:60;
+  if(!del&&ci===p.length){del=true;w=1600}else if(del&&ci===0){del=false;pi=(pi+1)%phrases.length;w=300}setTimeout(type,w)})();
+const st=document.getElementById('stars');for(let i=0;i<50;i++){const s=document.createElement('span');s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s;animation-duration:${3+Math.random()*4}s`;st.appendChild(s)}
+const stops=['Florenc','Muzeum','Můstek','Anděl','Karlovo náměstí','Hlavní nádraží','Dejvická','Letiště'];
+document.getElementById('tk').innerHTML=[...stops,...stops].map((s,i)=>`<span><b class="${i%3?'':'r'}">${[100,119,176,9,22,17,26,191][i%8]}</b>${s}</span>`).join('');
+setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleTimeString('cs-CZ'),1000);
+/* kurzorové světlo + tilt karet */
+const glow=document.getElementById('glow');
+addEventListener('pointermove',e=>{glow.style.transform=`translate(${e.clientX}px,${e.clientY}px) translate(-50%,-50%)`});
+document.querySelectorAll('.card').forEach(c=>{
+  c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+    c.style.setProperty('--mx',x*100+'%');c.style.setProperty('--my',y*100+'%');
+    if(c.classList.contains('tilt'))c.style.transform=`perspective(700px) rotateY(${(x-.5)*10}deg) rotateX(${(.5-y)*10}deg) translateZ(6px)`});
+  c.addEventListener('pointerleave',()=>c.style.transform='')});
+/* odhalování při scrollu + trasa */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach((el,i)=>{if(!el.style.getPropertyValue('--d')&&el.classList.contains('stop'))el.style.setProperty('--d','.05s');io.observe(el)});
+const route=document.getElementById('route'),prog=document.getElementById('prog');
+function sc(){const r=route.getBoundingClientRect(),p=Math.min(1,Math.max(0,(innerHeight*.65-r.top)/r.height));prog.style.strokeDashoffset=1-p}
+addEventListener('scroll',sc,{passive:true});sc();
+/* animované čítače + Discord API */
+function count(el,to){const d=1400,s=performance.now();(function f(n){const p=Math.min(1,(n-s)/d),e=1-Math.pow(1-p,4);el.textContent=Math.round(to*e).toLocaleString('cs-CZ');if(p<1)requestAnimationFrame(f)})(s)}
+async function loadDiscordStats(){
+  const urls=['https://discord.com/api/v10/invites/A3FwDyvNdd?with_counts=true','https://discord.com/api/v9/invites/A3FwDyvNdd?with_counts=true','https://discordapp.com/api/v9/invites/A3FwDyvNdd?with_counts=true'];
+  for(const u of urls){
+    try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;const d=await r.json();
+      if(typeof d.approximate_member_count!=='number')continue;
+      count(document.getElementById('discord-online'),d.approximate_presence_count);count(document.getElementById('discord-total'),d.approximate_member_count);return}
+    catch(err){console.warn('Discord API nedostupné:',u,err)}}
+  // záloha: nic nevymýšlíme, jen odkážeme na Discord
+  ['discord-online','discord-total'].forEach(id=>{const n=document.getElementById(id);n.textContent='—';n.title='Statistiky se nepodařilo načíst'});
+  document.querySelectorAll('#stats .lbl').forEach(l=>l.insertAdjacentHTML('beforeend',' <a href="https://discord.gg/A3FwDyvNdd" target="_blank" rel="noopener" style="color:var(--cyan)">(otevřít Discord)</a>'));
+  setTimeout(()=>location.protocol.startsWith('http')&&loadDiscordStats(),60000)
+}
+loadDiscordStats();
+
+/* ---------- 3D autobus PID (Three.js) ---------- */
+(function(){
+const el=document.getElementById('bus3d');
+if(!window.THREE){el.classList.add('nowebgl');return}
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;
+el.appendChild(renderer.domElement);
+const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(32,1,.1,100);
+scene.add(new THREE.AmbientLight(0x8ea2ff,.55));
+const sun=new THREE.DirectionalLight(0xffffff,1);sun.position.set(6,12,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
+Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10});scene.add(sun);
+const rim=new THREE.DirectionalLight(0xe8112d,.7);rim.position.set(-8,4,-6);scene.add(rim);
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.45,metalness:.2},o));
+const box=(w,h,d,m,x,y,z,p)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.position.set(x,y,z);b.castShadow=true;(p||bus).add(b);return b};
+const bus=new THREE.Group();scene.add(bus);
+const white=M(0xf3f5f9,{roughness:.3}),red=M(0xe8112d,{roughness:.35}),glass=M(0x0b1830,{roughness:.08,metalness:.8}),dark=M(0x11151f),blue=M(0x1d4ed8);
+// karoserie
+box(12,2.9,2.5,white,0,1.9,0);
+box(12.04,.95,2.54,red,0,.95,0);
+box(12.05,.12,2.56,blue,0,1.5,0);
+box(10.7,.95,2.52,glass,-.2,2.55,0);          // boční okna
+box(.04,1.45,2.2,glass,6.01,2.35,0);          // čelní sklo
+box(.04,1.2,2.2,glass,-6.01,2.45,0);          // zadní sklo
+box(2.6,.35,1.5,M(0xcfd6e4),-1.5,3.5,0);      // klimatizace na střeše
+box(.5,.28,1.2,dark,4,3.45,0);
+// dveře
+[3.6,-.9,-4.3].forEach((x,i)=>[1,-1].forEach(s=>{if(i<2)box(1.25,2.15,.05,M(0x1e293b,{roughness:.1,metalness:.6}),x,1.75,s*1.27)}));
+// ukazatel cíle (LED)
+const cv=document.createElement('canvas');cv.width=512;cv.height=128;const cx=cv.getContext('2d');
+const tex=new THREE.CanvasTexture(cv);
+function sign(on){cx.fillStyle='#000';cx.fillRect(0,0,512,128);cx.fillStyle='#ffb627';cx.shadowColor='#ffb627';cx.shadowBlur=10;
+  cx.font='700 64px monospace';cx.fillText('100',18,84);cx.font='700 46px monospace';cx.fillText(on?'LETIŠTĚ ►':'LETIŠTĚ  ',160,80);tex.needsUpdate=true}
+sign(true);setInterval(()=>sign(Math.floor(Date.now()/700)%2===0),700);
+const sg=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.55),new THREE.MeshBasicMaterial({map:tex}));sg.position.set(6.03,3.1,0);sg.rotation.y=Math.PI/2;bus.add(sg);
+const sg2=sg.clone();sg2.position.set(0,3.05,1.27);sg2.rotation.y=0;sg2.scale.set(.8,.8,1);bus.add(sg2);
+// světla
+const em=(c)=>new THREE.MeshBasicMaterial({color:c});
+[.85,-.85].forEach(z=>{box(.06,.3,.45,em(0xfff3c4),6.02,1.15,z);box(.06,.22,.4,em(0xff2030),-6.02,1.3,z)});
+const bm=new THREE.MeshBasicMaterial({color:0xfff0b0,transparent:true,opacity:.1,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+[.85,-.85].forEach(z=>{const c=new THREE.Mesh(new THREE.ConeGeometry(1.5,6,24,1,true),bm);c.rotation.z=Math.PI/2;c.position.set(9,.9,z);bus.add(c)});
+const pl=new THREE.PointLight(0xfff0b0,1.2,10);pl.position.set(7,1.1,0);bus.add(pl);
+// čelní PID logo (červený pruh) a zrcátka
+box(.05,.3,1.2,red,6.03,.55,0);box(.1,.5,.25,dark,5.6,2.2,1.5);box(.1,.5,.25,dark,5.6,2.2,-1.5);
+// kola
+const wheels=[];
+[[3.9,1.32],[3.9,-1.32],[-3.4,1.32],[-3.4,-1.32],[-4.4,1.32],[-4.4,-1.32]].forEach(([x,z],i)=>{
+  if(i>3&&false)return;
+  const g=new THREE.CylinderGeometry(.55,.55,.4,28);g.rotateX(Math.PI/2);
+  const w=new THREE.Mesh(g,M(0x0a0a0d,{roughness:.9}));w.position.set(x,.55,z);w.castShadow=true;
+  const hg=new THREE.CylinderGeometry(.28,.28,.42,16);hg.rotateX(Math.PI/2);w.add(new THREE.Mesh(hg,M(0xaab2c5,{metalness:.8,roughness:.25})));
+  const nub=new THREE.Mesh(new THREE.BoxGeometry(.12,.7,.44),M(0xaab2c5,{metalness:.8}));w.add(nub);
+  bus.add(w);wheels.push(w)});
+bus.position.y=.2;
+// plošina + silnice
+const disc=new THREE.Mesh(new THREE.CylinderGeometry(10,10,.2,64),M(0x0c1428,{roughness:.8}));disc.position.y=-.1;disc.receiveShadow=true;scene.add(disc);
+const ring=new THREE.Mesh(new THREE.TorusGeometry(10,.06,8,96),new THREE.MeshBasicMaterial({color:0x38d5ff}));ring.rotation.x=Math.PI/2;scene.add(ring);
+const ring2=new THREE.Mesh(new THREE.TorusGeometry(8.2,.03,8,96),new THREE.MeshBasicMaterial({color:0xe8112d,transparent:true,opacity:.7}));ring2.rotation.x=Math.PI/2;ring2.position.y=.02;scene.add(ring2);
+const dashM=new THREE.MeshBasicMaterial({color:0xffffff});const dashes=[];
+for(let i=0;i<10;i++){const d=new THREE.Mesh(new THREE.BoxGeometry(1.6,.02,.14),dashM);d.position.set(-9+i*2,.01,3.2);scene.add(d);dashes.push(d);
+  const d2=d.clone();d2.position.z=-3.2;scene.add(d2);dashes.push(d2)}
+// částice
+const N=160,pg=new THREE.BufferGeometry(),pp=new Float32Array(N*3);
+for(let i=0;i<N;i++){pp.set([(Math.random()-.5)*26,Math.random()*9,(Math.random()-.5)*26],i*3)}
+pg.setAttribute('position',new THREE.BufferAttribute(pp,3));
+const pts=new THREE.Points(pg,new THREE.PointsMaterial({color:0x7fdcff,size:.08,transparent:true,opacity:.7}));scene.add(pts);
+// ovládání
+let ang=.9,vel=0,drag=false,lx=0,mx=0,my=0;
+el.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;vel=0;el.setPointerCapture(e.pointerId)});
+addEventListener('pointerup',()=>drag=false);
+addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;if(drag){vel=(e.clientX-lx)*.008;ang-=vel;lx=e.clientX}});
+function size(){const w=el.clientWidth,h=el.clientHeight;renderer.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix()}
+addEventListener('resize',size);size();
+const clock=new THREE.Clock();let vis=true;new IntersectionObserver(e=>vis=e[0].isIntersecting).observe(el);
+(function loop(){requestAnimationFrame(loop);if(!vis)return;
+  const dt=clock.getDelta(),t=clock.elapsedTime;
+  if(!drag){ang+=dt*.18+vel*.0;vel*=.95}
+  const r=24,h=6.5+my*3;cam.position.set(Math.cos(ang)*r,h,Math.sin(ang)*r);cam.lookAt(0,1.6,0);
+  const sp=9;wheels.forEach(w=>w.rotation.z-=dt*sp/.55);
+  dashes.forEach(d=>{d.position.x-=dt*sp;if(d.position.x<-9)d.position.x+=20;const s=Math.max(0,1-Math.abs(d.position.x)/9);d.scale.x=s;});
+  bus.position.y=.2+Math.sin(t*14)*.012;bus.rotation.z=Math.sin(t*2)*.003;
+  ring.rotation.z=t*.2;ring2.rotation.z=-t*.3;pts.rotation.y=t*.03;
+  pl.intensity=1.1+Math.sin(t*3)*.15;
+  renderer.render(scene,cam)})();
+})();
+</script>
 </body>
 </html>
