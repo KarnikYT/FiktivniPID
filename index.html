@@ -17,7 +17,7 @@
 }
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:var(--display);min-height:100vh;overflow-x:hidden;line-height:1.5}
+body{background:var(--bg);color:var(--ink);font-family:var(--display);min-height:100vh;overflow-x:clip;line-height:1.5}
 ::selection{background:var(--red);color:#fff}
 
 /* ---------- loader ---------- */
@@ -143,6 +143,30 @@ h2{font-size:clamp(1.9rem,4.5vw,3rem);letter-spacing:-.03em;line-height:1.05;mar
 footer{border-top:1px solid var(--line);padding:34px 20px calc(30px + env(safe-area-inset-bottom,0px));text-align:center;color:var(--sub);font-size:.9rem}
 footer a{color:var(--sub);transition:color .2s}footer a:hover{color:var(--ink)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
+
+/* ---------- redirect popup ---------- */
+#rd{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:20px;background:rgba(3,6,16,.88);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+#rd.open{opacity:1;visibility:visible}
+.rd-box{width:min(440px,100%);background:#0b1226;border:1px solid rgba(148,163,184,.25);border-radius:22px;padding:26px 24px 22px;text-align:center;box-shadow:0 40px 90px -30px #000,0 0 0 1px rgba(232,17,45,.15);transform:translateY(24px) scale(.96);transition:transform .45s cubic-bezier(.2,.9,.3,1.2)}
+#rd.open .rd-box{transform:none}
+.rd-tag{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.72rem;letter-spacing:.12em;color:#38d5ff;text-transform:uppercase}
+.rd-box h3{font-size:1.5rem;letter-spacing:-.02em;margin:8px 0 4px}
+.rd-box p{color:#9aa9cb;font-size:.95rem}
+.rd-led{margin:16px auto 6px;display:inline-block;background:#000;border:1px solid #2a2f3d;border-radius:8px;padding:8px 16px;font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;color:#ffb627;text-shadow:0 0 8px #ffb627;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rd-road{position:relative;height:50px;margin:10px 0 6px;overflow:hidden;border-bottom:2px dashed rgba(148,163,184,.25)}
+.rd-road svg{position:absolute;bottom:4px;left:0;width:96px;animation:rdgo 1.8s linear infinite}
+@keyframes rdgo{from{transform:translateX(-100px)}to{transform:translateX(440px)}}
+.rd-road .w{transform-box:fill-box;transform-origin:center;animation:rdspin .45s linear infinite}
+@keyframes rdspin{to{transform:rotate(360deg)}}
+.rd-bar{height:6px;border-radius:6px;background:rgba(148,163,184,.18);overflow:hidden;margin-top:12px}
+.rd-bar i{display:block;height:100%;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#e8112d,#ffb627);border-radius:6px}
+#rd.run .rd-bar i{transition:transform 3s linear;transform:scaleX(1)}
+.rd-cnt{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.8rem;color:#9aa9cb;margin-top:8px}
+.rd-btns{display:flex;gap:10px;margin-top:18px}
+.rd-btns button{flex:1;padding:12px 14px;border-radius:12px;font:600 .95rem 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer;border:1px solid rgba(148,163,184,.25);color:#eef2ff;background:#1b2440;transition:transform .2s,background .2s}
+.rd-btns button:hover{transform:translateY(-2px)}
+.rd-btns .go{background:#e8112d;border-color:transparent}
+@media(prefers-reduced-motion:reduce){.rd-road svg,.rd-road .w{animation:none}}
 </style>
 </head>
 <body>
@@ -217,6 +241,23 @@ footer a{color:var(--sub);transition:color .2s}footer a:hover{color:var(--ink)}
 
 <footer>&copy; Prague Community 2026. Všechna práva vyhrazena. | <a href="https://karnikyt.github.io/FiktivniPID/zasady" target="_blank" rel="noopener">Zásady ochrany soukromí</a></footer>
 
+
+<!-- Redirect popup (odchod z webu) -->
+<div id="rd" role="dialog" aria-modal="true" aria-labelledby="rd-t" aria-hidden="true">
+  <div class="rd-box">
+    <div class="rd-tag">Opouštíš Prague Community</div>
+    <h3 id="rd-t">Přesměrování…</h3>
+    <p>Za chvíli tě přesměrujeme na externí stránku.</p>
+    <div class="rd-led" id="rd-dest">→</div>
+    <div class="rd-road" aria-hidden="true">
+      <svg viewBox="0 0 150 52"><rect x="4" y="6" width="136" height="32" rx="6" fill="#f3f5f9"/><rect x="4" y="28" width="136" height="12" rx="3" fill="#e8112d"/><rect x="14" y="11" width="104" height="13" rx="2" fill="#0b1830"/><rect x="122" y="10" width="14" height="16" rx="2" fill="#0b1830"/><rect x="138" y="30" width="6" height="5" fill="#fff3c4"/><circle class="w" cx="32" cy="42" r="8" fill="#0a0a0d"/><circle class="w" cx="32" cy="42" r="3.5" fill="#aab2c5"/><circle class="w" cx="112" cy="42" r="8" fill="#0a0a0d"/><circle class="w" cx="112" cy="42" r="3.5" fill="#aab2c5"/></svg>
+    </div>
+    <div class="rd-bar"><i></i></div>
+    <div class="rd-cnt" id="rd-cnt">Odjezd za 3 s</div>
+    <div class="rd-btns"><button type="button" id="rd-cancel">Zůstat tady</button><button type="button" class="go" id="rd-go">Pokračovat hned</button></div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* ---------- základ: loader, písmena, psaní, hvězdy, ticker, hodiny ---------- */
@@ -245,7 +286,7 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.targ
 document.querySelectorAll('.reveal').forEach((el,i)=>{if(!el.style.getPropertyValue('--d')&&el.classList.contains('stop'))el.style.setProperty('--d','.05s');io.observe(el)});
 const route=document.getElementById('route'),prog=document.getElementById('prog');
 function sc(){const r=route.getBoundingClientRect(),p=Math.min(1,Math.max(0,(innerHeight*.65-r.top)/r.height));prog.style.strokeDashoffset=1-p}
-addEventListener('scroll',sc,{passive:true});sc();
+let sq=false;addEventListener('scroll',()=>{if(!sq){sq=true;requestAnimationFrame(()=>{sc();sq=false})}},{passive:true});sc();
 /* animované čítače + Discord API */
 function count(el,to){const d=1400,s=performance.now();(function f(n){const p=Math.min(1,(n-s)/d),e=1-Math.pow(1-p,4);el.textContent=Math.round(to*e).toLocaleString('cs-CZ');if(p<1)requestAnimationFrame(f)})(s)}
 async function loadDiscordStats(){
@@ -329,8 +370,8 @@ pg.setAttribute('position',new THREE.BufferAttribute(pp,3));
 const pts=new THREE.Points(pg,new THREE.PointsMaterial({color:0x7fdcff,size:.08,transparent:true,opacity:.7}));scene.add(pts);
 // ovládání
 let ang=.9,vel=0,drag=false,lx=0,mx=0,my=0;
-el.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;vel=0;el.setPointerCapture(e.pointerId)});
-addEventListener('pointerup',()=>drag=false);
+el.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;vel=0});
+addEventListener('pointerup',()=>drag=false);addEventListener('pointercancel',()=>drag=false);
 addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;if(drag){vel=(e.clientX-lx)*.008;ang-=vel;lx=e.clientX}});
 function size(){const w=el.clientWidth,h=el.clientHeight;renderer.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix()}
 addEventListener('resize',size);size();
@@ -345,6 +386,37 @@ const clock=new THREE.Clock();let vis=true;new IntersectionObserver(e=>vis=e[0].
   ring.rotation.z=t*.2;ring2.rotation.z=-t*.3;pts.rotation.y=t*.03;
   pl.intensity=1.1+Math.sin(t*3)*.15;
   renderer.render(scene,cam)})();
+})();
+</script>
+
+<script>
+/* Přesměrovací loading popup pro všechny odkazy mimo web */
+(function(){
+  const rd=document.getElementById('rd'),dest=document.getElementById('rd-dest'),cnt=document.getElementById('rd-cnt');
+  let timer=null,tick=null,url='',lastFocus=null;
+  function clean(t){return t.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F]/gu,'').trim()}
+  function close(){clearTimeout(timer);clearInterval(tick);rd.classList.remove('open','run');rd.setAttribute('aria-hidden','true');if(lastFocus)lastFocus.focus()}
+  function go(){const u=url;close();location.href=u}
+  function open(a){
+    url=a.href;lastFocus=a;
+    let host='';try{host=new URL(url).hostname}catch(e){}
+    dest.textContent='► '+(clean(a.textContent)||host).toUpperCase();
+    rd.querySelector('p').textContent='Za chvíli tě přesměrujeme na '+host+'.';
+    rd.classList.add('open');rd.setAttribute('aria-hidden','false');
+    let left=3;cnt.textContent='Odjezd za '+left+' s';
+    rd.classList.remove('run');void rd.offsetWidth;requestAnimationFrame(()=>rd.classList.add('run'));
+    tick=setInterval(()=>{left--;if(left>0)cnt.textContent='Odjezd za '+left+' s'},1000);
+    timer=setTimeout(go,3000);
+    document.getElementById('rd-go').focus();
+  }
+  document.querySelectorAll('a[target="_blank"][href^="http"]').forEach(a=>{
+    a.addEventListener('click',e=>{if(e.metaKey||e.ctrlKey||e.shiftKey||e.button===1)return;e.preventDefault();open(a)});
+  });
+  document.getElementById('rd-cancel').addEventListener('click',close);
+  document.getElementById('rd-go').addEventListener('click',go);
+  rd.addEventListener('click',e=>{if(e.target===rd)close()});
+  addEventListener('keydown',e=>{if(e.key==='Escape'&&rd.classList.contains('open'))close()});
+  addEventListener('pageshow',e=>{if(e.persisted)close()});
 })();
 </script>
 </body>
