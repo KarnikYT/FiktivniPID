@@ -224,50 +224,196 @@
     .discord-state { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.78rem; color: var(--muted); }
     .discord-state.ok { color: var(--success); } .discord-state.err { color: var(--gold); }
 
-    /* ---------- Modal ---------- */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 16px;
-      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      opacity: 0; visibility: hidden; transition: opacity 0.3s var(--ease), visibility 0.3s;
+    /* ---------- TadxPay brána ---------- */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+
+    .pay-overlay {
+      position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: center; align-items: center;
+      background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      opacity: 0; visibility: hidden; transition: opacity 0.35s var(--ease), visibility 0.35s;
     }
-    .modal-overlay.open { opacity: 1; visibility: visible; }
-    .tadx-card {
-      width: 100%; max-width: 380px; border-radius: 24px; padding: 24px; text-align: center; outline: none;
-      background: linear-gradient(160deg, #1a1113, #0a0606);
-      border: 1px solid rgba(255, 138, 147, 0.45);
-      box-shadow: 0 0 0 1px rgba(255, 138, 147, 0.08), 0 30px 80px -20px rgba(255, 138, 147, 0.25), 0 30px 60px -20px #000;
-      transform: translateY(24px) scale(0.94); opacity: 0; transition: transform 0.45s var(--ease), opacity 0.35s var(--ease);
+    .pay-overlay.open { opacity: 1; visibility: visible; }
+    .pay-sheet {
+      position: relative; width: 100%; height: 100%; max-width: 980px; display: flex; flex-direction: column; overflow: hidden; outline: none;
+      background: #0b0809; border: 1px solid var(--border);
+      transform: translateY(40px) scale(0.97); opacity: 0; transition: transform 0.55s var(--ease), opacity 0.4s var(--ease);
     }
-    .modal-overlay.open .tadx-card { transform: none; opacity: 1; }
-    .tadx-logo { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: 0.12em; color: var(--gold); font-size: 0.95rem; }
-    .tadx-sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
-    .tadx-amount { margin: 16px 0 6px; padding: 12px; border-radius: 14px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); }
-    .tadx-amount small { display: block; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-    .tadx-amount b { font-size: 1.6rem; color: var(--gold); font-weight: 800; font-variant-numeric: tabular-nums; }
-    .pin-label { font-size: 0.82rem; color: var(--muted); margin-top: 14px; }
-    .pin-dots { display: flex; justify-content: center; gap: 14px; margin: 14px 0 6px; }
+    .pay-overlay.open .pay-sheet { transform: none; opacity: 1; }
+    @media (min-width: 820px) {
+      .pay-overlay { padding: 24px; }
+      .pay-sheet { height: auto; max-height: min(92vh, 780px); border-radius: 28px; box-shadow: 0 40px 120px -20px rgba(225, 29, 46, 0.35), 0 30px 80px -30px #000; }
+    }
+    .pay-top { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .pay-brand { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; letter-spacing: 0.02em; }
+    .pay-brand svg { color: var(--primary); }
+    .pill-test { font-style: normal; font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: rgba(255, 138, 147, 0.14); color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; }
+    .pay-grid { display: grid; grid-template-columns: 1fr; flex: 1; min-height: 0; overflow-y: auto; }
+    @media (min-width: 820px) { .pay-grid { grid-template-columns: 5fr 6fr; } }
+
+    .pay-summary { padding: 18px 20px 6px; background: radial-gradient(120% 90% at 0% 0%, rgba(225, 29, 46, 0.22), transparent 60%), #0d0809; }
+    @media (min-width: 820px) { .pay-summary { padding: 40px 36px; border-right: 1px solid var(--border); } }
+    .merchant { display: flex; align-items: center; gap: 10px; }
+    .m-logo { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
+    .merchant small { display: block; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .merchant b { font-size: 0.98rem; }
+    .pay-amt-label { margin-top: 18px; font-size: 0.78rem; color: var(--muted); }
+    .pay-amt { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+    .pay-order-title { margin-top: 2px; font-size: 0.86rem; color: var(--muted); }
+    .pay-lines { display: none; list-style: none; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+    .pay-lines li { display: flex; justify-content: space-between; gap: 14px; padding: 7px 0; font-size: 0.88rem; }
+    .pay-lines li span:first-child { color: var(--muted); }
+    .pay-lines li span:last-child { font-variant-numeric: tabular-nums; }
+    .pay-ref { display: none; margin-top: 18px; font-size: 0.76rem; color: var(--muted); }
+    .pay-ref code { font-family: "JetBrains Mono", monospace; color: var(--text); }
+    @media (min-width: 820px) { .pay-lines { display: block; } .pay-ref { display: block; } }
+
+    .pay-main { padding: 14px 20px 22px; display: flex; flex-direction: column; }
+    @media (min-width: 820px) { .pay-main { padding: 32px 36px; justify-content: center; } }
+
+    /* 3D karta */
+    .card3d-wrap { perspective: 1100px; display: grid; place-items: center; padding: 4px 0 18px; touch-action: pan-y; }
+    .card3d-wrap.shake { animation: shake 0.45s; }
+    .card3d { --sx: 0; position: relative; width: min(300px, 72vw); aspect-ratio: 1.586; transform-style: preserve-3d; will-change: transform; }
+    .face {
+      position: absolute; inset: 0; border-radius: 18px; padding: 16px 18px; overflow: hidden;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      display: flex; flex-direction: column; justify-content: space-between;
+      box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.12); transition: box-shadow 0.3s;
+    }
+    .face.front { background: radial-gradient(120% 120% at 0% 0%, rgba(255, 59, 74, 0.55), transparent 55%), linear-gradient(135deg, #2b050a 0%, #0b0b0b 55%, #6d0b16 100%); }
+    .face.back { transform: rotateY(180deg); padding: 0; background: linear-gradient(135deg, #120708, #050505 60%, #4a0710); justify-content: flex-start; }
+    .face::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 8px); }
+    .holo {
+      position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; opacity: 0.55;
+      background: linear-gradient(115deg, transparent 20%, rgba(255, 59, 74, 0.35) 35%, rgba(255, 255, 255, 0.28) 45%, rgba(255, 138, 147, 0.35) 55%, transparent 70%);
+      background-size: 250% 100%; background-position: calc(var(--sx) * 1%) 50%;
+    }
+    .shine { position: absolute; top: -20%; bottom: -20%; left: 0; width: 45%; pointer-events: none; background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform: translateX(-140%) skewX(-18deg); animation: shimmer 3.4s var(--ease) infinite; }
+    @keyframes shimmer { 0% { transform: translateX(-140%) skewX(-18deg); } 55%, 100% { transform: translateX(320%) skewX(-18deg); } }
+    .card3d-wrap.ok .face { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7), 0 0 50px rgba(255, 255, 255, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.2); }
+    .card3d-wrap.err .face { box-shadow: 0 0 0 2px #ff5c5c, 0 0 50px rgba(255, 92, 92, 0.6), inset 0 0 0 1px rgba(255, 92, 92, 0.4); }
+    .c-row { position: relative; display: flex; justify-content: space-between; align-items: center; }
+    .c-logo { display: flex; align-items: center; gap: 6px; font-weight: 800; letter-spacing: 0.04em; }
+    .ctl { opacity: 0.85; }
+    .c-chip { position: relative; width: 42px; height: 31px; border-radius: 7px; background: linear-gradient(135deg, #f0f0f0, #8d8d8d); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3); }
+    .c-chip::before, .c-chip::after { content: ""; position: absolute; background: rgba(0, 0, 0, 0.3); }
+    .c-chip::before { left: 0; right: 0; top: 50%; height: 1px; }
+    .c-chip::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+    .c-num { position: relative; font-family: "JetBrains Mono", monospace; font-weight: 500; letter-spacing: 0.12em; font-size: 1.02rem; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6); }
+    .c-bottom small { display: block; font-size: 0.56rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); }
+    .c-bottom b { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; }
+    .mag { height: 22%; margin-top: 8%; background: #000; position: relative; }
+    .back-body { position: relative; padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; }
+    .sig { padding: 10px 12px; border-radius: 6px; background: repeating-linear-gradient(90deg, #ddd 0 6px, #cfcfcf 6px 12px); color: #222; font-size: 0.68rem; font-weight: 600; }
+    .back-logo { display: flex; align-items: center; gap: 6px; justify-content: flex-end; font-weight: 800; font-size: 0.8rem; opacity: 0.8; }
+
+    .pay-tabs { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 14px; }
+    .pay-tab { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 8px; border: none; background: none; color: var(--muted); font: inherit; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: color 0.3s; }
+    .pay-tab.on { color: #fff; }
+    .tab-ind { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 11px; background: linear-gradient(135deg, var(--primary), var(--primary-2)); box-shadow: 0 8px 20px -8px rgba(225, 29, 46, 0.8); transition: transform 0.45s var(--ease); }
+    .pay-tabs[data-tab="bank"] .tab-ind { transform: translateX(100%); }
+    .pay-pane.in { animation: pop 0.45s var(--ease) both; }
+
+    .pin-title { text-align: center; font-weight: 700; font-size: 1rem; }
+    .pin-hint { text-align: center; font-size: 0.78rem; color: var(--muted); margin-top: 3px; min-height: 2.4em; }
+    .pin-dots { display: flex; justify-content: center; gap: 14px; margin: 10px 0 4px; }
     .pin-dots.shake { animation: shake 0.4s; }
-    .pin-dots span { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-strong); transition: all 0.25s var(--ease); }
-    .pin-dots span.filled { background: var(--gold); border-color: var(--gold); transform: scale(1.15); box-shadow: 0 0 14px rgba(255, 138, 147, 0.6); }
-    .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+    .pin-dots span { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--border-strong); transition: all 0.25s var(--ease); }
+    .pin-dots span.filled { background: var(--primary); border-color: var(--primary); transform: scale(1.18); box-shadow: 0 0 14px rgba(225, 29, 46, 0.7); }
+    .pin-msg { min-height: 1.3em; text-align: center; font-size: 0.8rem; color: var(--muted); }
+    .pin-msg.err { color: #ff8a93; }
+    .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px auto 14px; max-width: 280px; }
     .pin-btn {
-      height: 56px; display: grid; place-items: center; font: inherit; font-size: 1.25rem; font-weight: 600; color: var(--text);
-      background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; cursor: pointer;
+      height: 50px; display: grid; place-items: center; font: inherit; font-size: 1.2rem; font-weight: 600; color: var(--text);
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; cursor: pointer;
       transition: transform 0.15s var(--ease), background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent;
     }
     .pin-btn:hover { border-color: var(--border-strong); background: rgba(255, 255, 255, 0.12); }
     .pin-btn:active { transform: scale(0.92); }
-    .pin-btn.action-clear { color: #fca5a5; }
-    .pin-btn.action-ok { background: linear-gradient(135deg, #b3101f, #ef3340); border: none; color: #fff; }
-    .modal-cancel { margin-top: 14px; background: none; border: none; color: var(--muted); cursor: pointer; font: inherit; font-size: 0.82rem; padding: 8px 12px; border-radius: 10px; transition: color 0.2s; }
-    .modal-cancel:hover { color: var(--text); }
-    .processing { display: none; padding: 36px 0 20px; }
-    .processing .spin { font-size: 2.4rem; color: var(--gold); animation: spin 1s linear infinite; display: inline-block; }
-    .processing p { margin-top: 14px; color: var(--muted); font-size: 0.9rem; }
-    .tadx-card.busy .pin-ui { display: none; }
-    .tadx-card.busy .processing { display: block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+    .pin-btn.blank { visibility: hidden; }
+
+    .bank-info { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 14px; background: rgba(0, 0, 0, 0.25); margin-bottom: 12px; }
+    .bank-info > div { display: flex; justify-content: space-between; gap: 14px; padding: 12px 14px; font-size: 0.86rem; }
+    .bank-info > div + div { border-top: 1px solid var(--border); }
+    .bank-info dt { color: var(--muted); }
+    .bank-info dd { font-weight: 600; text-align: right; }
+    .mono { font-family: "JetBrains Mono", monospace; }
+    .pay-btn { width: 100%; padding: 15px 18px; font-size: 1rem; background: linear-gradient(135deg, var(--primary), var(--primary-2)); box-shadow: 0 14px 30px -10px rgba(225, 29, 46, 0.8); }
+    .pay-foot { display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--muted); margin-top: 12px; }
+
+    .pay-state {
+      position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px;
+      background: rgba(5, 3, 4, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      opacity: 0; visibility: hidden; transition: opacity 0.35s, visibility 0.35s;
+    }
+    .pay-state.show { opacity: 1; visibility: visible; }
+    .st { display: none; flex-direction: column; align-items: center; gap: 12px; }
+    .pay-state[data-state="processing"] .st-processing, .pay-state[data-state="success"] .st-success, .pay-state[data-state="error"] .st-error { display: flex; }
+    .st h3 { font-size: 1.25rem; font-weight: 800; }
+    .st p { font-size: 0.86rem; color: var(--muted); max-width: 30ch; line-height: 1.5; }
+    .ring { width: 64px; height: 64px; border-radius: 50%; border: 4px solid rgba(255, 255, 255, 0.1); border-top-color: var(--primary); animation: spin 0.9s linear infinite; }
+    .st-svg { width: 96px; height: 96px; }
+    .ck-circle { fill: none; stroke: var(--success); stroke-width: 2.5; stroke-dasharray: 151; stroke-dashoffset: 151; animation: ckDraw 0.6s var(--ease) forwards; }
+    .ck-mark { fill: none; stroke: #fff; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; animation: ckDraw 0.4s 0.45s var(--ease) forwards; }
+    .er-circle { fill: none; stroke: #ff5c5c; stroke-width: 2.5; stroke-dasharray: 151; stroke-dashoffset: 151; animation: ckDraw 0.6s var(--ease) forwards; }
+    .er-mark { fill: none; stroke: #fff; stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 30; stroke-dashoffset: 30; animation: ckDraw 0.4s 0.4s var(--ease) forwards; }
+    @keyframes ckDraw { to { stroke-dashoffset: 0; } }
+    .burst { position: absolute; left: 50%; top: 42%; pointer-events: none; }
+    .spark { position: absolute; width: 8px; height: 8px; border-radius: 2px; background: var(--c, #ff3b4a); animation: sparkFly 0.95s var(--ease) forwards; }
+    @keyframes sparkFly { from { transform: translate(0, 0) rotate(0) scale(1); opacity: 1; } to { transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(0.3); opacity: 0; } }
+
+    /* ---------- U řidiče / Lítačka ---------- */
+    .carrier-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .carrier { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 12px; border: 1px solid var(--border); border-radius: 14px; background: rgba(0, 0, 0, 0.2); color: var(--text); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.3s var(--ease), background 0.3s, transform 0.3s var(--ease); }
+    .carrier:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+    .carrier .c-ico { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: var(--surface-2); color: var(--muted); margin-bottom: 4px; transition: all 0.3s var(--ease); }
+    .carrier b { font-size: 0.92rem; }
+    .carrier small { font-size: 0.74rem; color: var(--muted); }
+    .carrier.on { border-color: var(--primary); background: linear-gradient(135deg, rgba(225, 29, 46, 0.16), rgba(143, 15, 28, 0.12)); }
+    .carrier.on .c-ico { background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #fff; }
+    .line-list { display: flex; flex-direction: column; gap: 8px; }
+    .line-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 14px; background: rgba(0, 0, 0, 0.2); color: var(--text); font: inherit; text-align: left; cursor: pointer; transition: border-color 0.3s var(--ease), background 0.3s, transform 0.3s var(--ease); }
+    .line-item:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+    .line-item.on { border-color: var(--primary); background: linear-gradient(135deg, rgba(225, 29, 46, 0.16), rgba(143, 15, 28, 0.12)); }
+    .line-code { min-width: 42px; height: 32px; padding: 0 8px; border-radius: 9px; display: grid; place-items: center; font-weight: 800; font-family: "JetBrains Mono", monospace; background: var(--surface-2); transition: background 0.3s; }
+    .line-item.on .line-code { background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
+    .line-name { flex: 1; min-width: 0; font-size: 0.88rem; font-weight: 600; }
+    .line-km { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .km-box { padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: rgba(0, 0, 0, 0.2); }
+    .km-val { text-align: center; margin-bottom: 6px; }
+    .km-val b { font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+    .km-val span { color: var(--muted); }
+    .km-box input[type="range"] { width: 100%; accent-color: var(--primary); height: 28px; background: transparent; }
+    .km-scale { display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill { padding: 9px 14px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.3s var(--ease); }
+    .pill:hover { border-color: var(--primary); }
+    .pill.on { background: linear-gradient(135deg, var(--primary), var(--primary-2)); border-color: transparent; box-shadow: 0 8px 20px -8px rgba(225, 29, 46, 0.8); }
+    .lit-card { position: relative; overflow: hidden; border-radius: 18px; padding: 18px 20px; max-width: 380px; aspect-ratio: 1.9; margin: 0 auto 18px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #8f0f1c, #e11d2e 45%, #1a0407); box-shadow: 0 24px 50px -20px rgba(225, 29, 46, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.15); }
+    .lit-card::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.04) 0 2px, transparent 2px 8px); }
+    .lit-top { position: relative; display: flex; justify-content: space-between; align-items: center; }
+    .lit-name { font-weight: 800; font-size: 1.2rem; letter-spacing: 0.02em; }
+    .lit-num { position: relative; font-family: "JetBrains Mono", monospace; letter-spacing: 0.12em; font-size: 0.98rem; }
+    .lit-bal { position: relative; }
+    .lit-bal small { display: block; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); }
+    .lit-bal b { font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .hist-list { display: flex; flex-direction: column; gap: 8px; }
+    .hist-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 14px; background: rgba(0, 0, 0, 0.2); animation: itemIn 0.5s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 50ms); }
+    .hist-item .t-main small { font-size: 0.72rem; }
+    .hist-amt { font-weight: 800; color: var(--success); font-variant-numeric: tabular-nums; }
+
+    .card3d-wrap { transition: opacity 0.4s var(--ease); }
+    .card3d-wrap.dim { opacity: 0.35; }
+    .pay-state[data-state="success"] { background: rgba(5, 3, 4, 0.78); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+
+    .drawer-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+    .drawer-bottom .drawer-foot { margin-top: 0; }
+    .snd-toggle { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; font-size: 0.86rem; cursor: pointer; transition: border-color 0.25s, background 0.25s; }
+    .snd-toggle:hover { border-color: var(--border-strong); background: var(--surface-2); }
+    .snd-toggle span { flex: 1; text-align: left; }
+    .snd-toggle em { font-style: normal; font-size: 0.74rem; color: var(--muted); }
+    .snd-toggle.on em, .snd-toggle.on svg { color: var(--success); }
 
     /* ---------- Toasty ---------- */
     .toasts { position: fixed; z-index: 2000; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; flex-direction: column; gap: 10px; width: calc(100% - 32px); max-width: 420px; pointer-events: none; }
@@ -514,11 +660,6 @@
         <div class="options" id="category-options" role="radiogroup" aria-label="Věková kategorie cestujícího"></div>
       </div>
 
-      <div class="section">
-        <div class="section-title"><span class="num">4</span>Způsob platby</div>
-        <div class="options cols-2 method" id="method-options" role="radiogroup" aria-label="Způsob platby"></div>
-      </div>
-
       <div class="summary">
         <div class="sum-row"><span>Základní cena</span><span id="sum-base">0 Kč</span></div>
         <div class="sum-row"><span>Sleva</span><span id="sum-discount">0 Kč</span></div>
@@ -606,6 +747,137 @@
       </section>
     </div>
 
+    <!-- ===== STRÁNKA: U ŘIDIČE ===== -->
+    <div class="page" id="page-driver" hidden>
+      <section class="card">
+        <div class="page-head">
+          <div class="ph-ico"><i data-lucide="bus"></i></div>
+          <div><h2>Jízdenka u řidiče</h2><p>Krátkodobá jízdenka podle dopravce a kilometrů</p></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="num">1</span>Dopravce</div>
+          <div class="carrier-grid" id="drv-carriers" role="radiogroup" aria-label="Dopravce"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="num">2</span>Linka</div>
+          <div class="line-list" id="drv-lines" role="radiogroup" aria-label="Linka"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="num">3</span>Vzdálenost</div>
+          <div class="km-box">
+            <div class="km-val"><b id="drv-km-val">1</b> <span>km</span></div>
+            <input type="range" id="drv-km" min="1" max="10" step="1" value="1" aria-label="Počet kilometrů">
+            <div class="km-scale"><span>1 km</span><span id="drv-km-hint"></span><span id="drv-km-max"></span></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="num">4</span>Kategorie</div>
+          <div class="pill-row" id="drv-cats" role="radiogroup" aria-label="Věková kategorie"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="num">5</span>Tvoje údaje</div>
+          <div class="field">
+            <i data-lucide="message-circle"></i>
+            <input type="text" id="drv-discord" placeholder="Discord uživatelské jméno" autocomplete="off" maxlength="40" aria-label="Discord uživatelské jméno">
+          </div>
+          <div class="field">
+            <i data-lucide="gamepad-2"></i>
+            <input type="text" id="drv-roblox" placeholder="Roblox uživatelské jméno" autocomplete="off" maxlength="40" aria-label="Roblox uživatelské jméno">
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="sum-row"><span>Spoj</span><span id="drv-sum-line">–</span></div>
+          <div class="sum-row"><span>Vzdálenost</span><span id="drv-sum-km">–</span></div>
+          <div class="sum-row"><span>Platnost</span><span id="drv-sum-valid">–</span></div>
+          <div class="sum-row"><span>Sleva</span><span id="drv-sum-discount">–</span></div>
+          <div class="sum-total">
+            <span>Cena jízdenky</span>
+            <div class="price-amount" id="drv-total">0 Kč</div>
+          </div>
+        </div>
+
+        <div class="pay-wrap">
+          <button class="btn btn-pay btn-block" id="drv-pay" type="button"></button>
+          <div class="secure-note"><i data-lucide="shield-check"></i>Fiktivní platba ve hře – žádné skutečné peníze</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== STRÁNKA: LÍTAČKA ===== -->
+    <div class="page" id="page-litacka" hidden>
+      <section class="card">
+        <div class="page-head">
+          <div class="ph-ico"><i data-lucide="wallet"></i></div>
+          <div><h2>Lítačka</h2><p>Dobití předplacené karty</p></div>
+        </div>
+
+        <div class="lit-card" aria-hidden="true">
+          <div class="lit-top">
+            <span class="lit-name">Lítačka</span>
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8.5 8.5a5 5 0 0 1 0 7"/><path d="M12 6a8.5 8.5 0 0 1 0 12"/><path d="M15.5 3.5a12 12 0 0 1 0 17"/></svg>
+          </div>
+          <div class="lit-num" id="lit-card-num">•••• •••• ••••</div>
+          <div class="lit-bal"><small>Zůstatek</small><b id="lit-balance">0 Kč</b></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="num">1</span>Číslo karty</div>
+          <div class="field">
+            <i data-lucide="credit-card"></i>
+            <input type="text" id="lit-number" inputmode="numeric" placeholder="Číslo karty Lítačka" autocomplete="off" maxlength="19" aria-label="Číslo karty Lítačka">
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="num">2</span>Částka dobití</div>
+          <div class="pill-row" id="lit-amounts" role="radiogroup" aria-label="Částka dobití"></div>
+          <div class="field" style="margin-top:10px">
+            <i data-lucide="banknote"></i>
+            <input type="text" id="lit-custom" inputmode="numeric" placeholder="Jiná částka (50 – 5 000 Kč)" autocomplete="off" maxlength="5" aria-label="Jiná částka dobití v korunách">
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title"><span class="num">3</span>Tvoje údaje</div>
+          <div class="field">
+            <i data-lucide="message-circle"></i>
+            <input type="text" id="lit-discord" placeholder="Discord uživatelské jméno" autocomplete="off" maxlength="40" aria-label="Discord uživatelské jméno">
+          </div>
+          <div class="field">
+            <i data-lucide="gamepad-2"></i>
+            <input type="text" id="lit-roblox" placeholder="Roblox uživatelské jméno" autocomplete="off" maxlength="40" aria-label="Roblox uživatelské jméno">
+          </div>
+        </div>
+
+        <div class="summary">
+          <div class="sum-row"><span>Karta</span><span id="lit-sum-card">–</span></div>
+          <div class="sum-row"><span>Stávající zůstatek</span><span id="lit-sum-before">0 Kč</span></div>
+          <div class="sum-row"><span>Zůstatek po dobití</span><span id="lit-sum-after">–</span></div>
+          <div class="sum-total">
+            <span>K úhradě</span>
+            <div class="price-amount" id="lit-total">–</div>
+          </div>
+        </div>
+
+        <div class="pay-wrap">
+          <button class="btn btn-pay btn-block" id="lit-pay" type="button"></button>
+          <div class="secure-note"><i data-lucide="shield-check"></i>Fiktivní platba ve hře – žádné skutečné peníze</div>
+        </div>
+        <p class="hint">Zůstatek se eviduje v tomto prohlížeči. Potvrzení o dobití se odešle na Discord.</p>
+      </section>
+
+      <section class="card" id="lit-history-card" hidden>
+        <div class="section-title">Poslední dobití</div>
+        <div class="hist-list" id="lit-history"></div>
+      </section>
+    </div>
+
     <!-- ===== STRÁNKA: ÚČET ===== -->
     <div class="page" id="page-account" hidden>
       <section class="card" id="acc-guest">
@@ -650,10 +922,11 @@
 
         <section class="card">
           <div class="btn-row">
+            <button class="btn btn-ghost" id="acc-pin-reset" type="button"><i data-lucide="key-round"></i>Resetovat PIN karty</button>
             <button class="btn btn-ghost" id="acc-logout" type="button"><i data-lucide="log-out"></i>Odhlásit</button>
             <button class="btn btn-danger" id="acc-wipe" type="button"><i data-lucide="trash-2"></i><span>Smazat místní data</span></button>
           </div>
-          <p class="hint">Smazání odstraní uložené přezdívky a jízdenky z tohoto prohlížeče. Nic to nemění na Discordu.</p>
+          <p class="hint">Smazání odstraní uložené přezdívky, jízdenky, zůstatky karet Lítačka a PIN karty TadxPay z tohoto prohlížeče. Nic to nemění na Discordu.</p>
         </section>
       </div>
     </div>
@@ -687,34 +960,117 @@
     </div>
     <nav class="drawer-nav">
       <button class="nav-item active" type="button" data-nav="shop" style="--i:0"><i data-lucide="shopping-bag"></i><span>Obchod</span></button>
-      <button class="nav-item" type="button" data-nav="tickets" style="--i:1"><i data-lucide="ticket"></i><span>Moje jízdenky</span><em class="nav-count" id="nav-ticket-count" hidden></em></button>
-      <button class="nav-item" type="button" data-nav="account" style="--i:2"><i data-lucide="user-round"></i><span>Účet</span></button>
-      <button class="nav-item" type="button" data-nav="support" style="--i:3"><i data-lucide="life-buoy"></i><span>Podpora</span></button>
+      <button class="nav-item" type="button" data-nav="driver" style="--i:1"><i data-lucide="bus"></i><span>U řidiče</span></button>
+      <button class="nav-item" type="button" data-nav="litacka" style="--i:2"><i data-lucide="wallet"></i><span>Lítačka</span></button>
+      <button class="nav-item" type="button" data-nav="tickets" style="--i:3"><i data-lucide="ticket"></i><span>Moje jízdenky</span><em class="nav-count" id="nav-ticket-count" hidden></em></button>
+      <button class="nav-item" type="button" data-nav="account" style="--i:4"><i data-lucide="user-round"></i><span>Účet</span></button>
+      <button class="nav-item" type="button" data-nav="support" style="--i:5"><i data-lucide="life-buoy"></i><span>Podpora</span></button>
     </nav>
-    <div class="drawer-foot">Fiktivní PID • Prague Community</div>
+    <div class="drawer-bottom">
+      <button class="snd-toggle on" id="snd-toggle" type="button" aria-pressed="true"><i data-lucide="volume-2"></i><span>Zvukové efekty</span><em>Zapnuto</em></button>
+      <div class="drawer-foot">Fiktivní PID • Prague Community</div>
+    </div>
   </aside>
 
-  <!-- Tadx Pay Brána (Modal) -->
-  <div class="modal-overlay" id="tadx-modal" aria-hidden="true">
-    <div class="tadx-card" id="tadx-card" role="dialog" aria-modal="true" aria-labelledby="tadx-title" tabindex="-1">
-      <div class="tadx-logo" id="tadx-title"><i data-lucide="credit-card"></i>TADX PAY GATEWAY</div>
-      <div class="tadx-sub">Fiktivní PID (Prague Community)</div>
+  <!-- TadxPay brána -->
+  <div class="pay-overlay" id="pay-overlay" aria-hidden="true">
+    <div class="pay-sheet" id="pay-sheet" role="dialog" aria-modal="true" aria-labelledby="pay-brand-title" tabindex="-1">
 
-      <div class="pin-ui">
-        <div class="tadx-amount">
-          <small>Částka k úhradě</small>
-          <b id="tadx-amount">0 Kč</b>
+      <header class="pay-top">
+        <button class="icon-btn" id="pay-close" type="button" aria-label="Zrušit platbu"><i data-lucide="x"></i></button>
+        <div class="pay-brand" id="pay-brand-title"><i data-lucide="zap"></i><span>TadxPay</span><em class="pill-test">Fiktivní</em></div>
+        <button class="icon-btn" id="pay-sound" type="button" aria-label="Zapnout nebo vypnout zvuk"><i data-lucide="volume-2"></i></button>
+      </header>
+
+      <div class="pay-grid">
+        <aside class="pay-summary">
+          <div class="merchant">
+            <div class="m-logo"><i data-lucide="train-front"></i></div>
+            <div><small>Platba pro</small><b>Fiktivní PID</b></div>
+          </div>
+          <div class="pay-amt-label">K úhradě</div>
+          <div class="pay-amt" id="pay-total">0 Kč</div>
+          <div class="pay-order-title" id="pay-order-title"></div>
+          <ul class="pay-lines" id="pay-lines"></ul>
+          <div class="pay-ref">Objednávka <code id="pay-ref"></code></div>
+        </aside>
+
+        <section class="pay-main">
+          <div class="card3d-wrap" id="card3d-wrap">
+            <div class="card3d" id="card3d">
+              <div class="face front">
+                <div class="holo"></div><div class="shine"></div>
+                <div class="c-row">
+                  <div class="c-logo"><i data-lucide="zap"></i>TadxPay</div>
+                  <svg class="ctl" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8.5 8.5a5 5 0 0 1 0 7"/><path d="M12 6a8.5 8.5 0 0 1 0 12"/><path d="M15.5 3.5a12 12 0 0 1 0 17"/></svg>
+                </div>
+                <div class="c-chip"></div>
+                <div class="c-num" id="cc-number">•••• •••• •••• 0000</div>
+                <div class="c-row c-bottom">
+                  <div><small>Držitel</small><b id="cc-name">TADX HOLDER</b></div>
+                  <div><small>Platí do</small><b id="cc-exp">12/30</b></div>
+                </div>
+              </div>
+              <div class="face back">
+                <div class="holo"></div><div class="shine"></div>
+                <div class="mag"></div>
+                <div class="back-body">
+                  <div class="sig">Fiktivní karta · platí pouze ve hře</div>
+                  <div class="back-logo"><i data-lucide="zap"></i>TadxPay</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pay-tabs" id="pay-tabs" data-tab="tadx" role="tablist">
+            <span class="tab-ind"></span>
+            <button class="pay-tab on" type="button" data-tab="tadx" role="tab" aria-selected="true"><i data-lucide="credit-card"></i>Karta Tadx</button>
+            <button class="pay-tab" type="button" data-tab="bank" role="tab" aria-selected="false"><i data-lucide="landmark"></i>Převod</button>
+          </div>
+
+          <div class="pay-pane" id="pane-card">
+            <div class="pin-title" id="pin-title">Zadej PIN karty</div>
+            <div class="pin-hint" id="pin-hint"></div>
+            <div class="pin-dots" id="pin-dots" aria-live="polite"><span></span><span></span><span></span><span></span></div>
+            <div class="pin-msg" id="pin-msg" aria-live="assertive"></div>
+            <div class="pin-pad" id="pay-pad"></div>
+          </div>
+
+          <div class="pay-pane" id="pane-bank" hidden>
+            <dl class="bank-info">
+              <div><dt>Příjemce</dt><dd>Fiktivní PID</dd></div>
+              <div><dt>Účet</dt><dd class="mono">000000-0000000000/0000</dd></div>
+              <div><dt>Variabilní symbol</dt><dd class="mono" id="bank-vs"></dd></div>
+              <div><dt>Částka</dt><dd id="bank-amount"></dd></div>
+            </dl>
+            <p class="hint" style="text-align:center;margin:0 0 14px">Simulace bankovního převodu. Po potvrzení se platba zaúčtuje okamžitě.</p>
+          </div>
+
+          <button class="btn pay-btn" id="pay-submit" type="button"></button>
+          <div class="pay-foot"><i data-lucide="shield-check"></i>Fiktivní platba ve hře · žádné skutečné peníze</div>
+        </section>
+      </div>
+
+      <div class="pay-state" id="pay-state" data-state="processing" role="status" aria-live="polite">
+        <div class="burst" id="pay-burst"></div>
+        <div class="st st-processing">
+          <div class="ring"></div>
+          <h3>Zpracovávám platbu…</h3>
+          <p>Moment, ověřujeme transakci.</p>
         </div>
-        <p class="pin-label">Zadejte 4místný PIN karty Tadx Pay</p>
-        <div class="pin-dots" id="pin-dots" aria-live="polite"><span></span><span></span><span></span><span></span></div>
-        <div class="pin-pad" id="pin-pad"></div>
-        <button class="modal-cancel" id="btn-cancel" type="button">Zrušit platbu</button>
+        <div class="st st-success">
+          <svg class="st-svg" viewBox="0 0 52 52" aria-hidden="true"><circle class="ck-circle" cx="26" cy="26" r="24"/><path class="ck-mark" d="M14 27l8 8 16-17"/></svg>
+          <h3>Platba proběhla</h3>
+          <p><b id="pay-ok-amount"></b> · <span id="pay-ok-ref"></span></p>
+        </div>
+        <div class="st st-error">
+          <svg class="st-svg" viewBox="0 0 52 52" aria-hidden="true"><circle class="er-circle" cx="26" cy="26" r="24"/><path class="er-mark" d="M18 18l16 16M34 18L18 34"/></svg>
+          <h3>Platba se nezdařila</h3>
+          <p id="pay-err-msg"></p>
+          <button class="btn btn-sm" id="pay-retry" type="button">Zkusit znovu</button>
+        </div>
       </div>
 
-      <div class="processing" aria-live="polite">
-        <i data-lucide="loader-circle" class="spin"></i>
-        <p>Ověřuji platbu…</p>
-      </div>
     </div>
   </div>
 
@@ -792,19 +1148,13 @@
         { id: "c4",  label: "Senior 65+",         text: "Senior 65+ (Sleva 50%)",                 ratio: 0.5, badge: "−50 %",  icon: "heart" }
       ];
 
-      const METHODS = [
-        { id: "tadx", value: "Tadx Pay",        label: "Tadx Pay",        sub: "Virtuální karta", icon: "credit-card" },
-        { id: "bank", value: "Bankovní převod", label: "Bankovní převod", sub: "Převod z účtu",   icon: "landmark" }
-      ];
 
       const state = {
         duration: DURATIONS[0],
         category: CATEGORIES[3],
-        method: METHODS[0],
         price: 0,
-        pin: "",
         busy: false,
-        lastFocus: null,
+        paying: false,
         shownPrice: 0
       };
 
@@ -815,13 +1165,147 @@
       const icons = () => { if (window.lucide) window.lucide.createIcons(); };
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       const clip = (s, n = 1000) => String(s).slice(0, n);
+      const rand6 = () => (window.crypto && crypto.getRandomValues) ? 100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000) : Math.floor(100000 + Math.random() * 900000);
+      const newTicketId = () => "PID-" + rand6();
+      const fmtDT = (d) => d.toLocaleString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
       const store = {
         get(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } },
         set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignorováno */ } }
       };
 
-      function toast(message, type = "info", ms = 3600) {
+      /* ---------- Zvukové efekty (Web Audio, bez souborů) ---------- */
+      const sfx = (() => {
+        let ctx = null, master = null, noiseBuf = null;
+        let enabled = store.get("pid.sound") !== "off";
+        const listeners = [];
+
+        function ensure() {
+          if (!enabled) return null;
+          try {
+            if (!ctx) {
+              const AC = window.AudioContext || window.webkitAudioContext;
+              if (!AC) return null;
+              ctx = new AC();
+              master = ctx.createGain();
+              master.gain.value = 0.55;
+              const comp = ctx.createDynamicsCompressor();
+              master.connect(comp);
+              comp.connect(ctx.destination);
+            }
+            if (ctx.state === "suspended") ctx.resume();
+          } catch (e) { return null; }
+          return ctx;
+        }
+
+        function tone(c, o) {
+          const t = c.currentTime + (o.at || 0);
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          osc.type = o.type || "sine";
+          osc.frequency.setValueAtTime(o.f, t);
+          if (o.to) osc.frequency.exponentialRampToValueAtTime(o.to, t + o.d);
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(o.v || 0.2, t + Math.min(0.01, o.d / 4));
+          g.gain.exponentialRampToValueAtTime(0.0001, t + o.d);
+          osc.connect(g);
+          if (o.lp) {
+            const f = c.createBiquadFilter();
+            f.type = "lowpass";
+            f.frequency.value = o.lp;
+            g.connect(f);
+            f.connect(master);
+          } else {
+            g.connect(master);
+          }
+          osc.start(t);
+          osc.stop(t + o.d + 0.05);
+        }
+
+        function noise(c, o) {
+          if (!noiseBuf) {
+            noiseBuf = c.createBuffer(1, c.sampleRate, c.sampleRate);
+            const d = noiseBuf.getChannelData(0);
+            for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+          }
+          const t = c.currentTime + (o.at || 0);
+          const src = c.createBufferSource();
+          src.buffer = noiseBuf;
+          const f = c.createBiquadFilter();
+          f.type = "bandpass";
+          f.Q.value = o.q || 1.2;
+          f.frequency.setValueAtTime(o.f0, t);
+          f.frequency.exponentialRampToValueAtTime(o.f1, t + o.d);
+          const g = c.createGain();
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(o.v || 0.15, t + o.d * 0.3);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + o.d);
+          src.connect(f);
+          f.connect(g);
+          g.connect(master);
+          src.start(t);
+          src.stop(t + o.d + 0.05);
+        }
+
+        const CHORD = [523.25, 659.25, 783.99, 1046.5];
+        const P = {
+          tick:    (c) => tone(c, { f: 1700, d: 0.03, v: 0.05 }),
+          tap:     (c) => tone(c, { f: 900, to: 600, d: 0.06, v: 0.12, type: "triangle" }),
+          back:    (c) => tone(c, { f: 520, to: 340, d: 0.07, v: 0.1, type: "triangle" }),
+          open:    (c) => { noise(c, { f0: 400, f1: 2400, d: 0.28, v: 0.12 }); tone(c, { f: 330, to: 660, d: 0.22, v: 0.07 }); },
+          close:   (c) => noise(c, { f0: 2200, f1: 350, d: 0.22, v: 0.1 }),
+          flip:    (c) => { noise(c, { f0: 700, f1: 3200, d: 0.18, v: 0.12, q: 2 }); tone(c, { f: 760, to: 1100, d: 0.1, v: 0.05 }); },
+          process: (c) => {
+            tone(c, { f: 520, d: 0.08, v: 0.1 }); tone(c, { f: 780, d: 0.1, v: 0.1, at: 0.11 });
+            tone(c, { f: 520, d: 0.08, v: 0.08, at: 0.5 }); tone(c, { f: 780, d: 0.1, v: 0.08, at: 0.61 });
+          },
+          success: (c) => {
+            CHORD.forEach((f, i) => {
+              tone(c, { f, d: 0.4, v: 0.16, at: i * 0.085 });
+              tone(c, { f: f * 2, d: 0.3, v: 0.04, at: i * 0.085, type: "triangle" });
+            });
+            tone(c, { f: 2093, d: 0.5, v: 0.05, at: 0.36 });
+          },
+          error:   (c) => {
+            tone(c, { f: 240, d: 0.2, v: 0.16, type: "sawtooth", lp: 900 });
+            tone(c, { f: 170, d: 0.34, v: 0.16, type: "sawtooth", lp: 700, at: 0.16 });
+          },
+          warn:    (c) => {
+            tone(c, { f: 560, d: 0.08, v: 0.1, type: "square", lp: 1800 });
+            tone(c, { f: 560, d: 0.08, v: 0.1, type: "square", lp: 1800, at: 0.12 });
+          },
+          notify:  (c) => { tone(c, { f: 880, d: 0.1, v: 0.1 }); tone(c, { f: 1318.5, d: 0.18, v: 0.1, at: 0.09 }); },
+          coin:    (c) => {
+            tone(c, { f: 988, d: 0.07, v: 0.12, type: "square", lp: 3000 });
+            tone(c, { f: 1318.5, d: 0.4, v: 0.12, type: "square", lp: 3000, at: 0.07 });
+          },
+          ticket:  (c) => {
+            for (let i = 0; i < 4; i++) noise(c, { f0: 3000, f1: 1800, d: 0.045, v: 0.1, at: i * 0.06, q: 3 });
+            tone(c, { f: 1568, d: 0.18, v: 0.06, at: 0.26 });
+          },
+          send:    (c) => tone(c, { f: 600, to: 1000, d: 0.09, v: 0.08, type: "triangle" }),
+          recv:    (c) => tone(c, { f: 1000, to: 700, d: 0.09, v: 0.08, type: "triangle" })
+        };
+
+        return {
+          play(name) {
+            const c = ensure();
+            const fn = P[name];
+            if (!c || !fn) return;
+            try { fn(c); } catch (e) { /* zvuk není kritický */ }
+          },
+          get enabled() { return enabled; },
+          setEnabled(v) {
+            enabled = !!v;
+            store.set("pid.sound", enabled ? "on" : "off");
+            listeners.forEach((f) => f(enabled));
+            if (enabled) this.play("tick");
+          },
+          onChange(f) { listeners.push(f); }
+        };
+      })();
+
+      function toast(message, type = "info", ms = 3600, silent = false) {
         const iconMap = { success: "circle-check", error: "circle-x", warn: "triangle-alert", info: "info" };
         const el = document.createElement("div");
         el.className = `toast ${type}`;
@@ -829,6 +1313,7 @@
         el.querySelector("span").textContent = message;
         $("toasts").appendChild(el);
         icons();
+        if (!silent) sfx.play(type === "error" ? "error" : type === "warn" ? "warn" : "notify");
         setTimeout(() => { el.classList.add("leaving"); setTimeout(() => el.remove(), 380); }, ms);
       }
 
@@ -867,15 +1352,6 @@
             </span>
           </label>`).join("");
 
-        $("method-options").innerHTML = METHODS.map((m) => `
-          <label class="option">
-            <input type="radio" name="method" value="${m.id}" ${m.id === state.method.id ? "checked" : ""}>
-            <span class="option-body">
-              <span class="opt-icon"><i data-lucide="${m.icon}"></i></span>
-              <span class="opt-text"><b>${m.label}</b><small>${m.sub}</small></span>
-            </span>
-          </label>`).join("");
-
         icons();
       }
 
@@ -886,10 +1362,6 @@
       $("category-options").addEventListener("change", (e) => {
         state.category = CATEGORIES.find((c) => c.id === e.target.value) || state.category;
         recalculatePrice();
-      });
-      $("method-options").addEventListener("change", (e) => {
-        state.method = METHODS.find((m) => m.id === e.target.value) || state.method;
-        updatePayButton();
       });
 
       /* ---------- Cena ---------- */
@@ -917,7 +1389,6 @@
         state.price = total;
         state.shownPrice = total;
         animateNumber(prev, total, (v) => { $("final-price-display").textContent = kc(v); });
-        $("tadx-amount").textContent = kc(total);
         updatePayButton();
       }
 
@@ -926,8 +1397,7 @@
         let icon, text, locked = false;
         if (!window.currentUser) { icon = "lock"; text = "Přihlaste se pro nákup"; locked = true; }
         else if (state.price === 0) { icon = "ticket"; text = "Aktivovat zdarma"; }
-        else if (state.method.id === "tadx") { icon = "credit-card"; text = "Zaplatit přes Tadx Pay"; }
-        else { icon = "landmark"; text = "Pokračovat k platbě"; }
+        else { icon = "zap"; text = "Zaplatit " + kc(state.price) + " přes TadxPay"; }
         btn.classList.toggle("locked", locked);
         btn.innerHTML = `<i data-lucide="${icon}"></i><span>${text}</span>`;
         icons();
@@ -992,8 +1462,8 @@
         input.addEventListener("input", () => input.removeAttribute("aria-invalid"), { once: true });
       }
 
-      function initiateTadxPay() {
-        if (state.busy) return;
+      async function initiateTadxPay() {
+        if (state.busy || state.paying) return;
 
         if (!window.currentUser) {
           toast("Pro nákup se musíte nejprve přihlásit přes Google!", "warn");
@@ -1014,81 +1484,437 @@
         store.set("pid.discord", discord);
         store.set("pid.roblox", roblox);
 
-        if (state.price === 0) { processOrder(); return; }
-        openModal();
-      }
-
-      /* ---------- Tadx Pay modal ---------- */
-      function buildPinPad() {
-        const keys = ["1","2","3","4","5","6","7","8","9","clear","0","ok"];
-        $("pin-pad").innerHTML = keys.map((k) => {
-          if (k === "clear") return '<button class="pin-btn action-clear" type="button" data-key="back" aria-label="Smazat poslední číslici"><i data-lucide="delete"></i></button>';
-          if (k === "ok") return '<button class="pin-btn action-ok" type="button" data-key="ok" aria-label="Potvrdit platbu"><i data-lucide="check"></i></button>';
-          return `<button class="pin-btn" type="button" data-key="${k}">${k}</button>`;
-        }).join("");
-      }
-
-      $("pin-pad").addEventListener("click", (e) => {
-        const b = e.target.closest(".pin-btn");
-        if (!b) return;
-        const k = b.dataset.key;
-        if (k === "back") backPin();
-        else if (k === "ok") confirmPayment();
-        else pressPin(k);
-      });
-
-      function updatePinDisplay() {
-        [...$("pin-dots").children].forEach((d, i) => d.classList.toggle("filled", i < state.pin.length));
-      }
-      function pressPin(n) { if (state.pin.length < 4) { state.pin += n; updatePinDisplay(); } }
-      function backPin() { state.pin = state.pin.slice(0, -1); updatePinDisplay(); }
-      function clearPin() { state.pin = ""; updatePinDisplay(); }
-
-      function openModal() {
-        clearPin();
-        state.lastFocus = document.activeElement;
-        $("tadx-card").classList.remove("busy");
-        $("tadx-amount").textContent = kc(state.price);
-        const m = $("tadx-modal");
-        m.classList.add("open");
-        m.setAttribute("aria-hidden", "false");
-        setTimeout(() => $("tadx-card").focus(), 50);
-      }
-
-      function closeTadxModal() {
-        const m = $("tadx-modal");
-        m.classList.remove("open");
-        m.setAttribute("aria-hidden", "true");
-        clearPin();
-        if (state.lastFocus && state.lastFocus.focus) state.lastFocus.focus();
-      }
-
-      async function confirmPayment() {
-        if (state.busy) return;
-        if (state.pin.length !== 4) {
-          const dots = $("pin-dots");
-          dots.classList.remove("shake"); void dots.offsetWidth; dots.classList.add("shake");
-          toast("Zadejte kompletní 4místný PIN kód!", "warn", 2400);
+        if (state.price === 0) {
+          processOrder({ ok: true, method: "Zdarma (100% sleva)", ref: "", free: true });
           return;
         }
-        state.busy = true;
-        $("tadx-card").classList.add("busy");
-        await sleep(1300);
-        closeTadxModal();
-        state.busy = false;
-        await processOrder();
+
+        const until = new Date(Date.now() + state.duration.days * 86400000);
+        state.paying = true;
+        let res;
+        try {
+          res = await TadxPay.pay({
+            amount: state.price,
+            title: `${state.duration.label} · ${state.duration.sub}`,
+            lines: [
+              ["Typ předplatného", state.duration.label],
+              ["Kategorie", state.category.label],
+              ["Platí do", fmtDate(until)]
+            ]
+          });
+        } finally {
+          state.paying = false;
+        }
+        if (res && res.ok) await processOrder(res);
       }
 
-      $("btn-cancel").addEventListener("click", () => { if (!state.busy) closeTadxModal(); });
-      $("tadx-modal").addEventListener("click", (e) => { if (e.target.id === "tadx-modal" && !state.busy) closeTadxModal(); });
+      /* ---------- TadxPay: platební brána (Stripe styl) ---------- */
+      const TadxPay = (() => {
+        const el = {
+          overlay: $("pay-overlay"), sheet: $("pay-sheet"), total: $("pay-total"), title: $("pay-order-title"),
+          lines: $("pay-lines"), ref: $("pay-ref"), wrap: $("card3d-wrap"), card: $("card3d"),
+          num: $("cc-number"), name: $("cc-name"), exp: $("cc-exp"), tabs: $("pay-tabs"),
+          paneCard: $("pane-card"), paneBank: $("pane-bank"), pinTitle: $("pin-title"), pinHint: $("pin-hint"),
+          dots: $("pin-dots"), msg: $("pin-msg"), pad: $("pay-pad"), bankVs: $("bank-vs"), bankAmount: $("bank-amount"),
+          submit: $("pay-submit"), state: $("pay-state"), burst: $("pay-burst"), okAmount: $("pay-ok-amount"),
+          okRef: $("pay-ok-ref"), errMsg: $("pay-err-msg"), retry: $("pay-retry"), close: $("pay-close")
+        };
+        const MAX_TRIES = 3;
+        const LOCK_MS = 30000;
+        const S = { open: false, order: null, tab: "tadx", pin: "", stage: "enter", firstPin: "", busy: false, resolve: null, lastFocus: null, ref: "" };
+        const tries = {};
+        const reduceMotion = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-      document.addEventListener("keydown", (e) => {
-        if (!$("tadx-modal").classList.contains("open") || state.busy) return;
-        if (/^[0-9]$/.test(e.key)) pressPin(e.key);
-        else if (e.key === "Backspace") backPin();
-        else if (e.key === "Enter") { e.preventDefault(); confirmPayment(); }
-        else if (e.key === "Escape") closeTadxModal();
-      });
+        const uid = () => (window.currentUser && window.currentUser.uid) || "guest";
+        const pinKey = () => "pid.pin.v1." + uid();
+        const lockKey = () => "pid.pinlock.v1." + uid();
+
+        async function hashPin(pin) {
+          const text = uid() + ":" + pin;
+          try {
+            if (window.crypto && crypto.subtle) {
+              const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+              return "s" + [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+            }
+          } catch (e) { /* použije se záložní hash */ }
+          let h = 2166136261;
+          for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
+          return "f" + (h >>> 0).toString(16);
+        }
+
+        function identity() {
+          const u = window.currentUser;
+          const seed = (u && u.uid) || "guest";
+          let h = 2166136261;
+          for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+          let x = Math.imul(h >>> 0, 2246822519) >>> 0;
+          x ^= x >>> 13;
+          const last4 = String(Math.abs(x) % 10000).padStart(4, "0");
+          const raw = (u && (u.displayName || (u.email || "").split("@")[0])) || "TADX HOLDER";
+          const name = raw.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().replace(/[^A-Z0-9 .\-]/g, "").trim().slice(0, 22) || "TADX HOLDER";
+          return { last4, name, exp: "12/" + String((new Date().getFullYear() + 4) % 100).padStart(2, "0") };
+        }
+
+        /* ----- 3D karta ----- */
+        const Card3D = (() => {
+          let raf = 0, t0 = 0, px = 0, py = 0, inside = false, tiltX = 0, tiltY = 0, flip = 0, flipTarget = 0, spinStart = 0, timer = 0;
+
+          function frame(now) {
+            const t = (now - t0) / 1000;
+            const tY = inside ? px * 24 : Math.sin(t * 0.9) * 16;
+            const tX = inside ? -py * 18 : Math.cos(t * 0.7) * 5;
+            tiltY += (tY - tiltY) * 0.08;
+            tiltX += (tX - tiltX) * 0.08;
+            flip += (flipTarget - flip) * 0.12;
+            let spin = 0;
+            if (spinStart) {
+              const p = Math.min(1, (now - spinStart) / 1100);
+              spin = 360 * (1 - Math.pow(1 - p, 3));
+              if (p >= 1) spinStart = 0;
+            }
+            el.card.style.transform = `rotateX(${tiltX.toFixed(2)}deg) rotateY(${(tiltY + flip + spin).toFixed(2)}deg)`;
+            el.card.style.setProperty("--sx", (50 + tiltY * 2.2).toFixed(1));
+            raf = requestAnimationFrame(frame);
+          }
+
+          el.wrap.addEventListener("pointermove", (e) => {
+            const r = el.wrap.getBoundingClientRect();
+            px = ((e.clientX - r.left) / r.width - 0.5) * 2;
+            py = ((e.clientY - r.top) / r.height - 0.5) * 2;
+            inside = true;
+          });
+          el.wrap.addEventListener("pointerleave", () => { inside = false; });
+          el.wrap.addEventListener("click", () => {
+            flipTarget = flipTarget ? 0 : 180;
+            if (reduceMotion) el.card.style.transform = `rotateY(${flipTarget}deg)`;
+            sfx.play("flip");
+          });
+
+          return {
+            start() {
+              cancelAnimationFrame(raf);
+              flip = 0; flipTarget = 0; spinStart = 0; tiltX = 0; tiltY = 0; inside = false;
+              el.wrap.classList.remove("ok", "err", "shake");
+              t0 = performance.now();
+              if (reduceMotion) { el.card.style.transform = "rotateY(-10deg)"; el.card.style.setProperty("--sx", "30"); return; }
+              raf = requestAnimationFrame(frame);
+            },
+            stop() { cancelAnimationFrame(raf); clearTimeout(timer); },
+            celebrate() {
+              flipTarget = 0;
+              el.wrap.classList.remove("err");
+              el.wrap.classList.add("ok");
+              if (!reduceMotion) spinStart = performance.now();
+            },
+            fail() {
+              clearTimeout(timer);
+              el.wrap.classList.remove("ok", "shake");
+              void el.wrap.offsetWidth;
+              el.wrap.classList.add("err", "shake");
+              timer = setTimeout(() => el.wrap.classList.remove("err", "shake"), 800);
+            }
+          };
+        })();
+
+        /* ----- PIN a stavy ----- */
+        el.pad.innerHTML = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "blank", "0", "back"].map((k) => {
+          if (k === "blank") return '<span class="pin-btn blank" aria-hidden="true"></span>';
+          if (k === "back") return '<button class="pin-btn" type="button" data-key="back" aria-label="Smazat poslední číslici"><i data-lucide="delete"></i></button>';
+          return `<button class="pin-btn" type="button" data-key="${k}">${k}</button>`;
+        }).join("");
+
+        const stateShown = () => el.state.classList.contains("show");
+        const setMsg = (text, err) => { el.msg.textContent = text || ""; el.msg.classList.toggle("err", !!err); };
+
+        function updateSubmitEnabled() {
+          el.submit.disabled = S.busy || (S.tab === "tadx" && S.pin.length !== 4);
+        }
+        function setPin(v) {
+          S.pin = v;
+          [...el.dots.children].forEach((d, i) => d.classList.toggle("filled", i < v.length));
+          updateSubmitEnabled();
+        }
+        function pressDigit(d) {
+          if (S.busy || S.tab !== "tadx" || stateShown() || S.pin.length >= 4) return;
+          setMsg("");
+          setPin(S.pin + d);
+          sfx.play("tap");
+        }
+        function backDigit() {
+          if (S.busy || S.tab !== "tadx" || stateShown() || !S.pin) return;
+          setPin(S.pin.slice(0, -1));
+          sfx.play("back");
+        }
+
+        function renderStage() {
+          const amt = kc(S.order.amount);
+          let label, icon;
+          if (S.tab === "bank") { label = `Potvrdit převod ${amt}`; icon = "landmark"; }
+          else if (S.stage === "create") { label = "Pokračovat"; icon = "arrow-right"; el.pinTitle.textContent = "Vytvoř si PIN karty"; el.pinHint.textContent = "Je to tvoje první platba. Zvol si 4místný PIN, budeš ho potřebovat při dalších platbách."; }
+          else if (S.stage === "confirm") { label = `Uložit PIN a zaplatit ${amt}`; icon = "lock"; el.pinTitle.textContent = "Potvrď PIN"; el.pinHint.textContent = "Zadej stejný PIN ještě jednou."; }
+          else { label = `Zaplatit ${amt}`; icon = "lock"; el.pinTitle.textContent = "Zadej PIN karty"; el.pinHint.textContent = "Platbu potvrdíš PINem své karty TadxPay."; }
+          el.submit.innerHTML = `<i data-lucide="${icon}"></i><span></span>`;
+          el.submit.querySelector("span").textContent = label;
+          icons();
+          updateSubmitEnabled();
+        }
+
+        function lockRemaining() {
+          const until = Number(store.get(lockKey())) || 0;
+          return Math.max(0, until - Date.now());
+        }
+
+        function setTab(tab, silent) {
+          S.tab = tab;
+          el.tabs.dataset.tab = tab;
+          el.tabs.querySelectorAll(".pay-tab").forEach((b) => {
+            const on = b.dataset.tab === tab;
+            b.classList.toggle("on", on);
+            b.setAttribute("aria-selected", on ? "true" : "false");
+          });
+          el.paneCard.hidden = tab !== "tadx";
+          el.paneBank.hidden = tab !== "bank";
+          const pane = tab === "tadx" ? el.paneCard : el.paneBank;
+          pane.classList.remove("in"); void pane.offsetWidth; pane.classList.add("in");
+          el.wrap.classList.toggle("dim", tab === "bank");
+          renderStage();
+          if (!silent) sfx.play("tick");
+        }
+
+        function setState(name) {
+          el.state.dataset.state = name;
+          el.state.classList.add("show");
+        }
+        function hideState() { el.state.classList.remove("show"); }
+
+        function wrong(msg) {
+          sfx.play("error");
+          setMsg(msg, true);
+          el.dots.classList.remove("shake"); void el.dots.offsetWidth; el.dots.classList.add("shake");
+          Card3D.fail();
+          setPin("");
+        }
+
+        function showError(msg) {
+          el.errMsg.textContent = msg;
+          setState("error");
+          sfx.play("error");
+          Card3D.fail();
+        }
+
+        function burst() {
+          el.burst.innerHTML = "";
+          const colors = ["#ff3b4a", "#ffffff", "#ff8a93", "#e11d2e"];
+          for (let i = 0; i < 26; i++) {
+            const s = document.createElement("span");
+            s.className = "spark";
+            const a = Math.random() * Math.PI * 2;
+            const d = 90 + Math.random() * 120;
+            s.style.setProperty("--dx", Math.cos(a) * d + "px");
+            s.style.setProperty("--dy", Math.sin(a) * d + "px");
+            s.style.setProperty("--r", (Math.random() * 540 - 270) + "deg");
+            s.style.setProperty("--c", colors[i % colors.length]);
+            el.burst.appendChild(s);
+          }
+          setTimeout(() => { el.burst.innerHTML = ""; }, 1100);
+        }
+
+        function finish(result) {
+          if (!S.open) return;
+          S.open = false;
+          S.busy = false;
+          el.overlay.classList.remove("open");
+          el.overlay.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("no-scroll");
+          Card3D.stop();
+          hideState();
+          setPin("");
+          if (!result.ok) sfx.play("close");
+          if (S.lastFocus && S.lastFocus.focus) { try { S.lastFocus.focus(); } catch (e) { /* ignorováno */ } }
+          const r = S.resolve;
+          S.resolve = null;
+          if (r) r(result);
+        }
+
+        function cancel() {
+          if (!S.open || S.busy) return;
+          finish({ ok: false, cancelled: true });
+        }
+
+        async function runPayment(method) {
+          S.busy = true;
+          updateSubmitEnabled();
+          setState("processing");
+          sfx.play("process");
+          await sleep(1400 + Math.random() * 800);
+          el.okAmount.textContent = kc(S.order.amount);
+          el.okRef.textContent = S.ref;
+          setState("success");
+          sfx.play("success");
+          burst();
+          Card3D.celebrate();
+          await sleep(2100);
+          finish({ ok: true, method, ref: S.ref, amount: S.order.amount });
+        }
+
+        async function submit() {
+          if (!S.open || S.busy || stateShown()) return;
+
+          if (S.tab === "bank") { runPayment("Bankovní převod"); return; }
+
+          if (S.pin.length !== 4) {
+            sfx.play("warn");
+            setMsg("Zadej 4místný PIN.", true);
+            el.dots.classList.remove("shake"); void el.dots.offsetWidth; el.dots.classList.add("shake");
+            return;
+          }
+
+          if (S.stage === "create") {
+            S.firstPin = S.pin;
+            S.stage = "confirm";
+            setPin("");
+            setMsg("");
+            sfx.play("tick");
+            renderStage();
+            return;
+          }
+
+          if (S.stage === "confirm") {
+            if (S.pin !== S.firstPin) {
+              S.firstPin = "";
+              S.stage = "create";
+              wrong("PIN se neshoduje. Zkus to znovu.");
+              renderStage();
+              return;
+            }
+            store.set(pinKey(), await hashPin(S.pin));
+            S.stage = "enter";
+            setPin("");
+            runPayment("Tadx Pay");
+            return;
+          }
+
+          const wait = lockRemaining();
+          if (wait > 0) {
+            wrong(`Karta je dočasně zablokována. Zkus to za ${Math.ceil(wait / 1000)} s.`);
+            return;
+          }
+
+          const ok = (await hashPin(S.pin)) === store.get(pinKey());
+          if (ok) {
+            tries[uid()] = 0;
+            runPayment("Tadx Pay");
+            return;
+          }
+
+          tries[uid()] = (tries[uid()] || 0) + 1;
+          const left = MAX_TRIES - tries[uid()];
+          if (left <= 0) {
+            tries[uid()] = 0;
+            store.set(lockKey(), String(Date.now() + LOCK_MS));
+            setPin("");
+            el.retry.textContent = "Zpět";
+            showError("Příliš mnoho nesprávných pokusů. Karta je zablokovaná na 30 sekund.");
+            return;
+          }
+          wrong(`Nesprávný PIN. ${left === 1 ? "Zbývá 1 pokus" : "Zbývají " + left + " pokusy"}.`);
+        }
+
+        /* ----- Události ----- */
+        el.pad.addEventListener("click", (e) => {
+          const b = e.target.closest(".pin-btn[data-key]");
+          if (!b) return;
+          if (b.dataset.key === "back") backDigit(); else pressDigit(b.dataset.key);
+        });
+        el.tabs.addEventListener("click", (e) => {
+          const b = e.target.closest(".pay-tab");
+          if (!b || S.busy || stateShown() || b.dataset.tab === S.tab) return;
+          setTab(b.dataset.tab);
+        });
+        el.submit.addEventListener("click", submit);
+        el.close.addEventListener("click", cancel);
+        el.retry.addEventListener("click", () => { hideState(); sfx.play("tick"); el.retry.textContent = "Zkusit znovu"; });
+        el.state.addEventListener("click", () => {
+          if (el.state.dataset.state === "success" && S.open) finish({ ok: true, method: S.tab === "bank" ? "Bankovní převod" : "Tadx Pay", ref: S.ref, amount: S.order.amount });
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (!S.open) return;
+
+          if (e.key === "Tab") {
+            const f = [...el.sheet.querySelectorAll("button:not([disabled])")].filter((n) => n.offsetParent !== null && getComputedStyle(n).visibility !== "hidden");
+            if (!f.length) return;
+            const first = f[0], last = f[f.length - 1], a = document.activeElement;
+            if (e.shiftKey && (a === first || a === el.sheet)) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
+            return;
+          }
+          if (e.key === "Escape") {
+            if (stateShown() && el.state.dataset.state === "error") hideState(); else cancel();
+            return;
+          }
+          if (S.busy || stateShown()) return;
+          if (e.ctrlKey || e.metaKey || e.altKey) return;
+          if (/^[0-9]$/.test(e.key)) pressDigit(e.key);
+          else if (e.key === "Backspace") backDigit();
+          else if (e.key === "Enter" && !(document.activeElement && document.activeElement.tagName === "BUTTON")) { e.preventDefault(); submit(); }
+        });
+
+        /* ----- Veřejné API ----- */
+        function pay(order) {
+          if (S.open) return Promise.resolve({ ok: false, cancelled: true });
+          S.order = order;
+          S.open = true;
+          S.busy = false;
+          S.pin = "";
+          S.firstPin = "";
+          S.ref = "TP-" + rand6();
+          S.lastFocus = document.activeElement;
+
+          const id = identity();
+          el.num.textContent = "•••• •••• •••• " + id.last4;
+          el.name.textContent = id.name;
+          el.exp.textContent = id.exp;
+
+          el.total.textContent = kc(order.amount);
+          el.title.textContent = order.title || "";
+          el.ref.textContent = S.ref;
+          el.bankVs.textContent = S.ref.replace(/\D/g, "");
+          el.bankAmount.textContent = kc(order.amount);
+          el.lines.innerHTML = "";
+          (order.lines || []).forEach((l) => {
+            const li = document.createElement("li");
+            li.innerHTML = "<span></span><span></span>";
+            li.children[0].textContent = l[0];
+            li.children[1].textContent = l[1];
+            el.lines.appendChild(li);
+          });
+
+          hideState();
+          setPin("");
+          setMsg("");
+          S.stage = store.get(pinKey()) ? "enter" : "create";
+          setTab("tadx", true);
+          const wait = S.stage === "enter" ? lockRemaining() : 0;
+          if (wait > 0) setMsg(`Karta je dočasně zablokována. Zkus to za ${Math.ceil(wait / 1000)} s.`, true);
+
+          el.overlay.classList.add("open");
+          el.overlay.setAttribute("aria-hidden", "false");
+          document.body.classList.add("no-scroll");
+          sfx.play("open");
+          Card3D.start();
+          setTimeout(() => el.sheet.focus(), 60);
+          icons();
+          return new Promise((resolve) => { S.resolve = resolve; });
+        }
+
+        function resetPin() {
+          try { localStorage.removeItem(pinKey()); localStorage.removeItem(lockKey()); } catch (e) { /* ignorováno */ }
+          tries[uid()] = 0;
+        }
+
+        return { pay, resetPin, isOpen: () => S.open };
+      })();
 
       /* ---------- Zpracování objednávky ---------- */
       function swapView(hideEl, showEl) {
@@ -1109,7 +1935,24 @@
         icons();
       }
 
-      async function processOrder() {
+      const EMBED_COLOR = 1610753;
+
+      async function sendDiscord(embed) {
+        const payload = {
+          username: "Fiktivní PID - E-Shop Bot",
+          avatar_url: "https://i.imgur.com/4M34gB0.png",
+          allowed_mentions: { parse: [] },
+          embeds: [Object.assign({ color: EMBED_COLOR, footer: { text: "Fiktivní PID • Prague Community E-Shop" }, timestamp: new Date().toISOString() }, embed)]
+        };
+        const res = await fetch(DISCORD_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+      }
+
+      async function processOrder(pay) {
         if (state.busy) return;
         const user = window.currentUser;
         if (!user) { toast("Přihlášení vypršelo, přihlaste se prosím znovu.", "warn"); return; }
@@ -1119,11 +1962,11 @@
         const roblox = $("roblox-nick").value.trim();
         const durationText = `${state.duration.label} (${state.duration.sub})`;
         const categoryText = state.category.text;
-        const payMethod = state.method.value;
+        const payMethod = (pay && pay.method) || "Tadx Pay";
         const price = state.price;
         const now = new Date();
         const until = new Date(now.getTime() + state.duration.days * 86400000);
-        const ticketId = "PID-" + (crypto.getRandomValues ? (100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000)) : Math.floor(100000 + Math.random() * 900000));
+        const ticketId = newTicketId();
 
         // Jízdenka
         $("ticket-id-text").textContent = ticketId;
@@ -1136,7 +1979,7 @@
 
         saveTicket({
           id: ticketId, discord, roblox, type: durationText, category: categoryText,
-          method: payMethod, price, from: now.toISOString(), until: until.toISOString()
+          method: payMethod, ref: (pay && pay.ref) || "", price, from: now.toISOString(), until: until.toISOString()
         });
 
         const qrContainer = $("qrcode");
@@ -1150,38 +1993,26 @@
         setDiscordState("", "Odesílám potvrzení na Discord…", "loader-circle");
         swapView($("shop-form"), $("result-box"));
         icons();
-        toast(price === 0 ? "Jízdenka aktivována!" : "Platba proběhla úspěšně, jízdenka je aktivní!", "success");
+        sfx.play(pay && pay.free ? "success" : "ticket");
+        toast(price === 0 ? "Jízdenka aktivována!" : "Platba proběhla úspěšně, jízdenka je aktivní!", "success", 3600, true);
 
-        // Discord Embed
-        const payload = {
-          username: "Fiktivní PID - E-Shop Bot",
-          avatar_url: "https://i.imgur.com/4M34gB0.png",
-          allowed_mentions: { parse: [] },
-          embeds: [{
-            title: "👑 Zakoupeno Dlouhodobé Předplatné PID",
-            color: 1610753,
-            description: "Vytvořena nová objednávka v E-Shopu Prague Community.",
-            fields: [
-              { name: "💬 Discord Uživatel", value: clip(discord, 200), inline: true },
-              { name: "🎮 Roblox Uživatel", value: clip(roblox, 200), inline: true },
-              { name: "🎟️ Typ Předplatného", value: clip(durationText, 200), inline: false },
-              { name: "👥 Věková Kategorie", value: clip(categoryText, 200), inline: false },
-              { name: "📅 Platnost", value: `${fmtDate(now)} – ${fmtDate(until)}`, inline: false },
-              { name: "💳 Platba & Částka", value: `${payMethod} (${price} Kč)`, inline: true },
-              { name: "🆔 ID Jízdenky", value: `\`${ticketId}\``, inline: true }
-            ],
-            footer: { text: "Fiktivní PID • Prague Community E-Shop" },
-            timestamp: now.toISOString()
-          }]
-        };
+        const fields = [
+          { name: "💬 Discord Uživatel", value: clip(discord, 200), inline: true },
+          { name: "🎮 Roblox Uživatel", value: clip(roblox, 200), inline: true },
+          { name: "🎟️ Typ Předplatného", value: clip(durationText, 200), inline: false },
+          { name: "👥 Věková Kategorie", value: clip(categoryText, 200), inline: false },
+          { name: "📅 Platnost", value: `${fmtDate(now)} – ${fmtDate(until)}`, inline: false },
+          { name: "💳 Platba & Částka", value: `${payMethod} (${price} Kč)`, inline: true },
+          { name: "🆔 ID Jízdenky", value: `\`${ticketId}\``, inline: true }
+        ];
+        if (pay && pay.ref) fields.push({ name: "🧾 Transakce", value: `\`${pay.ref}\``, inline: true });
 
         try {
-          const res = await fetch(DISCORD_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+          await sendDiscord({
+            title: "👑 Zakoupeno Dlouhodobé Předplatné PID",
+            description: "Vytvořena nová objednávka v E-Shopu Prague Community.",
+            fields
           });
-          if (!res.ok) throw new Error("HTTP " + res.status);
           setDiscordState("ok", "Potvrzení bylo úspěšně odesláno na Discord!", "circle-check");
         } catch (err) {
           console.error("Chyba při odesílání webhooku:", err);
@@ -1207,12 +2038,14 @@
       });
 
       /* ---------- Navigace (hamburger) ---------- */
-      const pages = { shop: $("page-shop"), tickets: $("page-tickets"), account: $("page-account"), support: $("page-support") };
+      const pages = { shop: $("page-shop"), driver: $("page-driver"), litacka: $("page-litacka"), tickets: $("page-tickets"), account: $("page-account"), support: $("page-support") };
       const burger = $("burger");
       const drawer = $("drawer");
       const overlay = $("drawer-overlay");
       let currentPage = "shop";
       let navTimer = null;
+      let ticketTimer = null;
+      let pendingOpen = null;
       let drawerFocus = null;
 
       function openDrawer() {
@@ -1249,6 +2082,7 @@
       function showPage(name) {
         if (!pages[name]) return;
         clearTimeout(navTimer);
+        clearInterval(ticketTimer);
         const next = pages[name];
         Object.keys(pages).forEach((k) => {
           if (k !== name && k !== currentPage) { pages[k].hidden = true; pages[k].classList.remove("out", "in"); }
@@ -1269,7 +2103,12 @@
       }
 
       function onEnter(name) {
-        if (name === "tickets") renderTickets();
+        if (name === "tickets") {
+          renderTickets();
+          if (pendingOpen) { const id = pendingOpen; pendingOpen = null; openTicket(id); }
+        }
+        else if (name === "driver") updateDrvPay();
+        else if (name === "litacka") renderLit();
         else if (name === "account") renderAccount();
         else if (name === "support" && !chat.greeted) { chat.greeted = true; addMsg("bot", GREETING); }
         icons();
@@ -1320,6 +2159,8 @@
 
       function refreshUserBits() {
         updateNavCount();
+        updateDrvPay();
+        updateLitUI();
         if (currentPage === "tickets") renderTickets();
         if (currentPage === "account") renderAccount();
       }
@@ -1339,6 +2180,7 @@
       function renderTickets() {
         const list = $("tickets-list");
         const sub = $("tickets-sub");
+        clearInterval(ticketTimer);
         $("ticket-detail").hidden = true;
         $("tickets-main").hidden = false;
         list.innerHTML = "";
@@ -1367,7 +2209,7 @@
           b.style.setProperty("--i", i);
           b.innerHTML = '<span class="t-ico"><i data-lucide="ticket"></i></span><span class="t-main"><b></b><small></small></span><span class="badge"></span>';
           b.querySelector("b").textContent = t.type || "Jízdenka";
-          b.querySelector("small").textContent = `${t.id} · do ${fmtDate(new Date(t.until))}`;
+          b.querySelector("small").textContent = `${t.id} · do ${(t.short ? fmtDT : fmtDate)(new Date(t.until))}`;
           const bd = b.querySelector(".badge");
           bd.textContent = act ? "Aktivní" : "Vypršela";
           if (!act) bd.classList.add("neutral");
@@ -1383,15 +2225,34 @@
         const act = isActive(t);
         const d = $("ticket-detail");
         d.classList.toggle("expired", !act);
-        $("d-title").textContent = act ? "PŘEDPLATNÉ AKTIVNÍ" : "PŘEDPLATNÉ VYPRŠELO";
-        $("d-sub").textContent = act ? "Tvoje jízdenka je platná" : "Platnost jízdenky skončila";
+        $("d-title").textContent = act ? (t.short ? "JÍZDENKA PLATNÁ" : "PŘEDPLATNÉ AKTIVNÍ") : (t.short ? "JÍZDENKA VYPRŠELA" : "PŘEDPLATNÉ VYPRŠELO");
+        clearInterval(ticketTimer);
+        if (t.short && act) {
+          const end = new Date(t.until).getTime();
+          const tick = () => {
+            const ms = end - Date.now();
+            if (ms <= 0) {
+              clearInterval(ticketTimer);
+              d.classList.add("expired");
+              $("d-title").textContent = "JÍZDENKA VYPRŠELA";
+              $("d-sub").textContent = "Platnost jízdenky skončila";
+              return;
+            }
+            const s = Math.floor(ms / 1000);
+            $("d-sub").textContent = `Zbývá ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+          };
+          tick();
+          ticketTimer = setInterval(tick, 1000);
+        } else {
+          $("d-sub").textContent = act ? "Tvoje jízdenka je platná" : "Platnost jízdenky skončila";
+        }
         $("d-id").textContent = t.id;
         $("d-discord").textContent = t.discord || "–";
         $("d-roblox").textContent = t.roblox || "–";
         $("d-type").textContent = t.type || "–";
         $("d-category").textContent = t.category || "–";
-        $("d-from").textContent = fmtDate(new Date(t.from));
-        $("d-until").textContent = fmtDate(new Date(t.until));
+        $("d-from").textContent = (t.short ? fmtDT : fmtDate)(new Date(t.from));
+        $("d-until").textContent = (t.short ? fmtDT : fmtDate)(new Date(t.until));
 
         const qr = $("d-qrcode");
         qr.innerHTML = "";
@@ -1405,7 +2266,7 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      $("d-back").addEventListener("click", () => { $("ticket-detail").hidden = true; $("tickets-main").hidden = false; });
+      $("d-back").addEventListener("click", () => { clearInterval(ticketTimer); $("ticket-detail").hidden = true; $("tickets-main").hidden = false; });
       $("d-copy").addEventListener("click", async () => {
         try { await navigator.clipboard.writeText($("d-id").textContent); toast("ID jízdenky zkopírováno", "success", 2200); }
         catch (e) { toast("Kopírování se nezdařilo", "error", 2200); }
@@ -1473,11 +2334,16 @@
         const k = ticketKey();
         try {
           if (k) localStorage.removeItem(k);
+          const lk = litKey();
+          if (lk) localStorage.removeItem(lk);
           localStorage.removeItem("pid.discord");
           localStorage.removeItem("pid.roblox");
         } catch (e) { /* ignorováno */ }
-        $("discord-nick").value = "";
-        $("roblox-nick").value = "";
+        TadxPay.resetPin();
+        ["discord-nick", "drv-discord", "lit-discord", "acc-discord"].forEach((i) => { $(i).value = ""; });
+        ["roblox-nick", "drv-roblox", "lit-roblox", "acc-roblox"].forEach((i) => { $(i).value = ""; });
+        updateLitUI();
+        renderLitHistory();
         updateNavCount();
         renderAccount();
         toast("Místní data byla smazána", "success");
@@ -1490,6 +2356,12 @@
       const FALLBACK = "Tomu úplně nerozumím. Zkus se zeptat na ceny, slevy, platbu, jízdenky nebo přihlášení. Jestli jde o něco jiného, " + CONTACT.charAt(0).toLowerCase() + CONTACT.slice(1);
 
       const KB = [
+        { keys: ["pin!", "zapomel", "zapomnel", "zapomenut", "zablokov", "reset pin", "resetovat pin", "spatny pin", "nespravny pin", "vytvorit pin", "novy pin", "zmenit pin"],
+          reply: () => "PIN karty TadxPay si vytváříš při první platbě. Po třech špatných pokusech se karta na 30 sekund zablokuje. Zapomenutý PIN můžeš resetovat v menu v sekci Účet (Resetovat PIN karty)." },
+        { keys: ["litack", "dobit", "dobiti", "nabit", "nabiti", "kredit", "zustatek"],
+          reply: () => `Kartu Lítačka dobiješ v menu v sekci Lítačka: zadáš číslo karty, vybereš částku ${LIT_MIN}–${LIT_MAX} Kč a zaplatíš přes TadxPay. Potvrzení o dobití se odešle na Discord.` },
+        { keys: ["u ridice", "ridic", "kratkodob", "jednorazov", "linka", "linky", "dopravce", "kilometr", "km!"],
+          reply: () => "Krátkodobou jízdenku koupíš v menu v sekci U řidiče: vybereš dopravce, linku a počet kilometrů. Cena i platnost (30–120 minut) se počítají podle vzdálenosti a dopravce." },
         { keys: ["kdo jsi", "co jsi", "jsi bot", "jsi ai", "jsi clovek", "jsi robot", "umela inteligence"],
           reply: () => "Jsem TadxSupport, automatický asistent. Neběžím na žádném AI modelu, odpovídám podle předpřipravených odpovědí. Složitější věci řeší tým Prague Community." },
         { keys: ["nedorazil", "neprisl", "neprislo", "potvrzeni", "webhook"],
@@ -1503,13 +2375,13 @@
         { keys: ["dik", "dekuj", "thx", "thanks"],
           reply: () => "Rádo se stalo! Kdyby cokoliv, jsem tu." },
         { keys: ["jak koupit", "koupit", "kupit", "nakup", "objednav", "objednat", "postup", "jak to funguje"],
-          reply: () => "Nákup je jednoduchý:\n1) Přihlas se přes Google.\n2) Vyplň Discord a Roblox jméno.\n3) Vyber dobu platnosti a věkovou kategorii.\n4) Zvol způsob platby a potvrď ji PINem.\nJízdenku pak najdeš v menu v sekci Moje jízdenky." },
+          reply: () => "Nákup je jednoduchý:\n1) Přihlas se přes Google.\n2) Vyplň Discord a Roblox jméno.\n3) Vyber dobu platnosti a věkovou kategorii.\n4) V platební bráně TadxPay zaplať kartou Tadx (PIN) nebo bankovním převodem.\nJízdenku pak najdeš v menu v sekci Moje jízdenky." },
         { keys: ["cena", "ceny", "cenik", "kolik stoji", "stoji", "kolik kc", "drah"],
           reply: () => "Ceny kupónů (dospělý, plné jízdné):\n" + DURATIONS.map((d) => `• ${d.label} (${d.sub}): ${kc(d.price)}`).join("\n") + "\nSlevy se počítají z těchto cen." },
         { keys: ["sleva", "slev", "dite", "deti", "student", "senior", "duchod", "zdarma", "zaci!", "zak!"],
           reply: () => "Věkové kategorie:\n" + CATEGORIES.map((c) => `• ${c.label}: ${c.ratio === 0 ? "zdarma" : c.ratio === 1 ? "plná cena" : "sleva 50 %"}`).join("\n") },
         { keys: ["platb", "zaplat", "tadx pay", "tadxpay", "pin!", "karta", "karty", "prevod", "banka", "bankovn"],
-          reply: () => "Platit můžeš přes Tadx Pay (virtuální karta, potvrzení 4místným PINem) nebo bankovním převodem. Platba je fiktivní a probíhá jen ve hře, žádné skutečné peníze se nestrhávají." },
+          reply: () => "Platba probíhá v bráně TadxPay: kartou Tadx (potvrzení 4místným PINem, který si vytvoříš při první platbě) nebo bankovním převodem. Platba je fiktivní a probíhá jen ve hře, žádné skutečné peníze se nestrhávají." },
         { keys: ["prihlas", "odhlas", "google", "login", "firebase", "ucet"],
           reply: () => {
             const u = window.currentUser;
@@ -1555,6 +2427,7 @@
         b.textContent = text;
         row.appendChild(b);
         $("chat-log").appendChild(row);
+        sfx.play(role === "user" ? "send" : "recv");
         scrollChat();
       }
 
@@ -1581,7 +2454,7 @@
 
       $("chat-form").addEventListener("submit", (e) => { e.preventDefault(); sendChat($("chat-input").value); });
 
-      ["Jak koupit jízdenku?", "Kolik to stojí?", "Jaké jsou slevy?", "Kde najdu jízdenky?", "Potvrzení nedorazilo"].forEach((c) => {
+      ["Jak koupit jízdenku?", "Kolik to stojí?", "Jaké jsou slevy?", "Kde najdu jízdenky?", "Jak dobít Lítačku?", "Potvrzení nedorazilo"].forEach((c) => {
         const b = document.createElement("button");
         b.type = "button";
         b.className = "chip";
@@ -1590,12 +2463,432 @@
         $("chat-chips").appendChild(b);
       });
 
+      /* ---------- Společné pomocné funkce nových sekcí ---------- */
+      const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+      function bindNames(ids, key) {
+        const els = ids.map($);
+        els.forEach((a) => a.addEventListener("input", () => {
+          const v = a.value.slice(0, 40);
+          store.set(key, v.trim());
+          els.forEach((b) => { if (b !== a) b.value = v; });
+        }));
+        const v = store.get(key);
+        els.forEach((a) => { a.value = v; });
+      }
+
+      function requireWho(dId, rId) {
+        if (!window.currentUser) {
+          toast("Pro nákup se musíte nejprve přihlásit přes Google!", "warn");
+          return null;
+        }
+        const dEl = $(dId), rEl = $(rId);
+        const discord = dEl.value.trim();
+        const roblox = rEl.value.trim();
+        if (!discord || !roblox) {
+          markInvalid(!discord ? dEl : rEl);
+          toast("Vyplňte prosím své Discord a Roblox uživatelské jméno!", "warn");
+          return null;
+        }
+        return { discord, roblox };
+      }
+
+      function setPayBtn(btn, text, icon, locked) {
+        btn.classList.toggle("locked", !!locked);
+        btn.innerHTML = `<i data-lucide="${icon}"></i><span></span>`;
+        btn.querySelector("span").textContent = text;
+        icons();
+      }
+
+      /* ---------- U řidiče: krátkodobé jízdenky podle dopravce a km ---------- */
+      // UKÁZKOVÁ DATA – uprav podle svých dopravců a linek.
+      // km = délka linky, base = základní sazba (Kč), perKm = cena za 1 km, min = minimální cena (Kč)
+      const CARRIERS = [
+        { id: "metro", name: "Metro", sub: "Podzemní dráha", icon: "train-front", base: 12, perKm: 1.0, min: 20,
+          lines: [
+            { code: "A", name: "Západní terminál – Východní depo", km: 17 },
+            { code: "B", name: "Jihozápad – Severovýchod", km: 26 },
+            { code: "C", name: "Sever – Jih", km: 23 }
+          ] },
+        { id: "tram", name: "Tramvaje", sub: "Městská doprava", icon: "tram-front", base: 10, perKm: 1.2, min: 20,
+          lines: [
+            { code: "9", name: "Sídliště – Spojovací", km: 22 },
+            { code: "14", name: "Lehovec – Spořilov", km: 15 },
+            { code: "22", name: "Bílá Hora – Nádraží", km: 19 }
+          ] },
+        { id: "bus", name: "Autobusy", sub: "Městské a příměstské", icon: "bus", base: 10, perKm: 1.5, min: 20,
+          lines: [
+            { code: "119", name: "Veleslavín – Letiště", km: 11 },
+            { code: "176", name: "Karlovo náměstí – Černý Most", km: 16 },
+            { code: "300", name: "Příměstská okružní", km: 34 }
+          ] },
+        { id: "train", name: "Vlaky", sub: "Esko / příměstské", icon: "train-track", base: 20, perKm: 1.8, min: 30,
+          lines: [
+            { code: "S1", name: "Hlavní nádraží – Kralupy", km: 30 },
+            { code: "S9", name: "Hlavní nádraží – Říčany", km: 28 },
+            { code: "S4", name: "Smíchov – Beroun", km: 45 }
+          ] }
+      ];
+
+      const drv = { carrier: CARRIERS[0], line: CARRIERS[0].lines[0], km: 1, cat: CATEGORIES[3], price: 0, shown: 0 };
+      const validityMin = (km) => (km <= 5 ? 30 : km <= 15 ? 60 : km <= 30 ? 90 : 120);
+      const defaultKm = (line) => Math.max(1, Math.round(line.km / 2));
+
+      function renderDrvCarriers() {
+        $("drv-carriers").innerHTML = CARRIERS.map((c) => `
+          <button class="carrier ${c.id === drv.carrier.id ? "on" : ""}" type="button" data-id="${esc(c.id)}" role="radio" aria-checked="${c.id === drv.carrier.id}">
+            <span class="c-ico"><i data-lucide="${esc(c.icon)}"></i></span><b>${esc(c.name)}</b><small>${esc(c.sub)}</small>
+          </button>`).join("");
+        icons();
+      }
+
+      function renderDrvLines() {
+        $("drv-lines").innerHTML = drv.carrier.lines.map((l) => `
+          <button class="line-item ${l.code === drv.line.code ? "on" : ""}" type="button" data-code="${esc(l.code)}" role="radio" aria-checked="${l.code === drv.line.code}">
+            <span class="line-code">${esc(l.code)}</span><span class="line-name">${esc(l.name)}</span><span class="line-km">${l.km} km</span>
+          </button>`).join("");
+      }
+
+      function renderDrvCats() {
+        $("drv-cats").innerHTML = CATEGORIES.map((c) => `
+          <button class="pill ${c.id === drv.cat.id ? "on" : ""}" type="button" data-id="${esc(c.id)}" role="radio" aria-checked="${c.id === drv.cat.id}">${esc(c.label)}</button>`).join("");
+      }
+
+      function setKmRange() {
+        const r = $("drv-km");
+        r.min = 1;
+        r.max = drv.line.km;
+        r.value = drv.km;
+        $("drv-km-max").textContent = `${drv.line.km} km`;
+      }
+
+      function updateDrvSummary() {
+        const c = drv.carrier;
+        const full = Math.max(c.min, Math.round(c.base + drv.km * c.perKm));
+        const price = Math.round(full * drv.cat.ratio);
+        drv.price = price;
+        $("drv-km-val").textContent = String(drv.km);
+        $("drv-km-hint").textContent = drv.km === drv.line.km ? "celá linka" : "";
+        $("drv-sum-line").textContent = `${c.name} · ${drv.line.code}`;
+        $("drv-sum-km").textContent = `${drv.km} km`;
+        $("drv-sum-valid").textContent = `${validityMin(drv.km)} minut`;
+        $("drv-sum-discount").textContent = price === full ? "–" : `−${kc(full - price)}`;
+        animateNumber(drv.shown, price, (v) => { $("drv-total").textContent = kc(v); });
+        drv.shown = price;
+        updateDrvPay();
+      }
+
+      function updateDrvPay() {
+        const btn = $("drv-pay");
+        if (!window.currentUser) setPayBtn(btn, "Přihlaste se pro nákup", "lock", true);
+        else if (drv.price === 0) setPayBtn(btn, "Získat zdarma", "ticket", false);
+        else setPayBtn(btn, "Zaplatit " + kc(drv.price) + " přes TadxPay", "zap", false);
+      }
+
+      function pickCarrier(id) {
+        const c = CARRIERS.find((x) => x.id === id);
+        if (!c) return;
+        drv.carrier = c;
+        drv.line = c.lines[0];
+        drv.km = defaultKm(drv.line);
+        renderDrvCarriers();
+        renderDrvLines();
+        setKmRange();
+        updateDrvSummary();
+      }
+
+      function pickLine(code) {
+        const l = drv.carrier.lines.find((x) => x.code === code);
+        if (!l) return;
+        drv.line = l;
+        drv.km = defaultKm(l);
+        renderDrvLines();
+        setKmRange();
+        updateDrvSummary();
+      }
+
+      function initDriver() {
+        drv.km = defaultKm(drv.line);
+        renderDrvCarriers();
+        renderDrvLines();
+        renderDrvCats();
+        setKmRange();
+        updateDrvSummary();
+        $("drv-carriers").addEventListener("click", (e) => { const b = e.target.closest(".carrier"); if (b) pickCarrier(b.dataset.id); });
+        $("drv-lines").addEventListener("click", (e) => { const b = e.target.closest(".line-item"); if (b) pickLine(b.dataset.code); });
+        $("drv-cats").addEventListener("click", (e) => {
+          const b = e.target.closest(".pill");
+          if (!b) return;
+          drv.cat = CATEGORIES.find((c) => c.id === b.dataset.id) || drv.cat;
+          renderDrvCats();
+          updateDrvSummary();
+        });
+        $("drv-km").addEventListener("input", (e) => { drv.km = Number(e.target.value) || 1; updateDrvSummary(); });
+        $("drv-pay").addEventListener("click", buyDriver);
+      }
+
+      async function buyDriver() {
+        if (state.busy || state.paying) return;
+        const who = requireWho("drv-discord", "drv-roblox");
+        if (!who) return;
+
+        const c = drv.carrier, l = drv.line, km = drv.km, cat = drv.cat, price = drv.price, valid = validityMin(km);
+        let pay = { ok: true, method: "Zdarma (100% sleva)", ref: "", free: true };
+
+        if (price > 0) {
+          state.paying = true;
+          try {
+            pay = await TadxPay.pay({
+              amount: price,
+              title: `Jízdenka u řidiče · ${c.name} ${l.code}`,
+              lines: [
+                ["Dopravce", c.name],
+                ["Linka", `${l.code} · ${l.name}`],
+                ["Vzdálenost", `${km} km`],
+                ["Kategorie", cat.label],
+                ["Platnost", `${valid} minut`]
+              ]
+            });
+          } finally {
+            state.paying = false;
+          }
+          if (!pay.ok) return;
+        }
+
+        const now = new Date();
+        const until = new Date(now.getTime() + valid * 60000);
+        const t = {
+          id: newTicketId(), kind: "driver", short: true, discord: who.discord, roblox: who.roblox,
+          type: `Jízdenka u řidiče · ${c.name} ${l.code}`, category: `${cat.label} · ${km} km`,
+          method: pay.method, ref: pay.ref || "", price, from: now.toISOString(), until: until.toISOString()
+        };
+        saveTicket(t);
+        sfx.play(pay.free ? "success" : "ticket");
+        toast(`Jízdenka ${c.name} ${l.code} je aktivní na ${valid} minut`, "success", 3600, true);
+        pendingOpen = t.id;
+        showPage("tickets");
+
+        const fields = [
+          { name: "💬 Discord Uživatel", value: clip(who.discord, 200), inline: true },
+          { name: "🎮 Roblox Uživatel", value: clip(who.roblox, 200), inline: true },
+          { name: "🚌 Dopravce & Linka", value: clip(`${c.name} · ${l.code} (${l.name})`, 300), inline: false },
+          { name: "📏 Vzdálenost", value: `${km} km`, inline: true },
+          { name: "⏱️ Platnost", value: `${valid} minut (do ${fmtDT(until)})`, inline: true },
+          { name: "👥 Věková Kategorie", value: clip(cat.text, 200), inline: false },
+          { name: "💳 Platba & Částka", value: `${pay.method} (${price} Kč)`, inline: true },
+          { name: "🆔 ID Jízdenky", value: `\`${t.id}\``, inline: true }
+        ];
+        if (pay.ref) fields.push({ name: "🧾 Transakce", value: `\`${pay.ref}\``, inline: true });
+        sendDiscord({ title: "🚌 Zakoupena Jízdenka u Řidiče", description: "Krátkodobá jízdenka zakoupená v E-Shopu Prague Community.", fields })
+          .catch((err) => { console.error("Chyba při odesílání webhooku:", err); toast("Jízdenka je aktivní, ale potvrzení na Discord se nepodařilo odeslat.", "warn", 4500, true); });
+      }
+
+      /* ---------- Lítačka: dobití karty ---------- */
+      const LIT_AMOUNTS = [100, 200, 300, 500, 1000, 2000];
+      const LIT_MIN = 50, LIT_MAX = 5000;
+      const lit = { amount: 200 };
+      const litKey = () => (window.currentUser ? "pid.lit.v1." + window.currentUser.uid : null);
+      const litDigits = (s) => String(s).replace(/\D/g, "").slice(0, 16);
+      const litFmt = (d) => d.replace(/(.{4})/g, "$1 ").trim();
+
+      function loadLit() {
+        const k = litKey();
+        const empty = { last: "", cards: {} };
+        if (!k) return empty;
+        try {
+          const o = JSON.parse(store.get(k) || "{}");
+          return { last: typeof o.last === "string" ? o.last : "", cards: o.cards && typeof o.cards === "object" ? o.cards : {} };
+        } catch (e) { return empty; }
+      }
+      function saveLit(o) {
+        const k = litKey();
+        if (!k) return;
+        const nums = Object.keys(o.cards);
+        if (nums.length > 10) nums.filter((n) => n !== o.last).slice(0, nums.length - 10).forEach((n) => { delete o.cards[n]; });
+        store.set(k, JSON.stringify(o));
+      }
+
+      function litAmount() {
+        const raw = $("lit-custom").value.replace(/\D/g, "");
+        return raw ? parseInt(raw, 10) : lit.amount;
+      }
+      const litValid = (a) => a >= LIT_MIN && a <= LIT_MAX;
+
+      function renderLitAmounts() {
+        const custom = !!$("lit-custom").value;
+        $("lit-amounts").innerHTML = LIT_AMOUNTS.map((a) => `
+          <button class="pill ${!custom && a === lit.amount ? "on" : ""}" type="button" data-amount="${a}" role="radio" aria-checked="${!custom && a === lit.amount}">${kc(a)}</button>`).join("");
+      }
+
+      function renderLitHistory() {
+        const num = litDigits($("lit-number").value);
+        const card = loadLit().cards[num];
+        const hist = (card && Array.isArray(card.hist)) ? card.hist : [];
+        const box = $("lit-history-card");
+        box.hidden = !hist.length;
+        const list = $("lit-history");
+        list.innerHTML = "";
+        hist.forEach((h, i) => {
+          const d = document.createElement("div");
+          d.className = "hist-item";
+          d.style.setProperty("--i", i);
+          d.innerHTML = '<span class="t-ico"><i data-lucide="wallet"></i></span><span class="t-main"><b></b><small></small></span><span class="hist-amt"></span>';
+          d.querySelector("b").textContent = "Dobití karty";
+          d.querySelector("small").textContent = `${fmtDT(new Date(h.at))}${h.ref ? " · " + h.ref : ""}`;
+          d.querySelector(".hist-amt").textContent = "+" + kc(h.amount);
+          list.appendChild(d);
+        });
+        icons();
+      }
+
+      function updateLitUI(skipBalance) {
+        const num = litDigits($("lit-number").value);
+        const card = loadLit().cards[num];
+        const bal = card ? Number(card.balance) || 0 : 0;
+        const amt = litAmount();
+        const ok = litValid(amt);
+
+        $("lit-card-num").textContent = num ? litFmt(num) : "•••• •••• ••••";
+        if (!skipBalance) $("lit-balance").textContent = kc(bal);
+        $("lit-sum-card").textContent = num ? "•••• " + num.slice(-4) : "–";
+        $("lit-sum-before").textContent = kc(bal);
+        $("lit-sum-after").textContent = ok ? kc(bal + amt) : "–";
+        $("lit-total").textContent = ok ? kc(amt) : "–";
+
+        const btn = $("lit-pay");
+        if (!window.currentUser) setPayBtn(btn, "Přihlaste se pro dobití", "lock", true);
+        else if (!ok) setPayBtn(btn, `Částka ${LIT_MIN} – ${kc(LIT_MAX)}`, "wallet", true);
+        else setPayBtn(btn, "Dobít " + kc(amt) + " přes TadxPay", "zap", false);
+      }
+
+      function renderLit() {
+        const data = loadLit();
+        if (!$("lit-number").value && data.last) $("lit-number").value = litFmt(data.last);
+        renderLitAmounts();
+        renderLitHistory();
+        updateLitUI();
+      }
+
+      function initLit() {
+        renderLitAmounts();
+        updateLitUI();
+        $("lit-number").addEventListener("input", (e) => {
+          e.target.value = litFmt(litDigits(e.target.value));
+          renderLitHistory();
+          updateLitUI();
+        });
+        $("lit-custom").addEventListener("input", (e) => {
+          e.target.value = e.target.value.replace(/\D/g, "").slice(0, 5);
+          renderLitAmounts();
+          updateLitUI();
+        });
+        $("lit-amounts").addEventListener("click", (e) => {
+          const b = e.target.closest(".pill");
+          if (!b) return;
+          lit.amount = Number(b.dataset.amount);
+          $("lit-custom").value = "";
+          renderLitAmounts();
+          updateLitUI();
+        });
+        $("lit-pay").addEventListener("click", topUp);
+      }
+
+      async function topUp() {
+        if (state.busy || state.paying) return;
+        const who = requireWho("lit-discord", "lit-roblox");
+        if (!who) return;
+
+        const numEl = $("lit-number");
+        const num = litDigits(numEl.value);
+        if (num.length < 6) {
+          markInvalid(numEl);
+          toast("Zadej číslo karty Lítačka (alespoň 6 číslic).", "warn");
+          return;
+        }
+        const amt = litAmount();
+        if (!litValid(amt)) {
+          markInvalid($("lit-custom"));
+          toast(`Částka musí být v rozmezí ${LIT_MIN} – ${kc(LIT_MAX)}.`, "warn");
+          return;
+        }
+
+        const before = Number((loadLit().cards[num] || {}).balance) || 0;
+        state.paying = true;
+        let pay;
+        try {
+          pay = await TadxPay.pay({
+            amount: amt,
+            title: "Dobití karty Lítačka",
+            lines: [
+              ["Karta Lítačka", "•••• " + num.slice(-4)],
+              ["Dobití", kc(amt)],
+              ["Zůstatek po dobití", kc(before + amt)]
+            ]
+          });
+        } finally {
+          state.paying = false;
+        }
+        if (!pay.ok) return;
+
+        const data = loadLit();
+        const card = data.cards[num] || { balance: 0, hist: [] };
+        card.balance = (Number(card.balance) || 0) + amt;
+        card.hist = [{ id: "TOP-" + rand6(), amount: amt, at: new Date().toISOString(), ref: pay.ref, method: pay.method }].concat(Array.isArray(card.hist) ? card.hist : []).slice(0, 20);
+        data.cards[num] = card;
+        data.last = num;
+        saveLit(data);
+
+        updateLitUI(true);
+        renderLitHistory();
+        animateNumber(before, card.balance, (v) => { $("lit-balance").textContent = kc(v); }, 900);
+        sfx.play("coin");
+        toast(`Karta •••• ${num.slice(-4)} dobita o ${kc(amt)}`, "success", 4000, true);
+
+        sendDiscord({
+          title: "💳 Dobití Karty Lítačka",
+          description: "Nová žádost o dobití karty v E-Shopu Prague Community.",
+          fields: [
+            { name: "💬 Discord Uživatel", value: clip(who.discord, 200), inline: true },
+            { name: "🎮 Roblox Uživatel", value: clip(who.roblox, 200), inline: true },
+            { name: "🪪 Číslo karty Lítačka", value: `\`${litFmt(num)}\``, inline: false },
+            { name: "💰 Dobitá částka", value: `${amt} Kč`, inline: true },
+            { name: "💳 Platba", value: pay.method, inline: true },
+            { name: "🧾 Transakce", value: `\`${pay.ref}\``, inline: true }
+          ]
+        }).catch((err) => { console.error("Chyba při odesílání webhooku:", err); toast("Dobití proběhlo, ale potvrzení na Discord se nepodařilo odeslat.", "warn", 4500, true); });
+      }
+
+      /* ---------- Zvuk: přepínače a klik efekty ---------- */
+      function syncSoundUI(on) {
+        const t = $("snd-toggle");
+        t.classList.toggle("on", on);
+        t.innerHTML = `<i data-lucide="${on ? "volume-2" : "volume-x"}"></i><span>Zvukové efekty</span><em>${on ? "Zapnuto" : "Vypnuto"}</em>`;
+        t.setAttribute("aria-pressed", on ? "true" : "false");
+        const p = $("pay-sound");
+        p.innerHTML = `<i data-lucide="${on ? "volume-2" : "volume-x"}"></i>`;
+        p.setAttribute("aria-pressed", on ? "true" : "false");
+        icons();
+      }
+      sfx.onChange(syncSoundUI);
+      $("snd-toggle").addEventListener("click", () => sfx.setEnabled(!sfx.enabled));
+      $("pay-sound").addEventListener("click", () => sfx.setEnabled(!sfx.enabled));
+      document.addEventListener("click", (e) => {
+        if (e.target.closest(".option, .carrier, .line-item, .pill, .chip, .nav-item, .t-item, .burger")) sfx.play("tick");
+      });
+
+      $("acc-pin-reset").addEventListener("click", () => {
+        TadxPay.resetPin();
+        toast("PIN karty TadxPay byl resetován. Při příští platbě si vytvoříš nový.", "success", 4000);
+      });
+
       /* ---------- Inicializace ---------- */
-      $("discord-nick").value = store.get("pid.discord");
-      $("roblox-nick").value = store.get("pid.roblox");
-      buildPinPad();
+      bindNames(["discord-nick", "drv-discord", "lit-discord", "acc-discord"], "pid.discord");
+      bindNames(["roblox-nick", "drv-roblox", "lit-roblox", "acc-roblox"], "pid.roblox");
       renderOptions();
       recalculatePrice();
+      initDriver();
+      initLit();
+      syncSoundUI(sfx.enabled);
       updateAuthUI(window.currentUser || null);
       icons();
     })();
