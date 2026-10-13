@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autoškola | Prague Community</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --accent-blue: #2563eb;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --border-color: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Tlačítko pro mobilní menu */
+    .mobile-nav-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Sidebar / Postranní panel */
+    .sidebar {
+      width: 280px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--border-color);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 900;
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      font-size: 1.2rem;
+      margin-top: 0;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-sub);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      text-align: left;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: var(--accent-blue);
+      color: white;
+      border-color: var(--accent-blue);
+    }
+
+    .close-sidebar-btn {
+      display: none;
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Hlavní obsah */
+    .main-content {
+      margin-left: 280px;
+      flex: 1;
+      padding: 30px;
+      max-width: 900px;
+    }
+
+    .auth-card, .user-info-card, .quiz-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+
+    .btn-submit {
+      background: var(--accent-green);
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
+      margin-top: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #0f172a;
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    /* Otázky */
+    .question-box {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .question-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+      transition: background 0.2s;
+    }
+
+    .option-label:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .option-label input {
+      cursor: pointer;
+    }
+
+    .result-box {
+      display: none;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    /* Responsive Styl pro mobil */
+    @media (max-width: 768px) {
+      .mobile-nav-toggle { display: block; }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .close-sidebar-btn { display: block; }
+      .main-content { margin-left: 0; padding: 70px 15px 20px 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobilní tlačítko pro otevření Sidebaru -->
+  <button class="mobile-nav-toggle" onclick="toggleSidebar()">☰ Menu Testů</button>
+
+  <!-- Sidebar / Postranní lišta -->
+  <div class="sidebar" id="sidebar">
+    <button class="close-sidebar-btn" onclick="toggleSidebar()">✕ Zavřít menu</button>
+    <h2>🚦 Testy Autoškoly</h2>
+    <button class="nav-btn active" onclick="switchCategory('cat-b')">🚗 Skupina B (Osobní)</button>
+    <button class="nav-btn" onclick="switchCategory('cat-c')">🚚 Skupina C (Nákladní)</button>
+    <button class="nav-btn" onclick="switchCategory('cat-d')">🚌 Skupina D (Autobusy)</button>
+    <button class="nav-btn" onclick="switchCategory('cat-t')">🏣 Trolejbus (Drážní)</button>
+  </div>
+
+  <!-- Hlavní obsah -->
+  <div class="main-content">
+    
+    <!-- 1. Přihlášení přes Google -->
+    <div class="auth-card">
+      <h3 style="margin-top: 0;">👤 Přihlášení k testu</h3>
+      <p style="color: var(--text-sub); font-size: 0.9rem;" id="auth-status">Status: Nepřihlášen</p>
+      <button class="btn" id="btn-login">Přihlásit se přes Google</button>
+    </div>
+
+    <!-- 2. Formulář uživatele -->
+    <div class="user-info-card">
+      <h3 style="margin-top:0;">📋 Identifikace uchazeče</h3>
+      <label for="discord-nick">Discord uživatelské jméno *</label>
+      <input type="text" id="discord-nick" placeholder="např. uzivatel_123">
+
+      <label for="roblox-nick">Roblox uživatelské jméno *</label>
+      <input type="text" id="roblox-nick" placeholder="např. RobloxPlayerCZ">
+    </div>
+
+    <!-- 3. Testovací otázky -->
+    <div class="quiz-card">
+      <form id="quiz-form">
+        
+        <!-- SKUPINA B -->
+        <div id="cat-b" class="quiz-category">
+          <h2>🚗 Skupina B (Osobní automobily)</h2>
+
+          <div class="question-box">
+            <div class="question-title">1. Předjíždění je zakázáno:</div>
+            <label class="option-label"><input type="radio" name="b_q1" value="A"> A) Na nepřehledných nebo jinak nebezpečných místech (např. v zatáčce nebo před horizontem).</label>
+            <label class="option-label"><input type="radio" name="b_q1" value="B"> B) Vždy na dvoupruhové komunikaci mimo obec.</label>
+            <label class="option-label"><input type="radio" name="b_q1" value="C"> C) Jen na místech, kde je to výslovně zakázáno dopravní značkou.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">2. Rychlostní limit pro osobní automobil v obci je (pokud není značkou stanoveno jinak):</div>
+            <label class="option-label"><input type="radio" name="b_q2" value="A"> A) 60 km/h</label>
+            <label class="option-label"><input type="radio" name="b_q2" value="B"> B) 50 km/h</label>
+            <label class="option-label"><input type="radio" name="b_q2" value="C"> C) 70 km/h</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">3. Smí řidič osobního automobilu použít při jízdě mobilní telefon?</div>
+            <label class="option-label"><input type="radio" name="b_q3" value="A"> A) Smí, pokud jede rychlostí do 30 km/h.</label>
+            <label class="option-label"><input type="radio" name="b_q3" value="B"> B) Nesmí ho držet v ruce ani jiným způsobem při jízdě.</label>
+            <label class="option-label"><input type="radio" name="b_q3" value="C"> C) Smí ho držet pouze v levé ruce.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">4. Jaká je minimální hloubka dezénu hlavních drážek u letních pneumatik pro osobní vůz (sk. B)?</div>
+            <label class="option-label"><input type="radio" name="b_q4" value="A"> A) 1,0 mm</label>
+            <label class="option-label"><input type="radio" name="b_q4" value="B"> B) 1,6 mm</label>
+            <label class="option-label"><input type="radio" name="b_q4" value="C"> C) 4,0 mm</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">5. Při poskytování první pomoci zraněnému v bezvědomí, který nedýchá normálně, jako první:</div>
+            <label class="option-label"><input type="radio" name="b_q5" value="A"> A) Zjistíte číslo pojišťovny.</label>
+            <label class="option-label"><input type="radio" name="b_q5" value="B"> B) Zahájíte resuscitaci (stlačování hrudníku v rytmu 100-120/min) a zavoláte záchrannou službu (155).</label>
+            <label class="option-label"><input type="radio" name="b_q5" value="C"> C) Dáte mu napít vody.</label>
+          </div>
+        </div>
+
+        <!-- SKUPINA C -->
+        <div id="cat-c" class="quiz-category" style="display: none;">
+          <h2>🚚 Skupina C (Nákladní automobily)</h2>
+
+          <div class="question-box">
+            <div class="question-title">1. Nejvyšší dovolená rychlost nákladního automobilu o celkové hmotnosti převyšující 3 500 kg na dálnici v ČR je:</div>
+            <label class="option-label"><input type="radio" name="c_q1" value="A"> A) 90 km/h</label>
+            <label class="option-label"><input type="radio" name="c_q1" value="B"> B) 80 km/h</label>
+            <label class="option-label"><input type="radio" name="c_q1" value="C"> C) 100 km/h</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">2. K čemu slouží motorová (odlehčovací) brzda u nákladního automobilu?</div>
+            <label class="option-label"><input type="radio" name="c_q2" value="A"> A) K náhlému zablokování kol při nouzovém brzdění.</label>
+            <label class="option-label"><input type="radio" name="c_q2" value="B"> B) Ke zpomalení vozidla při dlouhém klesání bez přehřívání provozních brzd.</label>
+            <label class="option-label"><input type="radio" name="c_q2" value="C"> C) K zajetění vozidla při stání v kopci.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">3. Co je to pneumatická brzdová soustava?</div>
+            <label class="option-label"><input type="radio" name="c_q3" value="A"> A) Systém, kde je brzdný účinek přenášen stlačeným vzduchem.</label>
+            <label class="option-label"><input type="radio" name="c_q3" value="B"> B) Systém využívaný výhradně u osobních automobilů.</label>
+            <label class="option-label"><input type="radio" name="c_q3" value="C"> C) Mechanické propojení brzdových destiček pomocí lanek.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">4. Co je povinností řidiče nákladního vozidla před začátkem jízdy ohledně nákladu?</div>
+            <label class="option-label"><input type="radio" name="c_q4" value="A"> A) Zkontrolovat pouze, zda náklad nepřečnívá vzadu o více než 5 metrů.</label>
+            <label class="option-label"><input type="radio" name="c_q4" value="B"> B) Zkontrolovat řádné upevnění a zabezpečení nákladu proti pohybu.</label>
+            <label class="option-label"><input type="radio" name="c_q4" value="C"> C) Náklad se kontroluje až po ujití prvních 100 km.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">5. Jaká je minimální hloubka dezénu pneumatik pro nákladní automobily nad 3,5 t v zimním období na vyznačených úsecích?</div>
+            <label class="option-label"><input type="radio" name="c_q5" value="A"> A) 1,6 mm</label>
+            <label class="option-label"><input type="radio" name="c_q5" value="B"> B) 6,0 mm</label>
+            <label class="option-label"><input type="radio" name="c_q5" value="C"> C) 6,0 mm u řízené nápravy, jinak 4,0 mm (dle platných předpisů ČR min. 6 mm na hnacích nápravách).</label>
+          </div>
+        </div>
+
+        <!-- SKUPINA D -->
+        <div id="cat-d" class="quiz-category" style="display: none;">
+          <h2>🚌 Skupina D (Autobusy)</h2>
+
+          <div class="question-box">
+            <div class="question-title">1. Řidič autobusu při vyjíždění ze zastávky MHD v obci:</div>
+            <label class="option-label"><input type="radio" name="d_q1" value="A"> A) Má absolutní přednost a může ihned vjet do jízdního pruhu.</label>
+            <label class="option-label"><input type="radio" name="d_q1" value="B"> B) Je povinen dávat znamení o změně směru jízdy a nesmí ohrozit řidiče jedoucí ve stejném směru; ostatní řidiči mu musí vyjetí usnadnit.</label>
+            <label class="option-label"><input type="radio" name="d_q1" value="C"> C) Musí počkat, až bude ulice zcela prázdná.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">2. Předním protisměrným pohybem nebo vybočením zádě při odbočování musí řidič autobusu počítat z důvodu:</div>
+            <label class="option-label"><input type="radio" name="d_q2" value="A"> A) Velkého rozvoru náprav a převisů karoserie.</label>
+            <label class="option-label"><input type="radio" name="d_q2" value="B"> B) Nesprávně nahuštěných pneumatik.</label>
+            <label class="option-label"><input type="radio" name="d_q2" value="C"> C) Vysoké hmotnosti cestujících.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">3. Jaké je základní vybavení autobusu z hlediska bezpečnosti cestujících při nouzovém opuštění vozidla?</div>
+            <label class="option-label"><input type="radio" name="d_q3" value="A"> A) Nouzová kladívka na rozbití oken a označené nouzové východy.</label>
+            <label class="option-label"><input type="radio" name="d_q3" value="B"> B) Náhradní volant a sada na opravu pneumatik.</label>
+            <label class="option-label"><input type="radio" name="d_q3" value="C"> C) Píšťalka a reflexní pásky pro každého cestujícího.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">4. Jaká je nejvyšší dovolená rychlost autobusu na dálnici v ČR (pokud není v TP/značkou uvedeno jinak)?</div>
+            <label class="option-label"><input type="radio" name="d_q4" value="A"> A) 130 km/h</label>
+            <label class="option-label"><input type="radio" name="d_q4" value="B"> B) 100 km/h nebo 130 km/h podle schválení vozidla (standardně u dálkových autobusu 100 km/h).</label>
+            <label class="option-label"><input type="radio" name="d_q4" value="C"> C) Vždy max. 80 km/h.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">5. Smí autobus přepravovat více cestujících, než je uvedeno v technickém průkazu?</div>
+            <label class="option-label"><input type="radio" name="d_q5" value="A"> A) Ano, pokud všichni stojí.</label>
+            <label class="option-label"><input type="radio" name="d_q5" value="B"> B) Ne, počet přepravovaných osob nesmí překročit povolenou kapacitu.</label>
+            <label class="option-label"><input type="radio" name="d_q5" value="C"> C) Ano, ale pouze na krátké vzdálenosti.</label>
+          </div>
+        </div>
+
+        <!-- TROLEJBUS -->
+        <div id="cat-t" class="quiz-category" style="display: none;">
+          <h2>🏣 Trolejbus (Drážní vozidlo)</h2>
+
+          <div class="question-box">
+            <div class="question-title">1. Trolejbus je z hlediska zákona o silničním provozu považován za:</div>
+            <label class="option-label"><input type="radio" name="t_q1" value="A"> A) Nemotorové vozidlo.</label>
+            <label class="option-label"><input type="radio" name="t_q1" value="B"> B) Nemotorové drážní vozidlo.</label>
+            <label class="option-label"><input type="radio" name="t_q1" value="C"> C) Motorové vozidlo a zároveň drážní vozidlo.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">2. Co se stane při výpadku napětí v trolejovém vedení u trolejbusu bez pomocného pohonu (baterií/agregátu)?</div>
+            <label class="option-label"><input type="radio" name="t_q2" value="A"> A) Trolejbus okamžitě prudce zabrzdí na místě mechanickou brzdou.</label>
+            <label class="option-label"><input type="radio" name="t_q2" value="B"> B) Přestane fungovat elektrická výzbroj a trakční pohon, zůstávají však funkční vzduchové/střadačové brzdy.</label>
+            <label class="option-label"><input type="radio" name="t_q2" value="C"> C) Vozidlo ztratí jakoukoli možnost brzdit.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">3. Co je to tzv. "stržení sběrače" nebo "vypadnutí botky"?</div>
+            <label class="option-label"><input type="radio" name="t_q3" value="A"> A) Situace, kdy botka sběrače opustí trolejový drát nebo dojde k zachycení konstrukce vedení.</label>
+            <label class="option-label"><input type="radio" name="t_q3" value="B"> B) Porucha přední nápravy trolejbusu.</label>
+            <label class="option-label"><input type="radio" name="t_q3" value="C"> C) Porucha odbavovacího systému cestujících.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">4. Při průjezdu trolejovou výhybkou pod proudem nebo s rádiovým přestavováním řidič musí:</div>
+            <label class="option-label"><input type="radio" name="t_q4" value="A"> A) Zrychlit na maximální možnou rychlost.</label>
+            <label class="option-label"><input type="radio" name="t_q4" value="B"> B) Dodržet předepsanou rychlost a postup řazení/průjezdu podle typu výhybky tak, aby nedošlo k poškození vedení.</label>
+            <label class="option-label"><input type="radio" name="t_q4" value="C"> C) Vždy před výhybkou úplně zastavit a vystoupit.</label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">5. Jaké nebezpečí hrozí při dotyku poškozeného trolejového drátu s karoserií trolejbusu?</div>
+            <label class="option-label"><input type="radio" name="t_q5" value="A"> A) Nebezpečí úrazu elektrickým proudem (vznik nebezpečného dotykového nebo krokového napětí).</label>
+            <label class="option-label"><input type="radio" name="t_q5" value="B"> B) Zvýšení spotřeby pneumatik.</label>
+            <label class="option-label"><input type="radio" name="t_q5" value="C"> C) Zablokování dveří pro cestující.</label>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-submit" onclick="submitTest()">Odevzdat a vyhodnotit test</button>
+      </form>
+
+      <div class="result-box" id="result-box"></div>
+    </div>
+
+  </div>
+
+  <!-- FIREBASE SCRIPT -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCA8xhs3qS9NH7XoedqDjdL2WY7gh0_-WE",
+      authDomain: "fiktivnipid.firebaseapp.com",
+      projectId: "fiktivnipid",
+      storageBucket: "fiktivnipid.firebasestorage.app",
+      messagingSenderId: "858723196116",
+      appId: "1:858723196116:web:05dbbe2f8684277e30af41"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    window.currentUser = null;
+
+    const loginBtn = document.getElementById('btn-login');
+    const authStatus = document.getElementById('auth-status');
+
+    loginBtn.addEventListener('click', () => {
+      if (window.currentUser) {
+        signOut(auth);
+      } else {
+        signInWithPopup(auth, provider);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.currentUser = user;
+        authStatus.textContent = "Přihlášen: " + user.email;
+        loginBtn.textContent = "Odhlásit se";
+      } else {
+        window.currentUser = null;
+        authStatus.textContent = "Status: Nepřihlášen";
+        loginBtn.textContent = "Přihlásit se přes Google";
+      }
+    });
+  </script>
+
+  <!-- SKRIPTY A LOGIKA APLIKACE -->
+  <script>
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1559452632970559562/NuG6HaINy1ARb4Ga1u0Mclerjz5KtD-I42LrohCRAGWP1aZ2JneMpNrore9edOXfXa2r";
+
+    let activeCategory = 'cat-b';
+
+    const correctAnswers = {
+      b: { b_q1: "A", b_q2: "B", b_q3: "B", b_q4: "B", b_q5: "B" },
+      c: { c_q1: "B", c_q2: "B", c_q3: "A", c_q4: "B", c_q5: "C" },
+      d: { d_q1: "B", d_q2: "A", d_q3: "A", d_q4: "B", d_q5: "B" },
+      t: { t_q1: "C", t_q2: "B", t_q3: "A", t_q4: "B", t_q5: "A" }
+    };
+
+    const categoryNames = {
+      'cat-b': 'Skupina B (Osobní)',
+      'cat-c': 'Skupina C (Nákladní)',
+      'cat-d': 'Skupina D (Autobusy)',
+      'cat-t': 'Trolejbus (Drážní)'
+    };
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function switchCategory(catId) {
+      activeCategory = catId;
+      
+      document.querySelectorAll('.quiz-category').forEach(el => el.style.display = 'none');
+      document.getElementById(catId).style.display = 'block';
+
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.getElementById('result-box').style.display = 'none';
+
+      if (window.innerWidth <= 768) {
+        toggleSidebar();
+      }
+    }
+
+    async function submitTest() {
+      if (!window.currentUser) {
+        alert("🔒 Pro odevzdání testu se musíte nejprve přihlásit přes Google!");
+        return;
+      }
+
+      const discordNick = document.getElementById('discord-nick').value.trim();
+      const robloxNick = document.getElementById('roblox-nick').value.trim();
+
+      if (!discordNick || !robloxNick) {
+        alert("Vyplňte prosím své Discord a Roblox jméno!");
+        return;
+      }
+
+      const prefix = activeCategory.split('-')[1]; // b, c, d nebo t
+      const answersGroup = correctAnswers[prefix];
+      let score = 0;
+      let total = Object.keys(answersGroup).length;
+
+      for (let qKey in answersGroup) {
+        const selected = document.querySelector(`input[name="${qKey}"]:checked`);
+        if (selected && selected.value === answersGroup[qKey]) {
+          score++;
+        }
+      }
+
+      const percent = Math.round((score / total) * 100);
+      const isPassed = percent >= 80;
+
+      const resBox = document.getElementById('result-box');
+      resBox.style.display = 'block';
+      resBox.innerHTML = `
+        <h3>Vyhodnocení testu: ${categoryNames[activeCategory]}</h3>
+        <p>Počet bodů: <strong>${score} z ${total}</strong> (${percent} %)</p>
+        <p style="font-size: 1.2rem; margin:0;">${isPassed ? '✔ TESTEM JSTE PROŠEL/A' : '❌ TESTEM JSTE NEPROŠEL/A'}</p>
+      `;
+
+      // Odeslání výsledků na Discord Webhook
+      const payload = {
+        username: "Autoškola - Testy",
+        embeds: [{
+          title: "📝 Vyhodnocení testu autoškoly",
+          color: isPassed ? 3066993 : 15158332,
+          fields: [
+            { name: "👤 Google Účet", value: window.currentUser.email, inline: false },
+            { name: "💬 Discord Nick", value: discordNick, inline: true },
+            { name: "🎮 Roblox Nick", value: robloxNick, inline: true },
+            { name: "📚 Kategorie", value: categoryNames[activeCategory], inline: false },
+            { name: "📊 Výsledek", value: `${score} / ${total} bodů (${percent} %)`, inline: true },
+            { name: "🏆 Stav", value: isPassed ? "✅ PROŠEL/A" : "❌ NEPROŠEL/A", inline: true }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        await fetch(DISCORD_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error("Chyba při odesílání Webhooku:", err);
+      }
+    }
+  </script>
+</body>
+</html>
