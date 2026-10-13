@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autoškola | Prague Community</title>
+  <title>Autoškola & DEV Nábor | Prague Community</title>
   <style>
     :root {
       --bg-dark: #0f172a;
       --card-bg: #1e293b;
       --accent-blue: #2563eb;
       --accent-green: #10b981;
+      --accent-gold: #f59e0b;
       --accent-red: #ef4444;
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
@@ -91,6 +92,16 @@
       border-color: var(--accent-blue);
     }
 
+    .nav-btn.admin-nav {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    .nav-btn.admin-nav:hover, .nav-btn.admin-nav.active {
+      background: var(--accent-gold);
+      color: #0f172a;
+    }
+
     .close-sidebar-btn {
       display: none;
       background: #ef4444;
@@ -148,7 +159,7 @@
       font-size: 0.85rem;
     }
 
-    input[type="text"] {
+    input[type="text"], textarea {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
@@ -156,6 +167,11 @@
       background: #0f172a;
       color: white;
       font-size: 0.95rem;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
     }
 
     /* Otázky */
@@ -229,6 +245,8 @@
     <button class="nav-btn" onclick="switchCategory('cat-c')">🚚 Skupina C (Nákladní)</button>
     <button class="nav-btn" onclick="switchCategory('cat-d')">🚌 Skupina D (Autobusy)</button>
     <button class="nav-btn" onclick="switchCategory('cat-t')">🏣 Trolejbus (Drážní)</button>
+    <!-- Admin / DEV Náborová sekce -->
+    <button class="nav-btn admin-nav" id="sidebar-admin-btn" onclick="switchCategory('cat-admin')">👑 DEV Nábor (Admin)</button>
   </div>
 
   <!-- Hlavní obsah -->
@@ -415,6 +433,61 @@
           </div>
         </div>
 
+        <!-- ADMIN / DEV NÁBOROVÁ SEKCE -->
+        <div id="cat-admin" class="quiz-category" style="display: none;">
+          <h2>👑 DEV Nábor (Admin Sekce)</h2>
+          
+          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">━━━━━━━━━━━━━━━━━━<br>🔒 6. ODPOVĚDNOST A TÝM<br>━━━━━━━━━━━━━━━━━━</h3>
+
+          <div class="question-box">
+            <div class="question-title">27. Jsi ochoten přijímat připomínky, opravovat chyby a dodržovat zadání vedoucího?</div>
+            <textarea name="admin_q27" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">28. Jak bys řešil neshodu s jiným členem Development oddělení?</div>
+            <textarea name="admin_q28" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">29. Jak bys zabezpečil pracovní soubory a přístupové údaje projektu?</div>
+            <textarea name="admin_q29" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">30. Dokážeš dokončit přidělený úkol, nebo včas informovat vedení, pokud máš problém?</div>
+            <textarea name="admin_q30" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">31. Proč bychom měli přijmout právě tebe a čím se odlišuješ od ostatních uchazečů?</div>
+            <textarea name="admin_q31" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">━━━━━━━━━━━━━━━━━━<br>🧪 7. ZÁVĚREČNÁ VÝZVA<br>━━━━━━━━━━━━━━━━━━</h3>
+
+          <div class="question-box">
+            <div class="question-title">32. Popiš jeden projekt, který bys chtěl v našem Development oddělení uskutečnit. Uveď jeho cíl, potřebné nástroje a první kroky.</div>
+            <textarea name="admin_q32" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">33. Pokud zatím nic neumíš, sestav si vlastní plán, jak by ses během prvního měsíce chtěl posunout. Uveď alespoň tři konkrétní cíle.</div>
+            <textarea name="admin_q33" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">34. Přilož ukázky své dosavadní práce, pokud nějaké máš. Pokud jsi začátečník, můžeš místo nich popsat, co bys chtěl vytvořit jako svůj první projekt.</div>
+            <textarea name="admin_q34" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title">35. Potvrzuješ, že jsi odpovídal pravdivě a jsi připraven na případný praktický úkol nebo pohovor?</div>
+            <label class="option-label"><input type="radio" name="admin_q35" value="Ano"> Ano, potvrzuji.</label>
+            <label class="option-label"><input type="radio" name="admin_q35" value="Ne"> Ne.</label>
+          </div>
+        </div>
+
         <button type="button" class="btn btn-submit" onclick="submitTest()">Odevzdat a vyhodnotit test</button>
       </form>
 
@@ -469,6 +542,12 @@
 
   <!-- SKRIPTY A LOGIKA APLIKACE -->
   <script>
+    // ==========================================
+    // SPÍNAČ ADMIN SEKCE (ZDE MŮŽEŠ PŘEPSAT NA false A SEKCE SE UZAMKNE)
+    // ==========================================
+    const ADMIN_SECTION_ENABLED = true; 
+    // ==========================================
+
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1559452632970559562/NuG6HaINy1ARb4Ga1u0Mclerjz5KtD-I42LrohCRAGWP1aZ2JneMpNrore9edOXfXa2r";
 
     let activeCategory = 'cat-b';
@@ -484,14 +563,28 @@
       'cat-b': 'Skupina B (Osobní)',
       'cat-c': 'Skupina C (Nákladní)',
       'cat-d': 'Skupina D (Autobusy)',
-      'cat-t': 'Trolejbus (Drážní)'
+      'cat-t': 'Trolejbus (Drážní)',
+      'cat-admin': 'DEV Nábor (Admin)'
     };
+
+    // Inicializace skrytí admin sekce podle spínače v kódu
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!ADMIN_SECTION_ENABLED) {
+        const adminBtn = document.getElementById('sidebar-admin-btn');
+        if (adminBtn) adminBtn.style.display = 'none';
+      }
+    });
 
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
     }
 
     function switchCategory(catId) {
+      if (catId === 'cat-admin' && !ADMIN_SECTION_ENABLED) {
+        alert("Admin sekce je momentálně uzamčena.");
+        return;
+      }
+
       activeCategory = catId;
       
       document.querySelectorAll('.quiz-category').forEach(el => el.style.display = 'none');
@@ -521,43 +614,67 @@
         return;
       }
 
-      const prefix = activeCategory.split('-')[1]; // b, c, d nebo t
-      const answersGroup = correctAnswers[prefix];
-      let score = 0;
-      let total = Object.keys(answersGroup).length;
-
-      for (let qKey in answersGroup) {
-        const selected = document.querySelector(`input[name="${qKey}"]:checked`);
-        if (selected && selected.value === answersGroup[qKey]) {
-          score++;
-        }
-      }
-
-      const percent = Math.round((score / total) * 100);
-      const isPassed = percent >= 80;
-
       const resBox = document.getElementById('result-box');
       resBox.style.display = 'block';
-      resBox.innerHTML = `
-        <h3>Vyhodnocení testu: ${categoryNames[activeCategory]}</h3>
-        <p>Počet bodů: <strong>${score} z ${total}</strong> (${percent} %)</p>
-        <p style="font-size: 1.2rem; margin:0;">${isPassed ? '✔ TESTEM JSTE PROŠEL/A' : '❌ TESTEM JSTE NEPROŠEL/A'}</p>
-      `;
+
+      let embedFields = [
+        { name: "👤 Google Účet", value: window.currentUser.email, inline: false },
+        { name: "💬 Discord Nick", value: discordNick, inline: true },
+        { name: "🎮 Roblox Nick", value: robloxNick, inline: true },
+        { name: "📚 Sekce", value: categoryNames[activeCategory], inline: false }
+      ];
+
+      if (activeCategory === 'cat-admin') {
+        // Zpracování admin/dev náboru
+        let adminAnswersSummary = "";
+        for (let i = 27; i <= 34; i++) {
+          const val = document.querySelector(`textarea[name="admin_q${i}"]`).value.trim();
+          adminAnswersSummary += `**Otázka ${i}:** ${val || "*Bez odpovědi*"}\n\n`;
+        }
+        const q35Val = document.querySelector(`input[name="admin_q35"]:checked`);
+        adminAnswersSummary += `**Otázka 35 (Potvrzení):** ${q35Val ? q35Val.value : "Nezvoleno"}`;
+
+        resBox.innerHTML = `<h3>DEV Nábor úspěšně odeslán!</h3><p>Vaše odpovědi byly odeslány vedení na Discord.</p>`;
+
+        embedFields.push({ name: "📋 Odpovědi z náboru", value: adminAnswersSummary.substring(0, 1024), inline: false });
+
+      } else {
+        // Zpracování klasických autoškola testů
+        const prefix = activeCategory.split('-')[1]; // b, c, d nebo t
+        const answersGroup = correctAnswers[prefix];
+        let score = 0;
+        let total = Object.keys(answersGroup).length;
+
+        for (let qKey in answersGroup) {
+          const selected = document.querySelector(`input[name="${qKey}"]:checked`);
+          if (selected && selected.value === answersGroup[qKey]) {
+            score++;
+          }
+        }
+
+        const percent = Math.round((score / total) * 100);
+        const isPassed = percent >= 80;
+
+        resBox.innerHTML = `
+          <h3>Vyhodnocení testu: ${categoryNames[activeCategory]}</h3>
+          <p>Počet bodů: <strong>${score} z ${total}</strong> (${percent} %)</p>
+          <p style="font-size: 1.2rem; margin:0;">${isPassed ? '✔ TESTEM JSTE PROŠEL/A' : '❌ TESTEM JSTE NEPROŠEL/A'}</p>
+        `;
+
+        embedFields.push(
+          { name: "📊 Výsledek", value: `${score} / ${total} bodů (${percent} %)`, inline: true },
+          { name: "🏆 Stav", value: isPassed ? "✅ PROŠEL/A" : "❌ NEPROŠEL/A", inline: true }
+        );
+      }
 
       // Odeslání výsledků na Discord Webhook
       const payload = {
-        username: "Autoškola - Testy",
+        username: "Autoškola & Nábor - Bot",
         embeds: [{
-          title: "📝 Vyhodnocení testu autoškoly",
-          color: isPassed ? 3066993 : 15158332,
-          fields: [
-            { name: "👤 Google Účet", value: window.currentUser.email, inline: false },
-            { name: "💬 Discord Nick", value: discordNick, inline: true },
-            { name: "🎮 Roblox Nick", value: robloxNick, inline: true },
-            { name: "📚 Kategorie", value: categoryNames[activeCategory], inline: false },
-            { name: "📊 Výsledek", value: `${score} / ${total} bodů (${percent} %)`, inline: true },
-            { name: "🏆 Stav", value: isPassed ? "✅ PROŠEL/A" : "❌ NEPROŠEL/A", inline: true }
-          ],
+          title: activeCategory === 'cat-admin' ? "👑 Nová přihláška do DEV týmu" : "📝 Vyhodnocení testu autoškoly",
+          color: activeCategory === 'cat-admin' ? 1610753 : 3066993,
+          fields: embedFields,
+          footer: { text: "A-TEAM STAFF • DEVELOPMENT DEPARTMENT" },
           timestamp: new Date().toISOString()
         }]
       };
