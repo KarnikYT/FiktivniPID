@@ -31,7 +31,6 @@
       min-height: 100vh;
     }
 
-    /* Tlačítko pro mobilní menu */
     .mobile-nav-toggle {
       display: none;
       position: fixed;
@@ -48,7 +47,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
-    /* Sidebar / Postranní panel */
     .sidebar {
       width: 280px;
       background: var(--card-bg);
@@ -114,7 +112,6 @@
       font-weight: bold;
     }
 
-    /* Hlavní obsah */
     .main-content {
       margin-left: 280px;
       flex: 1;
@@ -174,7 +171,6 @@
       min-height: 80px;
     }
 
-    /* Otázky */
     .question-box {
       background: #0f172a;
       border: 1px solid var(--border-color);
@@ -222,7 +218,17 @@
       margin-top: 20px;
     }
 
-    /* Responsive Styl pro mobil */
+    .info-banner {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
     @media (max-width: 768px) {
       .mobile-nav-toggle { display: block; }
       .sidebar { transform: translateX(-100%); }
@@ -234,10 +240,8 @@
 </head>
 <body>
 
-  <!-- Mobilní tlačítko pro otevření Sidebaru -->
   <button class="mobile-nav-toggle" onclick="toggleSidebar()">☰ Menu Testů</button>
 
-  <!-- Sidebar / Postranní lišta -->
   <div class="sidebar" id="sidebar">
     <button class="close-sidebar-btn" onclick="toggleSidebar()">✕ Zavřít menu</button>
     <h2>🚦 Testy Autoškoly</h2>
@@ -245,21 +249,19 @@
     <button class="nav-btn" onclick="switchCategory('cat-c')">🚚 Skupina C (Nákladní)</button>
     <button class="nav-btn" onclick="switchCategory('cat-d')">🚌 Skupina D (Autobusy)</button>
     <button class="nav-btn" onclick="switchCategory('cat-t')">🏣 Trolejbus (Drážní)</button>
-    <!-- Admin / DEV Náborová sekce -->
-    <button class="nav-btn admin-nav" id="sidebar-admin-btn" onclick="switchCategory('cat-admin')">👑 DEV Nábor (Admin)</button>
+    <button class="nav-btn admin-nav" id="sidebar-admin-btn" onclick="switchCategory('cat-admin')">🛠️ DEV Nábor (Admin)</button>
   </div>
 
-  <!-- Hlavní obsah -->
   <div class="main-content">
     
-    <!-- 1. Přihlášení přes Google -->
+    <!-- 1. Přihlášení -->
     <div class="auth-card">
       <h3 style="margin-top: 0;">👤 Přihlášení k testu</h3>
       <p style="color: var(--text-sub); font-size: 0.9rem;" id="auth-status">Status: Nepřihlášen</p>
       <button class="btn" id="btn-login">Přihlásit se přes Google</button>
     </div>
 
-    <!-- 2. Formulář uživatele -->
+    <!-- 2. Identifikace -->
     <div class="user-info-card">
       <h3 style="margin-top:0;">📋 Identifikace uchazeče</h3>
       <label for="discord-nick">Discord uživatelské jméno *</label>
@@ -269,7 +271,7 @@
       <input type="text" id="roblox-nick" placeholder="např. RobloxPlayerCZ">
     </div>
 
-    <!-- 3. Testovací otázky -->
+    <!-- 3. Testy a Dotazník -->
     <div class="quiz-card">
       <form id="quiz-form">
         
@@ -435,52 +437,170 @@
 
         <!-- ADMIN / DEV NÁBOROVÁ SEKCE -->
         <div id="cat-admin" class="quiz-category" style="display: none;">
-          <h2>👑 DEV Nábor (Admin Sekce)</h2>
+          <h2>🛠️ A-TEAM STAFF • DEVELOPMENT DEPARTMENT</h2>
+          <div class="info-banner">
+            <strong>DEVELOPMENT DEPARTMENT • NÁBOROVÝ DOTAZNÍK</strong><br>
+            Vítej u oficiálního náboru do A-TEAM STAFF – ODDĚLENÍ DEVELOPMENT.<br><br>
+            Nehledáme pouze lidi, kteří už všechno umí. Hledáme také schopné začátečníky, kteří mají vlastní nápady, dokážou přemýšlet nad problémy a jsou připraveni věnovat svůj čas rozvoji našich projektů.<br><br>
+            ⚠️ <strong>UPOZORNĚNÍ:</strong> Nábor není formalita. Odpovědi typu „nevím“, „asi“ nebo „chci to zkusit“ bez dalšího vysvětlení nemusí stačit.
+          </div>
+
+          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">👤 1. ZÁKLADNÍ INFORMACE</h3>
           
-          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">━━━━━━━━━━━━━━━━━━<br>🔒 6. ODPOVĚDNOST A TÝM<br>━━━━━━━━━━━━━━━━━━</h3>
+          <div class="question-box">
+            <div class="question-title">1. Jaká je tvoje Discord přezdívka?</div>
+            <textarea name="admin_q1" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">2. Kolik ti je let?</div>
+            <textarea name="admin_q2" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">3. Kolik času týdně můžeš Development oddělení reálně věnovat?</div>
+            <textarea name="admin_q3" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">4. Proč chceš právě do Development oddělení, a ne do jiného oddělení A-TEAM STAFF?</div>
+            <textarea name="admin_q4" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">5. Co podle tebe znamená být členem vývojového týmu a jaké povinnosti z toho vyplývají?</div>
+            <textarea name="admin_q5" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🧊 2. MODELOVÁNÍ A ÚPRAVY</h3>
+
+          <div class="question-box">
+            <div class="question-title">6. S jakými programy nebo nástroji máš zkušenosti? U každého napiš, co v něm dokážeš.</div>
+            <textarea name="admin_q6" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">7. Umíš vytvářet vlastní 3D modely, upravovat existující modely, pracovat s texturami nebo vytvářet polepy? Popiš konkrétně své schopnosti.</div>
+            <textarea name="admin_q7" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">8. Pokud zatím neumíš modelovat, co by ses chtěl naučit jako první a proč?</div>
+            <textarea name="admin_q8" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">9. Představ si, že dostaneš hotový model autobusu, ale potřebuješ změnit jeho vzhled, barvy a některé detaily. Jak bys postupoval?</div>
+            <textarea name="admin_q9" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">10. Jaký je podle tebe rozdíl mezi vytvořením nového modelu a úpravou již existujícího modelu?</div>
+            <textarea name="admin_q10" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">11. Co bys udělal, kdyby model po importování do hry vypadal jinak než v programu, ve kterém jsi ho upravoval?</div>
+            <textarea name="admin_q11" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">12. Jaké části autobusu nebo jiného vozidla bys chtěl umět upravovat? Uveď alespoň tři konkrétní příklady.</div>
+            <textarea name="admin_q12" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">⚙️ 3. PRAKTICKÉ MYŠLENÍ</h3>
+
+          <div class="question-box">
+            <div class="question-title">13. Dostaneš úkol, který neumíš splnit. Máš tři možnosti: vzdát to, počkat na pomoc, nebo se pokusit najít řešení. Co uděláš a proč?</div>
+            <textarea name="admin_q13" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">14. Vytvoříš model, na kterém jsi pracoval několik hodin, ale vedoucí ti řekne, že nesplňuje zadání. Jak budeš reagovat?</div>
+            <textarea name="admin_q14" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">15. Model vypadá dobře, ale ve hře způsobuje problémy. Co bys zkontroloval jako první a proč?</div>
+            <textarea name="admin_q15" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">16. Máš termín odevzdání projektu, ale zjistíš, že ho nestihneš. Jak situaci vyřešíš?</div>
+            <textarea name="admin_q16" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">17. Jiný člen týmu ti nabídne hotový model, ale nedokáže vysvětlit, odkud ho získal. Co uděláš, než ho použiješ v projektu?</div>
+            <textarea name="admin_q17" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🧠 4. ZNALOSTI A PŘÍSTUP</h3>
+
+          <div class="question-box">
+            <div class="question-title">18. Co je podle tebe důležitější: rychle dokončit model, nebo ho správně připravit a otestovat? Svou odpověď zdůvodni.</div>
+            <textarea name="admin_q18" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">19. Jak bys postupoval při učení nového programu, se kterým nemáš žádné zkušenosti?</div>
+            <textarea name="admin_q19" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">20. Jak poznáš, že je tvoje práce připravená k předání ostatním členům týmu?</div>
+            <textarea name="admin_q20" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">21. Když ti někdo zkušenější vysvětlí, že tvůj postup není správný, co uděláš?</div>
+            <textarea name="admin_q21" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">22. Uveď jednu svou silnou stránku a jednu slabinu, která by mohla ovlivnit tvoji práci v Development oddělení.</div>
+            <textarea name="admin_q22" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🚍 5. TVÉ ZAMĚŘENÍ</h3>
+
+          <div class="question-box">
+            <div class="question-title">23. Které činnosti tě zajímají? (Vyber všechny relevantní a rozepiš priority):</div>
+            <textarea name="admin_q23" placeholder="Modelování vozidel, textury, mapy, testování..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">24. S jakými hrami nebo projekty bys chtěl pracovat? (Např. PROTON BUS Simulator, OMSI 2, OpenOMSI, Roblox nebo jiné.)</div>
+            <textarea name="admin_q24" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">25. Jaký konkrétní model, vozidlo, objekt nebo jiný projekt bys chtěl jednou vytvořit či upravit?</div>
+            <textarea name="admin_q25" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+          <div class="question-box">
+            <div class="question-title">26. Co nám můžeš nabídnout, i kdybys zatím neuměl žádné technické úpravy?</div>
+            <textarea name="admin_q26" placeholder="Napište svou odpověď..."></textarea>
+          </div>
+
+          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🔒 6. ODPOVĚDNOST A TÝM</h3>
 
           <div class="question-box">
             <div class="question-title">27. Jsi ochoten přijímat připomínky, opravovat chyby a dodržovat zadání vedoucího?</div>
             <textarea name="admin_q27" placeholder="Napište svou odpověď..."></textarea>
           </div>
-
           <div class="question-box">
             <div class="question-title">28. Jak bys řešil neshodu s jiným členem Development oddělení?</div>
             <textarea name="admin_q28" placeholder="Napište svou odpověď..."></textarea>
           </div>
-
           <div class="question-box">
             <div class="question-title">29. Jak bys zabezpečil pracovní soubory a přístupové údaje projektu?</div>
             <textarea name="admin_q29" placeholder="Napište svou odpověď..."></textarea>
           </div>
-
           <div class="question-box">
             <div class="question-title">30. Dokážeš dokončit přidělený úkol, nebo včas informovat vedení, pokud máš problém?</div>
             <textarea name="admin_q30" placeholder="Napište svou odpověď..."></textarea>
           </div>
-
           <div class="question-box">
             <div class="question-title">31. Proč bychom měli přijmout právě tebe a čím se odlišuješ od ostatních uchazečů?</div>
             <textarea name="admin_q31" placeholder="Napište svou odpověď..."></textarea>
           </div>
 
-          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">━━━━━━━━━━━━━━━━━━<br>🧪 7. ZÁVĚREČNÁ VÝZVA<br>━━━━━━━━━━━━━━━━━━</h3>
+          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🧪 7. ZÁVĚREČNÁ VÝZVA</h3>
 
           <div class="question-box">
             <div class="question-title">32. Popiš jeden projekt, který bys chtěl v našem Development oddělení uskutečnit. Uveď jeho cíl, potřebné nástroje a první kroky.</div>
             <textarea name="admin_q32" placeholder="Napište svou odpověď..."></textarea>
           </div>
-
           <div class="question-box">
             <div class="question-title">33. Pokud zatím nic neumíš, sestav si vlastní plán, jak by ses během prvního měsíce chtěl posunout. Uveď alespoň tři konkrétní cíle.</div>
             <textarea name="admin_q33" placeholder="Napište svou odpověď..."></textarea>
           </div>
-
           <div class="question-box">
             <div class="question-title">34. Přilož ukázky své dosavadní práce, pokud nějaké máš. Pokud jsi začátečník, můžeš místo nich popsat, co bys chtěl vytvořit jako svůj první projekt.</div>
             <textarea name="admin_q34" placeholder="Napište svou odpověď..."></textarea>
           </div>
-
           <div class="question-box">
             <div class="question-title">35. Potvrzuješ, že jsi odpovídal pravdivě a jsi připraven na případný praktický úkol nebo pohovor?</div>
             <label class="option-label"><input type="radio" name="admin_q35" value="Ano"> Ano, potvrzuji.</label>
@@ -543,9 +663,9 @@
   <!-- SKRIPTY A LOGIKA APLIKACE -->
   <script>
     // ==========================================
-    // SPÍNAČ ADMIN SEKCE (ZDE MŮŽEŠ PŘEPSAT NA false A SEKCE SE UZAMKNE)
+    // SPÍNAČ ADMIN SEKCE (true = ZOBRAZIT / false = SKRÝT)
     // ==========================================
-    const ADMIN_SECTION_ENABLED = true; 
+    const ADMIN_SECTION_ENABLED = false; 
     // ==========================================
 
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1559452632970559562/NuG6HaINy1ARb4Ga1u0Mclerjz5KtD-I42LrohCRAGWP1aZ2JneMpNrore9edOXfXa2r";
@@ -567,7 +687,6 @@
       'cat-admin': 'DEV Nábor (Admin)'
     };
 
-    // Inicializace skrytí admin sekce podle spínače v kódu
     window.addEventListener('DOMContentLoaded', () => {
       if (!ADMIN_SECTION_ENABLED) {
         const adminBtn = document.getElementById('sidebar-admin-btn');
@@ -625,22 +744,27 @@
       ];
 
       if (activeCategory === 'cat-admin') {
-        // Zpracování admin/dev náboru
         let adminAnswersSummary = "";
-        for (let i = 27; i <= 34; i++) {
-          const val = document.querySelector(`textarea[name="admin_q${i}"]`).value.trim();
-          adminAnswersSummary += `**Otázka ${i}:** ${val || "*Bez odpovědi*"}\n\n`;
+        for (let i = 1; i <= 34; i++) {
+          const el = document.querySelector(`textarea[name="admin_q${i}"]`);
+          const val = el ? el.value.trim() : "";
+          if (val) {
+            adminAnswersSummary += `**Q${i}:** ${val}\n`;
+          }
         }
         const q35Val = document.querySelector(`input[name="admin_q35"]:checked`);
-        adminAnswersSummary += `**Otázka 35 (Potvrzení):** ${q35Val ? q35Val.value : "Nezvoleno"}`;
+        adminAnswersSummary += `**Q35 (Potvrzení):** ${q35Val ? q35Val.value : "Nezvoleno"}`;
 
-        resBox.innerHTML = `<h3>DEV Nábor úspěšně odeslán!</h3><p>Vaše odpovědi byly odeslány vedení na Discord.</p>`;
+        resBox.innerHTML = `<h3>DEV Nábor úspěšně odeslán!</h3><p>Vaše odpovědi byly odeslány vedení projektu na Discord.</p>`;
 
-        embedFields.push({ name: "📋 Odpovědi z náboru", value: adminAnswersSummary.substring(0, 1024), inline: false });
+        embedFields.push({ 
+          name: "📋 Odpovědi z náboru", 
+          value: adminAnswersSummary.length > 1024 ? adminAnswersSummary.substring(0, 1020) + "..." : (adminAnswersSummary || "Bez odpovědí"), 
+          inline: false 
+        });
 
       } else {
-        // Zpracování klasických autoškola testů
-        const prefix = activeCategory.split('-')[1]; // b, c, d nebo t
+        const prefix = activeCategory.split('-')[1];
         const answersGroup = correctAnswers[prefix];
         let score = 0;
         let total = Object.keys(answersGroup).length;
@@ -667,11 +791,10 @@
         );
       }
 
-      // Odeslání výsledků na Discord Webhook
       const payload = {
         username: "Autoškola & Nábor - Bot",
         embeds: [{
-          title: activeCategory === 'cat-admin' ? "👑 Nová přihláška do DEV týmu" : "📝 Vyhodnocení testu autoškoly",
+          title: activeCategory === 'cat-admin' ? "👑 Nová přihláška do DEV týmu (A-TEAM STAFF)" : "📝 Vyhodnocení testu autoškoly",
           color: activeCategory === 'cat-admin' ? 1610753 : 3066993,
           fields: embedFields,
           footer: { text: "A-TEAM STAFF • DEVELOPMENT DEPARTMENT" },
