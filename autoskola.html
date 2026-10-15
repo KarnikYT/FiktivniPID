@@ -1,623 +1,529 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autoškola & DEV Nábor | Prague Community</title>
-  <style>
-    :root {
-      --bg-dark: #0f172a;
-      --card-bg: #1e293b;
-      --accent-blue: #2563eb;
-      --accent-green: #10b981;
-      --accent-gold: #f59e0b;
-      --accent-red: #ef4444;
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --border-color: #334155;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autoškola &amp; DEV nábor | Prague Community</title>
+<style>
+:root{--blue:#0b4ea2;--navy:#082a57;--bg:#eef2f7;--card:#fff;--ink:#14213d;--sub:#566680;--line:#d3dce8;--ok:#00a562;--warn:#f8b30e;--bad:#d62718;--led:#ffb400;--r:8px}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1424;--card:#13203a;--ink:#e8eefb;--sub:#9db0cb;--line:#27385c;--blue:#6aa5ff}}
+*{box-sizing:border-box}
+html{scroll-padding-top:150px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Helvetica Neue",Arial,sans-serif}
+button,input,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+.top{background:var(--blue);color:#fff;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:10px 20px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;margin-right:auto}
+.brand b{background:#fff;color:var(--blue);padding:2px 9px;border-radius:5px;font-weight:900;letter-spacing:.5px}
+.brand small{display:block;font-weight:400;font-size:.75rem;opacity:.85}
+#auth-status{font-size:.85rem;opacity:.95}
+.btn{background:#fff;color:var(--blue);border:0;border-radius:var(--r);padding:9px 16px;font-weight:700;cursor:pointer}
+.btn:hover{background:#e3edfb}
+.layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:28px;max-width:1120px;margin:0 auto;padding:24px 20px 90px}
+.lines{position:sticky;top:76px;align-self:start}
+.lines h2{font-size:.95rem;color:var(--sub);margin:0 0 10px 4px;font-weight:600}
+.lines ul{list-style:none;margin:0;padding:0;position:relative}
+.lines ul::before{content:"";position:absolute;left:21px;top:20px;bottom:20px;width:4px;background:var(--line)}
+.line-btn{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:8px 10px;margin-bottom:4px;background:none;border:0;border-radius:var(--r);color:var(--ink);text-align:left;cursor:pointer;font-weight:600}
+.line-btn:hover{background:var(--card)}
+.line-btn[aria-current=true]{background:var(--card);box-shadow:inset 3px 0 0 var(--blue)}
+.line-btn small{display:block;font-weight:400;color:var(--sub);font-size:.78rem}
+.badge{flex:none;display:grid;place-items:center;min-width:24px;height:24px;margin:0 6px;padding:0 6px;color:#fff;font-weight:800;font-size:.85rem;line-height:1;position:relative;z-index:1;border:2px solid var(--card)}
+.badge.big{min-width:44px;height:44px;font-size:1.4rem;margin:0;border:0}
+.b{background:var(--ok);border-radius:50%}
+.c{background:var(--bad);border-radius:5px}
+.d{background:var(--blue);border-radius:5px}
+.t{background:#0097a7;border-radius:12px}
+.a{background:#111;color:var(--led);border-radius:5px}
+.board{background:#0a0a0a;color:var(--led);border-radius:var(--r);padding:16px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-family:"Courier New",monospace;border-bottom:6px solid var(--blue)}
+.board .what{flex:1;min-width:200px}
+.board strong{display:block;font-size:1.25rem}
+.board span{opacity:.8;font-size:.85rem}
+#clock{font-size:1.9rem;font-weight:700;letter-spacing:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-top:16px}
+.card h3{margin:0 0 4px}
+.ident{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ident p{grid-column:1/-1;margin:0;color:var(--sub);font-size:.9rem}
+label{display:block;font-size:.85rem;color:var(--sub);margin-bottom:4px}
+input[type=text],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+.quiz-category h2{display:flex;align-items:center;gap:12px;margin:0 0 14px;font-size:1.35rem}
+.section-head{margin:30px 0 12px;padding:6px 0 6px 12px;border-left:6px solid var(--warn);font-size:1.05rem}
+.info-banner{background:#fff6dc;color:#4a3600;border-left:6px solid var(--warn);border-radius:var(--r);padding:14px 16px;font-size:.92rem}
+@media(prefers-color-scheme:dark){.info-banner{background:#2d2610;color:#f5e3a8}}
+.question-box{border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;background:var(--card)}
+.question-box.missing{border-color:var(--bad);box-shadow:0 0 0 3px rgba(214,39,24,.18)}
+.question-title{display:flex;gap:12px;font-weight:700;margin-bottom:10px}
+.qnum{flex:none;min-width:28px;height:28px;display:grid;place-items:center;background:var(--navy);color:#fff;border-radius:50%;font-size:.85rem}
+.option-label{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;margin-bottom:4px;border:1px solid transparent;border-radius:var(--r);cursor:pointer;color:var(--ink)}
+.option-label:hover{background:var(--bg)}
+.option-label:has(input:checked){background:var(--bg);border-color:var(--blue)}
+.option-label input{margin-top:5px;accent-color:var(--blue)}
+.key{flex:none;font-weight:800;color:var(--blue);width:1.2em}
+.option-label.ok{background:rgba(0,165,98,.14);border-color:var(--ok)}
+.option-label.bad{background:rgba(214,39,24,.12);border-color:var(--bad)}
+.option-label.ok::after{content:"správně";margin-left:auto;color:var(--ok);font-weight:700;font-size:.8rem}
+.option-label.bad::after{content:"vaše odpověď";margin-left:auto;color:var(--bad);font-weight:700;font-size:.8rem}
+.submit{width:100%;margin-top:18px;padding:14px;font-size:1.05rem;background:var(--blue);color:#fff}
+.submit:hover{background:var(--navy)}
+.submit:disabled{opacity:.6;cursor:wait}
+.msg{display:none;margin-top:14px;padding:12px 16px;border-radius:var(--r);background:#fde8e6;color:#8a1209;font-weight:600}
+.ticket{display:none;margin-top:18px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.ticket header{padding:12px 20px;color:#fff;font-weight:700;background:var(--ok)}
+.ticket.fail header{background:var(--bad)}
+.ticket .body{padding:18px 20px;border-top:2px dashed var(--line)}
+.ticket .score{font-size:2.4rem;font-weight:800;line-height:1}
+.ticket .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.ticket .btn{background:var(--blue);color:#fff}
+.progress{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--card);border-top:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;gap:14px;font-size:.88rem}
+.track{flex:1;height:6px;background:var(--line);border-radius:3px;position:relative}
+.track i{display:block;height:100%;width:0;background:var(--blue);border-radius:3px;transition:width .25s}
+.track i::after{content:"";position:absolute;top:50%;left:var(--p,0%);width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#fff;border:4px solid var(--blue)}
+.foot{max-width:1120px;margin:0 auto;padding:0 20px 90px;color:var(--sub);font-size:.8rem}
+@media(max-width:820px){
+ .layout{grid-template-columns:1fr;gap:14px;padding-top:14px}
+ .lines{position:static}.lines h2,.lines ul::before{display:none}
+ .lines ul{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+ .line-btn{width:auto;flex:none;margin:0;background:var(--card);border:1px solid var(--line)}
+ .line-btn small{display:none}
+ .ident{grid-template-columns:1fr}
+ #clock{font-size:1.4rem}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
-    * {
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .mobile-nav-toggle {
-      display: none;
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 1000;
-      background: var(--accent-blue);
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-
-    .sidebar {
-      width: 280px;
-      background: var(--card-bg);
-      border-right: 1px solid var(--border-color);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 900;
-      transition: transform 0.3s ease;
-      overflow-y: auto;
-    }
-
-    .sidebar h2 {
-      font-size: 1.2rem;
-      margin-top: 0;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 10px;
-      color: var(--text-main);
-    }
-
-    .nav-btn {
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-sub);
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      text-align: left;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .nav-btn:hover, .nav-btn.active {
-      background: var(--accent-blue);
-      color: white;
-      border-color: var(--accent-blue);
-    }
-
-    .nav-btn.admin-nav {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
-    }
-
-    .nav-btn.admin-nav:hover, .nav-btn.admin-nav.active {
-      background: var(--accent-gold);
-      color: #0f172a;
-    }
-
-    .close-sidebar-btn {
-      display: none;
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 8px;
-      border-radius: 6px;
-      margin-bottom: 15px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .main-content {
-      margin-left: 280px;
-      flex: 1;
-      padding: 30px;
-      max-width: 900px;
-    }
-
-    .auth-card, .user-info-card, .quiz-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .btn {
-      background: var(--accent-blue);
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .btn:hover { opacity: 0.9; }
-
-    .btn-submit {
-      background: var(--accent-green);
-      width: 100%;
-      padding: 14px;
-      font-size: 1.1rem;
-      margin-top: 20px;
-    }
-
-    label {
-      display: block;
-      margin-top: 10px;
-      margin-bottom: 4px;
-      color: var(--text-sub);
-      font-size: 0.85rem;
-    }
-
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background: #0f172a;
-      color: white;
-      font-size: 0.95rem;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .question-box {
-      background: #0f172a;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-    }
-
-    .question-title {
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: var(--text-main);
-    }
-
-    .option-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      color: var(--text-sub);
-      margin-bottom: 4px;
-      transition: background 0.2s;
-    }
-
-    .option-label:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-main);
-    }
-
-    .option-label input {
-      cursor: pointer;
-    }
-
-    .result-box {
-      display: none;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid var(--accent-green);
-      color: var(--accent-green);
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
-      margin-top: 20px;
-    }
-
-    .info-banner {
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid var(--accent-gold);
-      color: var(--accent-gold);
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    @media (max-width: 768px) {
-      .mobile-nav-toggle { display: block; }
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .close-sidebar-btn { display: block; }
-      .main-content { margin-left: 0; padding: 70px 15px 20px 15px; }
-    }
-  </style>
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes drop{from{opacity:0;transform:translateY(-100%)}to{transform:none}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.28)}100%{transform:scale(1)}}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@keyframes glow{50%{text-shadow:0 0 14px var(--led)}}
+@keyframes stamp{0%{opacity:0;transform:scale(1.7) rotate(-6deg)}70%{transform:scale(.97) rotate(1deg)}100%{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes stripes{to{background-position:28px 0}}
+@keyframes ring{from{box-shadow:0 0 0 0 rgba(11,78,162,.55)}to{box-shadow:0 0 0 12px transparent}}
+@keyframes grow{from{transform:scaleY(0)}}
+@keyframes ripple{to{transform:scale(5);opacity:0}}
+@keyframes drive{to{transform:translateX(calc(100vw + 160px))}}
+@keyframes route{to{background-position:36px 0}}
+.top{animation:drop .6s cubic-bezier(.2,.9,.3,1)}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;background:repeating-linear-gradient(90deg,var(--warn) 0 24px,transparent 24px 36px);animation:route 1.2s linear infinite}
+.board{position:relative;overflow:hidden;animation:rise .6s .1s both}
+.board::after{content:"";position:absolute;bottom:0;left:-90px;width:64px;height:12px;background:repeating-linear-gradient(90deg,#9ed0ff 0 8px,var(--blue) 8px 12px);border-radius:4px 8px 0 0;animation:drive 9s linear infinite}
+#clock,#board-name{text-shadow:0 0 5px rgba(255,180,0,.55);animation:glow 3s ease-in-out infinite}
+.layout .card{animation:rise .6s .25s both}
+.lines li{animation:rise .5s both;animation-delay:calc(.15s + var(--i,0)*.07s)}
+.lines ul::before{transform-origin:top;animation:grow 1s .2s both}
+.line-btn{overflow:hidden;transition:transform .2s,background .2s}
+.line-btn:hover{transform:translateX(5px)}
+.line-btn:hover .badge,.pop{animation:pop .45s}
+.btn{position:relative;overflow:hidden;transition:transform .15s,background .2s}
+.btn:active{transform:scale(.95)}
+.submit::before{content:"";position:absolute;top:0;bottom:0;left:-80px;width:60px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg)}
+.submit:hover::before{left:110%;transition:left .6s}
+.submit.busy::after{content:"";display:inline-block;width:14px;height:14px;margin-left:10px;border:2px solid #fff;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
+.rip{position:absolute;width:30px;height:30px;margin:-15px;border-radius:50%;background:rgba(255,255,255,.5);pointer-events:none;animation:ripple .6s forwards}
+.line-btn .rip{background:rgba(11,78,162,.25)}
+.quiz-category.show h2,.quiz-category.show .info-banner,.quiz-category.show .section-head,.quiz-category.show .question-box{animation:rise .5s both;animation-delay:min(calc(var(--i,0)*55ms),800ms)}
+.question-box{transition:border-color .3s,box-shadow .3s}
+.question-box.done{box-shadow:inset 5px 0 0 var(--ok)}
+.question-box.done .qnum{background:var(--ok);animation:pop .4s}
+.quiz-category.show .question-box.missing{animation:shake .45s}
+.option-label{transition:background .2s,border-color .2s,transform .15s}
+.option-label:hover{transform:translateX(4px)}
+.option-label:has(input:checked) .key{animation:pop .35s}
+.msg{animation:shake .45s}
+.ticket{animation:stamp .6s both}
+.ticket.fail{animation:stamp .6s both,shake .5s .6s}
+.track i{background:repeating-linear-gradient(45deg,var(--blue) 0 10px,#2f78d6 10px 20px);background-size:28px 28px;animation:stripes .8s linear infinite}
+.track i::after{animation:ring 1.6s infinite}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:50}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
 
-  <button class="mobile-nav-toggle" onclick="toggleSidebar()">☰ Menu Testů</button>
+<header class="top">
+  <div class="brand"><b>PID</b><span>Autoškola<small>Prague Community · fiktivní integrovaná doprava</small></span></div>
+  <span id="auth-status">Status: Nepřihlášen</span>
+  <button class="btn" id="btn-login" type="button">Přihlásit se přes Google</button>
+</header>
 
-  <div class="sidebar" id="sidebar">
-    <button class="close-sidebar-btn" onclick="toggleSidebar()">✕ Zavřít menu</button>
-    <h2>🚦 Testy Autoškoly</h2>
-    <button class="nav-btn active" onclick="switchCategory('cat-b')">🚗 Skupina B (Osobní)</button>
-    <button class="nav-btn" onclick="switchCategory('cat-c')">🚚 Skupina C (Nákladní)</button>
-    <button class="nav-btn" onclick="switchCategory('cat-d')">🚌 Skupina D (Autobusy)</button>
-    <button class="nav-btn" onclick="switchCategory('cat-t')">🏣 Trolejbus (Drážní)</button>
-    <button class="nav-btn admin-nav" id="sidebar-admin-btn" onclick="switchCategory('cat-admin')">🛠️ DEV Nábor (Admin)</button>
-  </div>
+<div class="layout">
+  <nav class="lines" aria-label="Výběr testu">
+    <h2>Vyberte linku</h2>
+    <ul>
+      <li><button class="line-btn" data-cat="cat-b" aria-current="true"><span class="badge b">B</span><span>Skupina B<small>Osobní automobily</small></span></button></li>
+      <li><button class="line-btn" data-cat="cat-c"><span class="badge c">C</span><span>Skupina C<small>Nákladní automobily</small></span></button></li>
+      <li><button class="line-btn" data-cat="cat-d"><span class="badge d">D</span><span>Skupina D<small>Autobusy</small></span></button></li>
+      <li><button class="line-btn" data-cat="cat-t"><span class="badge t">T</span><span>Trolejbus<small>Drážní vozidlo</small></span></button></li>
+      <li id="sidebar-admin-btn-wrap"><button class="line-btn" id="sidebar-admin-btn" data-cat="cat-admin"><span class="badge a">N</span><span>DEV nábor<small>Admin sekce</small></span></button></li>
+    </ul>
+  </nav>
 
-  <div class="main-content">
-    
-    <!-- 1. Přihlášení -->
-    <div class="auth-card">
-      <h3 style="margin-top: 0;">👤 Přihlášení k testu</h3>
-      <p style="color: var(--text-sub); font-size: 0.9rem;" id="auth-status">Status: Nepřihlášen</p>
-      <button class="btn" id="btn-login">Přihlásit se přes Google</button>
-    </div>
+  <main>
+    <section class="board" aria-live="polite">
+      <span class="badge big" id="board-badge"></span>
+      <div class="what"><strong id="board-name"></strong><span id="board-meta"></span></div>
+      <div id="clock" aria-hidden="true">--:--:--</div>
+    </section>
 
-    <!-- 2. Identifikace -->
-    <div class="user-info-card">
-      <h3 style="margin-top:0;">📋 Identifikace uchazeče</h3>
-      <label for="discord-nick">Discord uživatelské jméno *</label>
-      <input type="text" id="discord-nick" placeholder="např. uzivatel_123">
+    <section class="card">
+      <h3>Identifikace uchazeče</h3>
+      <div class="ident">
+        <p>Údaje se odešlou spolu s výsledkem. Pro odevzdání je nutné přihlášení přes Google.</p>
+        <div><label for="discord-nick">Discord uživatelské jméno *</label><input type="text" id="discord-nick" placeholder="např. uzivatel_123" autocomplete="off"></div>
+        <div><label for="roblox-nick">Roblox uživatelské jméno *</label><input type="text" id="roblox-nick" placeholder="např. RobloxPlayerCZ" autocomplete="off"></div>
+      </div>
+    </section>
 
-      <label for="roblox-nick">Roblox uživatelské jméno *</label>
-      <input type="text" id="roblox-nick" placeholder="např. RobloxPlayerCZ">
-    </div>
-
-    <!-- 3. Testy a Dotazník -->
-    <div class="quiz-card">
-      <form id="quiz-form">
+    <section class="card">
+<form id="quiz-form">
         
         <!-- SKUPINA B -->
         <div id="cat-b" class="quiz-category">
-          <h2>🚗 Skupina B (Osobní automobily)</h2>
+          <h2>Skupina B (Osobní automobily)</h2>
 
           <div class="question-box">
-            <div class="question-title">1. Předjíždění je zakázáno:</div>
-            <label class="option-label"><input type="radio" name="b_q1" value="A"> A) Na nepřehledných nebo jinak nebezpečných místech (např. v zatáčce nebo před horizontem).</label>
-            <label class="option-label"><input type="radio" name="b_q1" value="B"> B) Vždy na dvoupruhové komunikaci mimo obec.</label>
-            <label class="option-label"><input type="radio" name="b_q1" value="C"> C) Jen na místech, kde je to výslovně zakázáno dopravní značkou.</label>
+            <div class="question-title"><span class="qnum">1</span><span>Předjíždění je zakázáno:</span></div>
+            <label class="option-label"><input type="radio" name="b_q1" value="A"><span class="key">A</span><span>Na nepřehledných nebo jinak nebezpečných místech (např. v zatáčce nebo před horizontem).</span></label>
+            <label class="option-label"><input type="radio" name="b_q1" value="B"><span class="key">B</span><span>Vždy na dvoupruhové komunikaci mimo obec.</span></label>
+            <label class="option-label"><input type="radio" name="b_q1" value="C"><span class="key">C</span><span>Jen na místech, kde je to výslovně zakázáno dopravní značkou.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">2. Rychlostní limit pro osobní automobil v obci je (pokud není značkou stanoveno jinak):</div>
-            <label class="option-label"><input type="radio" name="b_q2" value="A"> A) 60 km/h</label>
-            <label class="option-label"><input type="radio" name="b_q2" value="B"> B) 50 km/h</label>
-            <label class="option-label"><input type="radio" name="b_q2" value="C"> C) 70 km/h</label>
+            <div class="question-title"><span class="qnum">2</span><span>Rychlostní limit pro osobní automobil v obci je (pokud není značkou stanoveno jinak):</span></div>
+            <label class="option-label"><input type="radio" name="b_q2" value="A"><span class="key">A</span><span>60 km/h</span></label>
+            <label class="option-label"><input type="radio" name="b_q2" value="B"><span class="key">B</span><span>50 km/h</span></label>
+            <label class="option-label"><input type="radio" name="b_q2" value="C"><span class="key">C</span><span>70 km/h</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">3. Smí řidič osobního automobilu použít při jízdě mobilní telefon?</div>
-            <label class="option-label"><input type="radio" name="b_q3" value="A"> A) Smí, pokud jede rychlostí do 30 km/h.</label>
-            <label class="option-label"><input type="radio" name="b_q3" value="B"> B) Nesmí ho držet v ruce ani jiným způsobem při jízdě.</label>
-            <label class="option-label"><input type="radio" name="b_q3" value="C"> C) Smí ho držet pouze v levé ruce.</label>
+            <div class="question-title"><span class="qnum">3</span><span>Smí řidič osobního automobilu použít při jízdě mobilní telefon?</span></div>
+            <label class="option-label"><input type="radio" name="b_q3" value="A"><span class="key">A</span><span>Smí, pokud jede rychlostí do 30 km/h.</span></label>
+            <label class="option-label"><input type="radio" name="b_q3" value="B"><span class="key">B</span><span>Nesmí ho držet v ruce ani jiným způsobem při jízdě.</span></label>
+            <label class="option-label"><input type="radio" name="b_q3" value="C"><span class="key">C</span><span>Smí ho držet pouze v levé ruce.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">4. Jaká je minimální hloubka dezénu hlavních drážek u letních pneumatik pro osobní vůz (sk. B)?</div>
-            <label class="option-label"><input type="radio" name="b_q4" value="A"> A) 1,0 mm</label>
-            <label class="option-label"><input type="radio" name="b_q4" value="B"> B) 1,6 mm</label>
-            <label class="option-label"><input type="radio" name="b_q4" value="C"> C) 4,0 mm</label>
+            <div class="question-title"><span class="qnum">4</span><span>Jaká je minimální hloubka dezénu hlavních drážek u letních pneumatik pro osobní vůz (sk. B)?</span></div>
+            <label class="option-label"><input type="radio" name="b_q4" value="A"><span class="key">A</span><span>1,0 mm</span></label>
+            <label class="option-label"><input type="radio" name="b_q4" value="B"><span class="key">B</span><span>1,6 mm</span></label>
+            <label class="option-label"><input type="radio" name="b_q4" value="C"><span class="key">C</span><span>4,0 mm</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">5. Při poskytování první pomoci zraněnému v bezvědomí, který nedýchá normálně, jako první:</div>
-            <label class="option-label"><input type="radio" name="b_q5" value="A"> A) Zjistíte číslo pojišťovny.</label>
-            <label class="option-label"><input type="radio" name="b_q5" value="B"> B) Zahájíte resuscitaci (stlačování hrudníku v rytmu 100-120/min) a zavoláte záchrannou službu (155).</label>
-            <label class="option-label"><input type="radio" name="b_q5" value="C"> C) Dáte mu napít vody.</label>
+            <div class="question-title"><span class="qnum">5</span><span>Při poskytování první pomoci zraněnému v bezvědomí, který nedýchá normálně, jako první:</span></div>
+            <label class="option-label"><input type="radio" name="b_q5" value="A"><span class="key">A</span><span>Zjistíte číslo pojišťovny.</span></label>
+            <label class="option-label"><input type="radio" name="b_q5" value="B"><span class="key">B</span><span>Zahájíte resuscitaci (stlačování hrudníku v rytmu 100-120/min) a zavoláte záchrannou službu (155).</span></label>
+            <label class="option-label"><input type="radio" name="b_q5" value="C"><span class="key">C</span><span>Dáte mu napít vody.</span></label>
           </div>
         </div>
 
         <!-- SKUPINA C -->
         <div id="cat-c" class="quiz-category" style="display: none;">
-          <h2>🚚 Skupina C (Nákladní automobily)</h2>
+          <h2>Skupina C (Nákladní automobily)</h2>
 
           <div class="question-box">
-            <div class="question-title">1. Nejvyšší dovolená rychlost nákladního automobilu o celkové hmotnosti převyšující 3 500 kg na dálnici v ČR je:</div>
-            <label class="option-label"><input type="radio" name="c_q1" value="A"> A) 90 km/h</label>
-            <label class="option-label"><input type="radio" name="c_q1" value="B"> B) 80 km/h</label>
-            <label class="option-label"><input type="radio" name="c_q1" value="C"> C) 100 km/h</label>
+            <div class="question-title"><span class="qnum">1</span><span>Nejvyšší dovolená rychlost nákladního automobilu o celkové hmotnosti převyšující 3 500 kg na dálnici v ČR je:</span></div>
+            <label class="option-label"><input type="radio" name="c_q1" value="A"><span class="key">A</span><span>90 km/h</span></label>
+            <label class="option-label"><input type="radio" name="c_q1" value="B"><span class="key">B</span><span>80 km/h</span></label>
+            <label class="option-label"><input type="radio" name="c_q1" value="C"><span class="key">C</span><span>100 km/h</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">2. K čemu slouží motorová (odlehčovací) brzda u nákladního automobilu?</div>
-            <label class="option-label"><input type="radio" name="c_q2" value="A"> A) K náhlému zablokování kol při nouzovém brzdění.</label>
-            <label class="option-label"><input type="radio" name="c_q2" value="B"> B) Ke zpomalení vozidla při dlouhém klesání bez přehřívání provozních brzd.</label>
-            <label class="option-label"><input type="radio" name="c_q2" value="C"> C) K zajetění vozidla při stání v kopci.</label>
+            <div class="question-title"><span class="qnum">2</span><span>K čemu slouží motorová (odlehčovací) brzda u nákladního automobilu?</span></div>
+            <label class="option-label"><input type="radio" name="c_q2" value="A"><span class="key">A</span><span>K náhlému zablokování kol při nouzovém brzdění.</span></label>
+            <label class="option-label"><input type="radio" name="c_q2" value="B"><span class="key">B</span><span>Ke zpomalení vozidla při dlouhém klesání bez přehřívání provozních brzd.</span></label>
+            <label class="option-label"><input type="radio" name="c_q2" value="C"><span class="key">C</span><span>K zajetění vozidla při stání v kopci.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">3. Co je to pneumatická brzdová soustava?</div>
-            <label class="option-label"><input type="radio" name="c_q3" value="A"> A) Systém, kde je brzdný účinek přenášen stlačeným vzduchem.</label>
-            <label class="option-label"><input type="radio" name="c_q3" value="B"> B) Systém využívaný výhradně u osobních automobilů.</label>
-            <label class="option-label"><input type="radio" name="c_q3" value="C"> C) Mechanické propojení brzdových destiček pomocí lanek.</label>
+            <div class="question-title"><span class="qnum">3</span><span>Co je to pneumatická brzdová soustava?</span></div>
+            <label class="option-label"><input type="radio" name="c_q3" value="A"><span class="key">A</span><span>Systém, kde je brzdný účinek přenášen stlačeným vzduchem.</span></label>
+            <label class="option-label"><input type="radio" name="c_q3" value="B"><span class="key">B</span><span>Systém využívaný výhradně u osobních automobilů.</span></label>
+            <label class="option-label"><input type="radio" name="c_q3" value="C"><span class="key">C</span><span>Mechanické propojení brzdových destiček pomocí lanek.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">4. Co je povinností řidiče nákladního vozidla před začátkem jízdy ohledně nákladu?</div>
-            <label class="option-label"><input type="radio" name="c_q4" value="A"> A) Zkontrolovat pouze, zda náklad nepřečnívá vzadu o více než 5 metrů.</label>
-            <label class="option-label"><input type="radio" name="c_q4" value="B"> B) Zkontrolovat řádné upevnění a zabezpečení nákladu proti pohybu.</label>
-            <label class="option-label"><input type="radio" name="c_q4" value="C"> C) Náklad se kontroluje až po ujití prvních 100 km.</label>
+            <div class="question-title"><span class="qnum">4</span><span>Co je povinností řidiče nákladního vozidla před začátkem jízdy ohledně nákladu?</span></div>
+            <label class="option-label"><input type="radio" name="c_q4" value="A"><span class="key">A</span><span>Zkontrolovat pouze, zda náklad nepřečnívá vzadu o více než 5 metrů.</span></label>
+            <label class="option-label"><input type="radio" name="c_q4" value="B"><span class="key">B</span><span>Zkontrolovat řádné upevnění a zabezpečení nákladu proti pohybu.</span></label>
+            <label class="option-label"><input type="radio" name="c_q4" value="C"><span class="key">C</span><span>Náklad se kontroluje až po ujití prvních 100 km.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">5. Jaká je minimální hloubka dezénu pneumatik pro nákladní automobily nad 3,5 t v zimním období na vyznačených úsecích?</div>
-            <label class="option-label"><input type="radio" name="c_q5" value="A"> A) 1,6 mm</label>
-            <label class="option-label"><input type="radio" name="c_q5" value="B"> B) 6,0 mm</label>
-            <label class="option-label"><input type="radio" name="c_q5" value="C"> C) 6,0 mm u řízené nápravy, jinak 4,0 mm (dle platných předpisů ČR min. 6 mm na hnacích nápravách).</label>
+            <div class="question-title"><span class="qnum">5</span><span>Jaká je minimální hloubka dezénu pneumatik pro nákladní automobily nad 3,5 t v zimním období na vyznačených úsecích?</span></div>
+            <label class="option-label"><input type="radio" name="c_q5" value="A"><span class="key">A</span><span>1,6 mm</span></label>
+            <label class="option-label"><input type="radio" name="c_q5" value="B"><span class="key">B</span><span>6,0 mm</span></label>
+            <label class="option-label"><input type="radio" name="c_q5" value="C"><span class="key">C</span><span>6,0 mm u řízené nápravy, jinak 4,0 mm (dle platných předpisů ČR min. 6 mm na hnacích nápravách).</span></label>
           </div>
         </div>
 
         <!-- SKUPINA D -->
         <div id="cat-d" class="quiz-category" style="display: none;">
-          <h2>🚌 Skupina D (Autobusy)</h2>
+          <h2>Skupina D (Autobusy)</h2>
 
           <div class="question-box">
-            <div class="question-title">1. Řidič autobusu při vyjíždění ze zastávky MHD v obci:</div>
-            <label class="option-label"><input type="radio" name="d_q1" value="A"> A) Má absolutní přednost a může ihned vjet do jízdního pruhu.</label>
-            <label class="option-label"><input type="radio" name="d_q1" value="B"> B) Je povinen dávat znamení o změně směru jízdy a nesmí ohrozit řidiče jedoucí ve stejném směru; ostatní řidiči mu musí vyjetí usnadnit.</label>
-            <label class="option-label"><input type="radio" name="d_q1" value="C"> C) Musí počkat, až bude ulice zcela prázdná.</label>
+            <div class="question-title"><span class="qnum">1</span><span>Řidič autobusu při vyjíždění ze zastávky MHD v obci:</span></div>
+            <label class="option-label"><input type="radio" name="d_q1" value="A"><span class="key">A</span><span>Má absolutní přednost a může ihned vjet do jízdního pruhu.</span></label>
+            <label class="option-label"><input type="radio" name="d_q1" value="B"><span class="key">B</span><span>Je povinen dávat znamení o změně směru jízdy a nesmí ohrozit řidiče jedoucí ve stejném směru; ostatní řidiči mu musí vyjetí usnadnit.</span></label>
+            <label class="option-label"><input type="radio" name="d_q1" value="C"><span class="key">C</span><span>Musí počkat, až bude ulice zcela prázdná.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">2. Předním protisměrným pohybem nebo vybočením zádě při odbočování musí řidič autobusu počítat z důvodu:</div>
-            <label class="option-label"><input type="radio" name="d_q2" value="A"> A) Velkého rozvoru náprav a převisů karoserie.</label>
-            <label class="option-label"><input type="radio" name="d_q2" value="B"> B) Nesprávně nahuštěných pneumatik.</label>
-            <label class="option-label"><input type="radio" name="d_q2" value="C"> C) Vysoké hmotnosti cestujících.</label>
+            <div class="question-title"><span class="qnum">2</span><span>Předním protisměrným pohybem nebo vybočením zádě při odbočování musí řidič autobusu počítat z důvodu:</span></div>
+            <label class="option-label"><input type="radio" name="d_q2" value="A"><span class="key">A</span><span>Velkého rozvoru náprav a převisů karoserie.</span></label>
+            <label class="option-label"><input type="radio" name="d_q2" value="B"><span class="key">B</span><span>Nesprávně nahuštěných pneumatik.</span></label>
+            <label class="option-label"><input type="radio" name="d_q2" value="C"><span class="key">C</span><span>Vysoké hmotnosti cestujících.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">3. Jaké je základní vybavení autobusu z hlediska bezpečnosti cestujících při nouzovém opuštění vozidla?</div>
-            <label class="option-label"><input type="radio" name="d_q3" value="A"> A) Nouzová kladívka na rozbití oken a označené nouzové východy.</label>
-            <label class="option-label"><input type="radio" name="d_q3" value="B"> B) Náhradní volant a sada na opravu pneumatik.</label>
-            <label class="option-label"><input type="radio" name="d_q3" value="C"> C) Píšťalka a reflexní pásky pro každého cestujícího.</label>
+            <div class="question-title"><span class="qnum">3</span><span>Jaké je základní vybavení autobusu z hlediska bezpečnosti cestujících při nouzovém opuštění vozidla?</span></div>
+            <label class="option-label"><input type="radio" name="d_q3" value="A"><span class="key">A</span><span>Nouzová kladívka na rozbití oken a označené nouzové východy.</span></label>
+            <label class="option-label"><input type="radio" name="d_q3" value="B"><span class="key">B</span><span>Náhradní volant a sada na opravu pneumatik.</span></label>
+            <label class="option-label"><input type="radio" name="d_q3" value="C"><span class="key">C</span><span>Píšťalka a reflexní pásky pro každého cestujícího.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">4. Jaká je nejvyšší dovolená rychlost autobusu na dálnici v ČR (pokud není v TP/značkou uvedeno jinak)?</div>
-            <label class="option-label"><input type="radio" name="d_q4" value="A"> A) 130 km/h</label>
-            <label class="option-label"><input type="radio" name="d_q4" value="B"> B) 100 km/h nebo 130 km/h podle schválení vozidla (standardně u dálkových autobusu 100 km/h).</label>
-            <label class="option-label"><input type="radio" name="d_q4" value="C"> C) Vždy max. 80 km/h.</label>
+            <div class="question-title"><span class="qnum">4</span><span>Jaká je nejvyšší dovolená rychlost autobusu na dálnici v ČR (pokud není v TP/značkou uvedeno jinak)?</span></div>
+            <label class="option-label"><input type="radio" name="d_q4" value="A"><span class="key">A</span><span>130 km/h</span></label>
+            <label class="option-label"><input type="radio" name="d_q4" value="B"><span class="key">B</span><span>100 km/h nebo 130 km/h podle schválení vozidla (standardně u dálkových autobusů 100 km/h).</span></label>
+            <label class="option-label"><input type="radio" name="d_q4" value="C"><span class="key">C</span><span>Vždy max. 80 km/h.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">5. Smí autobus přepravovat více cestujících, než je uvedeno v technickém průkazu?</div>
-            <label class="option-label"><input type="radio" name="d_q5" value="A"> A) Ano, pokud všichni stojí.</label>
-            <label class="option-label"><input type="radio" name="d_q5" value="B"> B) Ne, počet přepravovaných osob nesmí překročit povolenou kapacitu.</label>
-            <label class="option-label"><input type="radio" name="d_q5" value="C"> C) Ano, ale pouze na krátké vzdálenosti.</label>
+            <div class="question-title"><span class="qnum">5</span><span>Smí autobus přepravovat více cestujících, než je uvedeno v technickém průkazu?</span></div>
+            <label class="option-label"><input type="radio" name="d_q5" value="A"><span class="key">A</span><span>Ano, pokud všichni stojí.</span></label>
+            <label class="option-label"><input type="radio" name="d_q5" value="B"><span class="key">B</span><span>Ne, počet přepravovaných osob nesmí překročit povolenou kapacitu.</span></label>
+            <label class="option-label"><input type="radio" name="d_q5" value="C"><span class="key">C</span><span>Ano, ale pouze na krátké vzdálenosti.</span></label>
           </div>
         </div>
 
         <!-- TROLEJBUS -->
         <div id="cat-t" class="quiz-category" style="display: none;">
-          <h2>🏣 Trolejbus (Drážní vozidlo)</h2>
+          <h2>Trolejbus (Drážní vozidlo)</h2>
 
           <div class="question-box">
-            <div class="question-title">1. Trolejbus je z hlediska zákona o silničním provozu považován za:</div>
-            <label class="option-label"><input type="radio" name="t_q1" value="A"> A) Nemotorové vozidlo.</label>
-            <label class="option-label"><input type="radio" name="t_q1" value="B"> B) Nemotorové drážní vozidlo.</label>
-            <label class="option-label"><input type="radio" name="t_q1" value="C"> C) Motorové vozidlo a zároveň drážní vozidlo.</label>
+            <div class="question-title"><span class="qnum">1</span><span>Trolejbus je z hlediska zákona o silničním provozu považován za:</span></div>
+            <label class="option-label"><input type="radio" name="t_q1" value="A"><span class="key">A</span><span>Nemotorové vozidlo.</span></label>
+            <label class="option-label"><input type="radio" name="t_q1" value="B"><span class="key">B</span><span>Nemotorové drážní vozidlo.</span></label>
+            <label class="option-label"><input type="radio" name="t_q1" value="C"><span class="key">C</span><span>Motorové vozidlo a zároveň drážní vozidlo.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">2. Co se stane při výpadku napětí v trolejovém vedení u trolejbusu bez pomocného pohonu (baterií/agregátu)?</div>
-            <label class="option-label"><input type="radio" name="t_q2" value="A"> A) Trolejbus okamžitě prudce zabrzdí na místě mechanickou brzdou.</label>
-            <label class="option-label"><input type="radio" name="t_q2" value="B"> B) Přestane fungovat elektrická výzbroj a trakční pohon, zůstávají však funkční vzduchové/střadačové brzdy.</label>
-            <label class="option-label"><input type="radio" name="t_q2" value="C"> C) Vozidlo ztratí jakoukoli možnost brzdit.</label>
+            <div class="question-title"><span class="qnum">2</span><span>Co se stane při výpadku napětí v trolejovém vedení u trolejbusu bez pomocného pohonu (baterií/agregátu)?</span></div>
+            <label class="option-label"><input type="radio" name="t_q2" value="A"><span class="key">A</span><span>Trolejbus okamžitě prudce zabrzdí na místě mechanickou brzdou.</span></label>
+            <label class="option-label"><input type="radio" name="t_q2" value="B"><span class="key">B</span><span>Přestane fungovat elektrická výzbroj a trakční pohon, zůstávají však funkční vzduchové/střadačové brzdy.</span></label>
+            <label class="option-label"><input type="radio" name="t_q2" value="C"><span class="key">C</span><span>Vozidlo ztratí jakoukoli možnost brzdit.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">3. Co je to tzv. "stržení sběrače" nebo "vypadnutí botky"?</div>
-            <label class="option-label"><input type="radio" name="t_q3" value="A"> A) Situace, kdy botka sběrače opustí trolejový drát nebo dojde k zachycení konstrukce vedení.</label>
-            <label class="option-label"><input type="radio" name="t_q3" value="B"> B) Porucha přední nápravy trolejbusu.</label>
-            <label class="option-label"><input type="radio" name="t_q3" value="C"> C) Porucha odbavovacího systému cestujících.</label>
+            <div class="question-title"><span class="qnum">3</span><span>Co je to tzv. "stržení sběrače" nebo "vypadnutí botky"?</span></div>
+            <label class="option-label"><input type="radio" name="t_q3" value="A"><span class="key">A</span><span>Situace, kdy botka sběrače opustí trolejový drát nebo dojde k zachycení konstrukce vedení.</span></label>
+            <label class="option-label"><input type="radio" name="t_q3" value="B"><span class="key">B</span><span>Porucha přední nápravy trolejbusu.</span></label>
+            <label class="option-label"><input type="radio" name="t_q3" value="C"><span class="key">C</span><span>Porucha odbavovacího systému cestujících.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">4. Při průjezdu trolejovou výhybkou pod proudem nebo s rádiovým přestavováním řidič musí:</div>
-            <label class="option-label"><input type="radio" name="t_q4" value="A"> A) Zrychlit na maximální možnou rychlost.</label>
-            <label class="option-label"><input type="radio" name="t_q4" value="B"> B) Dodržet předepsanou rychlost a postup řazení/průjezdu podle typu výhybky tak, aby nedošlo k poškození vedení.</label>
-            <label class="option-label"><input type="radio" name="t_q4" value="C"> C) Vždy před výhybkou úplně zastavit a vystoupit.</label>
+            <div class="question-title"><span class="qnum">4</span><span>Při průjezdu trolejovou výhybkou pod proudem nebo s rádiovým přestavováním řidič musí:</span></div>
+            <label class="option-label"><input type="radio" name="t_q4" value="A"><span class="key">A</span><span>Zrychlit na maximální možnou rychlost.</span></label>
+            <label class="option-label"><input type="radio" name="t_q4" value="B"><span class="key">B</span><span>Dodržet předepsanou rychlost a postup řazení/průjezdu podle typu výhybky tak, aby nedošlo k poškození vedení.</span></label>
+            <label class="option-label"><input type="radio" name="t_q4" value="C"><span class="key">C</span><span>Vždy před výhybkou úplně zastavit a vystoupit.</span></label>
           </div>
 
           <div class="question-box">
-            <div class="question-title">5. Jaké nebezpečí hrozí při dotyku poškozeného trolejového drátu s karoserií trolejbusu?</div>
-            <label class="option-label"><input type="radio" name="t_q5" value="A"> A) Nebezpečí úrazu elektrickým proudem (vznik nebezpečného dotykového nebo krokového napětí).</label>
-            <label class="option-label"><input type="radio" name="t_q5" value="B"> B) Zvýšení spotřeby pneumatik.</label>
-            <label class="option-label"><input type="radio" name="t_q5" value="C"> C) Zablokování dveří pro cestující.</label>
+            <div class="question-title"><span class="qnum">5</span><span>Jaké nebezpečí hrozí při dotyku poškozeného trolejového drátu s karoserií trolejbusu?</span></div>
+            <label class="option-label"><input type="radio" name="t_q5" value="A"><span class="key">A</span><span>Nebezpečí úrazu elektrickým proudem (vznik nebezpečného dotykového nebo krokového napětí).</span></label>
+            <label class="option-label"><input type="radio" name="t_q5" value="B"><span class="key">B</span><span>Zvýšení spotřeby pneumatik.</span></label>
+            <label class="option-label"><input type="radio" name="t_q5" value="C"><span class="key">C</span><span>Zablokování dveří pro cestující.</span></label>
           </div>
         </div>
 
         <!-- ADMIN / DEV NÁBOROVÁ SEKCE -->
         <div id="cat-admin" class="quiz-category" style="display: none;">
-          <h2>🛠️ A-TEAM STAFF • DEVELOPMENT DEPARTMENT</h2>
+          <h2>A-TEAM STAFF • DEVELOPMENT DEPARTMENT</h2>
           <div class="info-banner">
             <strong>DEVELOPMENT DEPARTMENT • NÁBOROVÝ DOTAZNÍK</strong><br>
             Vítej u oficiálního náboru do A-TEAM STAFF – ODDĚLENÍ DEVELOPMENT.<br><br>
             Nehledáme pouze lidi, kteří už všechno umí. Hledáme také schopné začátečníky, kteří mají vlastní nápady, dokážou přemýšlet nad problémy a jsou připraveni věnovat svůj čas rozvoji našich projektů.<br><br>
-            ⚠️ <strong>UPOZORNĚNÍ:</strong> Nábor není formalita. Odpovědi typu „nevím“, „asi“ nebo „chci to zkusit“ bez dalšího vysvětlení nemusí stačit.
+            <strong>UPOZORNĚNÍ:</strong> Nábor není formalita. Odpovědi typu „nevím“, „asi“ nebo „chci to zkusit“ bez dalšího vysvětlení nemusí stačit.
           </div>
 
-          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">👤 1. ZÁKLADNÍ INFORMACE</h3>
+          <h3 class="section-head">1. ZÁKLADNÍ INFORMACE</h3>
           
           <div class="question-box">
-            <div class="question-title">1. Jaká je tvoje Discord přezdívka?</div>
+            <div class="question-title"><span class="qnum">1</span><span>Jaká je tvoje Discord přezdívka?</span></div>
             <textarea name="admin_q1" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">2. Kolik ti je let?</div>
+            <div class="question-title"><span class="qnum">2</span><span>Kolik ti je let?</span></div>
             <textarea name="admin_q2" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">3. Kolik času týdně můžeš Development oddělení reálně věnovat?</div>
+            <div class="question-title"><span class="qnum">3</span><span>Kolik času týdně můžeš Development oddělení reálně věnovat?</span></div>
             <textarea name="admin_q3" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">4. Proč chceš právě do Development oddělení, a ne do jiného oddělení A-TEAM STAFF?</div>
+            <div class="question-title"><span class="qnum">4</span><span>Proč chceš právě do Development oddělení, a ne do jiného oddělení A-TEAM STAFF?</span></div>
             <textarea name="admin_q4" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">5. Co podle tebe znamená být členem vývojového týmu a jaké povinnosti z toho vyplývají?</div>
+            <div class="question-title"><span class="qnum">5</span><span>Co podle tebe znamená být členem vývojového týmu a jaké povinnosti z toho vyplývají?</span></div>
             <textarea name="admin_q5" placeholder="Napište svou odpověď..."></textarea>
           </div>
 
-          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🧊 2. MODELOVÁNÍ A ÚPRAVY</h3>
+          <h3 class="section-head">2. MODELOVÁNÍ A ÚPRAVY</h3>
 
           <div class="question-box">
-            <div class="question-title">6. S jakými programy nebo nástroji máš zkušenosti? U každého napiš, co v něm dokážeš.</div>
+            <div class="question-title"><span class="qnum">6</span><span>S jakými programy nebo nástroji máš zkušenosti? U každého napiš, co v něm dokážeš.</span></div>
             <textarea name="admin_q6" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">7. Umíš vytvářet vlastní 3D modely, upravovat existující modely, pracovat s texturami nebo vytvářet polepy? Popiš konkrétně své schopnosti.</div>
+            <div class="question-title"><span class="qnum">7</span><span>Umíš vytvářet vlastní 3D modely, upravovat existující modely, pracovat s texturami nebo vytvářet polepy? Popiš konkrétně své schopnosti.</span></div>
             <textarea name="admin_q7" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">8. Pokud zatím neumíš modelovat, co by ses chtěl naučit jako první a proč?</div>
+            <div class="question-title"><span class="qnum">8</span><span>Pokud zatím neumíš modelovat, co by ses chtěl naučit jako první a proč?</span></div>
             <textarea name="admin_q8" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">9. Představ si, že dostaneš hotový model autobusu, ale potřebuješ změnit jeho vzhled, barvy a některé detaily. Jak bys postupoval?</div>
+            <div class="question-title"><span class="qnum">9</span><span>Představ si, že dostaneš hotový model autobusu, ale potřebuješ změnit jeho vzhled, barvy a některé detaily. Jak bys postupoval?</span></div>
             <textarea name="admin_q9" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">10. Jaký je podle tebe rozdíl mezi vytvořením nového modelu a úpravou již existujícího modelu?</div>
+            <div class="question-title"><span class="qnum">10</span><span>Jaký je podle tebe rozdíl mezi vytvořením nového modelu a úpravou již existujícího modelu?</span></div>
             <textarea name="admin_q10" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">11. Co bys udělal, kdyby model po importování do hry vypadal jinak než v programu, ve kterém jsi ho upravoval?</div>
+            <div class="question-title"><span class="qnum">11</span><span>Co bys udělal, kdyby model po importování do hry vypadal jinak než v programu, ve kterém jsi ho upravoval?</span></div>
             <textarea name="admin_q11" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">12. Jaké části autobusu nebo jiného vozidla bys chtěl umět upravovat? Uveď alespoň tři konkrétní příklady.</div>
+            <div class="question-title"><span class="qnum">12</span><span>Jaké části autobusu nebo jiného vozidla bys chtěl umět upravovat? Uveď alespoň tři konkrétní příklady.</span></div>
             <textarea name="admin_q12" placeholder="Napište svou odpověď..."></textarea>
           </div>
 
-          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">⚙️ 3. PRAKTICKÉ MYŠLENÍ</h3>
+          <h3 class="section-head">3. PRAKTICKÉ MYŠLENÍ</h3>
 
           <div class="question-box">
-            <div class="question-title">13. Dostaneš úkol, který neumíš splnit. Máš tři možnosti: vzdát to, počkat na pomoc, nebo se pokusit najít řešení. Co uděláš a proč?</div>
+            <div class="question-title"><span class="qnum">13</span><span>Dostaneš úkol, který neumíš splnit. Máš tři možnosti: vzdát to, počkat na pomoc, nebo se pokusit najít řešení. Co uděláš a proč?</span></div>
             <textarea name="admin_q13" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">14. Vytvoříš model, na kterém jsi pracoval několik hodin, ale vedoucí ti řekne, že nesplňuje zadání. Jak budeš reagovat?</div>
+            <div class="question-title"><span class="qnum">14</span><span>Vytvoříš model, na kterém jsi pracoval několik hodin, ale vedoucí ti řekne, že nesplňuje zadání. Jak budeš reagovat?</span></div>
             <textarea name="admin_q14" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">15. Model vypadá dobře, ale ve hře způsobuje problémy. Co bys zkontroloval jako první a proč?</div>
+            <div class="question-title"><span class="qnum">15</span><span>Model vypadá dobře, ale ve hře způsobuje problémy. Co bys zkontroloval jako první a proč?</span></div>
             <textarea name="admin_q15" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">16. Máš termín odevzdání projektu, ale zjistíš, že ho nestihneš. Jak situaci vyřešíš?</div>
+            <div class="question-title"><span class="qnum">16</span><span>Máš termín odevzdání projektu, ale zjistíš, že ho nestihneš. Jak situaci vyřešíš?</span></div>
             <textarea name="admin_q16" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">17. Jiný člen týmu ti nabídne hotový model, ale nedokáže vysvětlit, odkud ho získal. Co uděláš, než ho použiješ v projektu?</div>
+            <div class="question-title"><span class="qnum">17</span><span>Jiný člen týmu ti nabídne hotový model, ale nedokáže vysvětlit, odkud ho získal. Co uděláš, než ho použiješ v projektu?</span></div>
             <textarea name="admin_q17" placeholder="Napište svou odpověď..."></textarea>
           </div>
 
-          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🧠 4. ZNALOSTI A PŘÍSTUP</h3>
+          <h3 class="section-head">4. ZNALOSTI A PŘÍSTUP</h3>
 
           <div class="question-box">
-            <div class="question-title">18. Co je podle tebe důležitější: rychle dokončit model, nebo ho správně připravit a otestovat? Svou odpověď zdůvodni.</div>
+            <div class="question-title"><span class="qnum">18</span><span>Co je podle tebe důležitější: rychle dokončit model, nebo ho správně připravit a otestovat? Svou odpověď zdůvodni.</span></div>
             <textarea name="admin_q18" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">19. Jak bys postupoval při učení nového programu, se kterým nemáš žádné zkušenosti?</div>
+            <div class="question-title"><span class="qnum">19</span><span>Jak bys postupoval při učení nového programu, se kterým nemáš žádné zkušenosti?</span></div>
             <textarea name="admin_q19" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">20. Jak poznáš, že je tvoje práce připravená k předání ostatním členům týmu?</div>
+            <div class="question-title"><span class="qnum">20</span><span>Jak poznáš, že je tvoje práce připravená k předání ostatním členům týmu?</span></div>
             <textarea name="admin_q20" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">21. Když ti někdo zkušenější vysvětlí, že tvůj postup není správný, co uděláš?</div>
+            <div class="question-title"><span class="qnum">21</span><span>Když ti někdo zkušenější vysvětlí, že tvůj postup není správný, co uděláš?</span></div>
             <textarea name="admin_q21" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">22. Uveď jednu svou silnou stránku a jednu slabinu, která by mohla ovlivnit tvoji práci v Development oddělení.</div>
+            <div class="question-title"><span class="qnum">22</span><span>Uveď jednu svou silnou stránku a jednu slabinu, která by mohla ovlivnit tvoji práci v Development oddělení.</span></div>
             <textarea name="admin_q22" placeholder="Napište svou odpověď..."></textarea>
           </div>
 
-          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🚍 5. TVÉ ZAMĚŘENÍ</h3>
+          <h3 class="section-head">5. TVÉ ZAMĚŘENÍ</h3>
 
           <div class="question-box">
-            <div class="question-title">23. Které činnosti tě zajímají? (Vyber všechny relevantní a rozepiš priority):</div>
+            <div class="question-title"><span class="qnum">23</span><span>Které činnosti tě zajímají? (Vyber všechny relevantní a rozepiš priority):</span></div>
             <textarea name="admin_q23" placeholder="Modelování vozidel, textury, mapy, testování..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">24. S jakými hrami nebo projekty bys chtěl pracovat? (Např. PROTON BUS Simulator, OMSI 2, OpenOMSI, Roblox nebo jiné.)</div>
+            <div class="question-title"><span class="qnum">24</span><span>S jakými hrami nebo projekty bys chtěl pracovat? (Např. PROTON BUS Simulator, OMSI 2, OpenOMSI, Roblox nebo jiné.)</span></div>
             <textarea name="admin_q24" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">25. Jaký konkrétní model, vozidlo, objekt nebo jiný projekt bys chtěl jednou vytvořit či upravit?</div>
+            <div class="question-title"><span class="qnum">25</span><span>Jaký konkrétní model, vozidlo, objekt nebo jiný projekt bys chtěl jednou vytvořit či upravit?</span></div>
             <textarea name="admin_q25" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">26. Co nám můžeš nabídnout, i kdybys zatím neuměl žádné technické úpravy?</div>
+            <div class="question-title"><span class="qnum">26</span><span>Co nám můžeš nabídnout, i kdybys zatím neuměl žádné technické úpravy?</span></div>
             <textarea name="admin_q26" placeholder="Napište svou odpověď..."></textarea>
           </div>
 
-          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🔒 6. ODPOVĚDNOST A TÝM</h3>
+          <h3 class="section-head">6. ODPOVĚDNOST A TÝM</h3>
 
           <div class="question-box">
-            <div class="question-title">27. Jsi ochoten přijímat připomínky, opravovat chyby a dodržovat zadání vedoucího?</div>
+            <div class="question-title"><span class="qnum">27</span><span>Jsi ochoten přijímat připomínky, opravovat chyby a dodržovat zadání vedoucího?</span></div>
             <textarea name="admin_q27" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">28. Jak bys řešil neshodu s jiným členem Development oddělení?</div>
+            <div class="question-title"><span class="qnum">28</span><span>Jak bys řešil neshodu s jiným členem Development oddělení?</span></div>
             <textarea name="admin_q28" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">29. Jak bys zabezpečil pracovní soubory a přístupové údaje projektu?</div>
+            <div class="question-title"><span class="qnum">29</span><span>Jak bys zabezpečil pracovní soubory a přístupové údaje projektu?</span></div>
             <textarea name="admin_q29" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">30. Dokážeš dokončit přidělený úkol, nebo včas informovat vedení, pokud máš problém?</div>
+            <div class="question-title"><span class="qnum">30</span><span>Dokážeš dokončit přidělený úkol, nebo včas informovat vedení, pokud máš problém?</span></div>
             <textarea name="admin_q30" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">31. Proč bychom měli přijmout právě tebe a čím se odlišuješ od ostatních uchazečů?</div>
+            <div class="question-title"><span class="qnum">31</span><span>Proč bychom měli přijmout právě tebe a čím se odlišuješ od ostatních uchazečů?</span></div>
             <textarea name="admin_q31" placeholder="Napište svou odpověď..."></textarea>
           </div>
 
-          <h3 style="color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px;">🧪 7. ZÁVĚREČNÁ VÝZVA</h3>
+          <h3 class="section-head">7. ZÁVĚREČNÁ VÝZVA</h3>
 
           <div class="question-box">
-            <div class="question-title">32. Popiš jeden projekt, který bys chtěl v našem Development oddělení uskutečnit. Uveď jeho cíl, potřebné nástroje a první kroky.</div>
+            <div class="question-title"><span class="qnum">32</span><span>Popiš jeden projekt, který bys chtěl v našem Development oddělení uskutečnit. Uveď jeho cíl, potřebné nástroje a první kroky.</span></div>
             <textarea name="admin_q32" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">33. Pokud zatím nic neumíš, sestav si vlastní plán, jak by ses během prvního měsíce chtěl posunout. Uveď alespoň tři konkrétní cíle.</div>
+            <div class="question-title"><span class="qnum">33</span><span>Pokud zatím nic neumíš, sestav si vlastní plán, jak by ses během prvního měsíce chtěl posunout. Uveď alespoň tři konkrétní cíle.</span></div>
             <textarea name="admin_q33" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">34. Přilož ukázky své dosavadní práce, pokud nějaké máš. Pokud jsi začátečník, můžeš místo nich popsat, co bys chtěl vytvořit jako svůj první projekt.</div>
+            <div class="question-title"><span class="qnum">34</span><span>Přilož ukázky své dosavadní práce, pokud nějaké máš. Pokud jsi začátečník, můžeš místo nich popsat, co bys chtěl vytvořit jako svůj první projekt.</span></div>
             <textarea name="admin_q34" placeholder="Napište svou odpověď..."></textarea>
           </div>
           <div class="question-box">
-            <div class="question-title">35. Potvrzuješ, že jsi odpovídal pravdivě a jsi připraven na případný praktický úkol nebo pohovor?</div>
+            <div class="question-title"><span class="qnum">35</span><span>Potvrzuješ, že jsi odpovídal pravdivě a jsi připraven na případný praktický úkol nebo pohovor?</span></div>
             <label class="option-label"><input type="radio" name="admin_q35" value="Ano"> Ano, potvrzuji.</label>
             <label class="option-label"><input type="radio" name="admin_q35" value="Ne"> Ne.</label>
           </div>
         </div>
 
-        <button type="button" class="btn btn-submit" onclick="submitTest()">Odevzdat a vyhodnotit test</button>
+        <button type="button" class="btn submit">Odevzdat a vyhodnotit test</button>
       </form>
+      <div class="msg" id="msg" role="alert"></div>
+      <div class="ticket" id="result-box"></div>
+    </section>
+  </main>
+</div>
 
-      <div class="result-box" id="result-box"></div>
-    </div>
+<footer class="foot">Fiktivní komunitní projekt pro Roblox. Nejde o oficiální stránky Pražské integrované dopravy ani ROPID.</footer>
 
-  </div>
+<div class="progress"><span id="prog-text">0 / 0</span><div class="track"><i id="prog-bar"></i></div></div>
 
-  <!-- FIREBASE SCRIPT -->
-  <script type="module">
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
@@ -643,7 +549,7 @@
       if (window.currentUser) {
         signOut(auth);
       } else {
-        signInWithPopup(auth, provider);
+        signInWithPopup(auth, provider).catch(e => { if (!/popup-closed|cancelled-popup/.test(e.code)) window.dispatchEvent(new Event('autherror')); });
       }
     });
 
@@ -660,158 +566,304 @@
     });
   </script>
 
-  <!-- SKRIPTY A LOGIKA APLIKACE -->
-  <script>
-    // ==========================================
-    // SPÍNAČ ADMIN SEKCE (true = ZOBRAZIT / false = SKRÝT)
-    // ==========================================
-    const ADMIN_SECTION_ENABLED = false; 
-    // ==========================================
+<script>
+// Přepínač admin sekce (true = zobrazit, false = skrýt)
+const ADMIN_SECTION_ENABLED = false;
+const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1559452632970559562/NuG6HaINy1ARb4Ga1u0Mclerjz5KtD-I42LrohCRAGWP1aZ2JneMpNrore9edOXfXa2r";
+const PASS_PERCENT = 80;
 
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1559452632970559562/NuG6HaINy1ARb4Ga1u0Mclerjz5KtD-I42LrohCRAGWP1aZ2JneMpNrore9edOXfXa2r";
+const correctAnswers = {
+  b: { b_q1:"A", b_q2:"B", b_q3:"B", b_q4:"B", b_q5:"B" },
+  c: { c_q1:"B", c_q2:"B", c_q3:"A", c_q4:"B", c_q5:"C" },
+  d: { d_q1:"B", d_q2:"A", d_q3:"A", d_q4:"B", d_q5:"B" },
+  t: { t_q1:"C", t_q2:"B", t_q3:"A", t_q4:"B", t_q5:"A" }
+};
+const CATS = {
+  'cat-b': { cls:'b', badge:'B', name:'Skupina B (Osobní)' },
+  'cat-c': { cls:'c', badge:'C', name:'Skupina C (Nákladní)' },
+  'cat-d': { cls:'d', badge:'D', name:'Skupina D (Autobusy)' },
+  'cat-t': { cls:'t', badge:'T', name:'Trolejbus (Drážní)' },
+  'cat-admin': { cls:'a', badge:'N', name:'DEV Nábor (Admin)' }
+};
+let activeCategory = 'cat-b';
+let submitted = false;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} }
+};
 
-    let activeCategory = 'cat-b';
+function showMsg(text) {
+  const m = $('#msg');
+  m.textContent = text;
+  m.style.display = text ? 'block' : 'none';
+}
 
-    const correctAnswers = {
-      b: { b_q1: "A", b_q2: "B", b_q3: "B", b_q4: "B", b_q5: "B" },
-      c: { c_q1: "B", c_q2: "B", c_q3: "A", c_q4: "B", c_q5: "C" },
-      d: { d_q1: "B", d_q2: "A", d_q3: "A", d_q4: "B", d_q5: "B" },
-      t: { t_q1: "C", t_q2: "B", t_q3: "A", t_q4: "B", t_q5: "A" }
-    };
+function questionKeys() {
+  const cat = $('#' + activeCategory);
+  if (activeCategory === 'cat-admin') return $$('textarea', cat).map(t => t.name).concat('admin_q35');
+  return Object.keys(correctAnswers[activeCategory.split('-')[1]]);
+}
 
-    const categoryNames = {
-      'cat-b': 'Skupina B (Osobní)',
-      'cat-c': 'Skupina C (Nákladní)',
-      'cat-d': 'Skupina D (Autobusy)',
-      'cat-t': 'Trolejbus (Drážní)',
-      'cat-admin': 'DEV Nábor (Admin)'
-    };
+function isAnswered(name) {
+  const el = $(`[name="${name}"]`);
+  if (!el) return false;
+  return el.type === 'radio' ? !!$(`input[name="${name}"]:checked`) : el.value.trim() !== '';
+}
 
-    window.addEventListener('DOMContentLoaded', () => {
-      if (!ADMIN_SECTION_ENABLED) {
-        const adminBtn = document.getElementById('sidebar-admin-btn');
-        if (adminBtn) adminBtn.style.display = 'none';
-      }
+function updateProgress() {
+  const keys = questionKeys();
+  const done = keys.filter(isAnswered).length;
+  const pct = keys.length ? Math.round(done / keys.length * 100) : 0;
+  $('#prog-text').textContent = `Zodpovězeno ${done} z ${keys.length}`;
+  $('#prog-bar').style.width = pct + '%';
+  $('.track').style.setProperty('--p', pct + '%');
+  $('#board-meta').textContent = activeCategory === 'cat-admin'
+    ? `${keys.length} otázek · odpovědi se odešlou vedení`
+    : `${keys.length} otázek · k úspěchu ${PASS_PERCENT} %`;
+}
+
+function switchCategory(catId) {
+  if (catId === 'cat-admin' && !ADMIN_SECTION_ENABLED) { showMsg('Admin sekce je momentálně uzamčena.'); return; }
+  activeCategory = catId;
+  $$('.quiz-category').forEach(el => el.style.display = el.id === catId ? 'block' : 'none');
+  $$('.line-btn').forEach(b => b.setAttribute('aria-current', b.dataset.cat === catId));
+  const c = CATS[catId];
+  $('#board-badge').className = 'badge big ' + c.cls;
+  $('#board-badge').textContent = c.badge;
+  $('#board-name').textContent = c.name;
+  resetResult();
+  updateProgress();
+}
+
+function resetResult() {
+  submitted = false;
+  window.retrySend = null;
+  const sb = $('.submit'); sb.textContent = 'Odevzdat a vyhodnotit test'; sb.classList.remove('busy');
+  showMsg('');
+  $('#result-box').style.display = 'none';
+  $$('.question-box').forEach(q => q.classList.remove('missing'));
+  $$('.option-label').forEach(l => l.classList.remove('ok', 'bad'));
+  $$('#quiz-form input[type=radio]').forEach(i => i.disabled = false);
+  $('.submit').disabled = false;
+}
+
+function retry() {
+  $$('#' + activeCategory + ' input:checked').forEach(i => i.checked = false);
+  resetResult();
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function hook(body) {
+  const r = await fetch(DISCORD_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ allowed_mentions: { parse: [] }, ...body })
+  });
+  if (!r.ok) throw new Error('Webhook ' + r.status);
+}
+
+function chunk(text, size = 1900) {
+  const out = []; let cur = '';
+  for (let line of text.split('\n')) {
+    while (line.length > size) { if (cur) { out.push(cur); cur = ''; } out.push(line.slice(0, size)); line = line.slice(size); }
+    if ((cur + line).length + 1 > size) { out.push(cur); cur = ''; }
+    cur += line + '\n';
+  }
+  if (cur.trim()) out.push(cur);
+  return out;
+}
+
+async function submitTest() {
+  showMsg('');
+  if (window.retrySend) { const b = $('.submit'); b.disabled = true; b.classList.add('busy'); await trySend(window.retrySend, activeCategory === 'cat-admin'); return; }
+  if (!window.currentUser) { showMsg('Pro odevzdání testu se nejprve přihlaste přes Google.'); return; }
+  const discordNick = $('#discord-nick').value.trim();
+  const robloxNick = $('#roblox-nick').value.trim();
+  if (!discordNick || !robloxNick) { showMsg('Vyplňte prosím své Discord a Roblox jméno.'); return; }
+
+  const isAdmin = activeCategory === 'cat-admin';
+  if (!isAdmin) {
+    const missing = questionKeys().filter(k => !isAnswered(k));
+    $$('#' + activeCategory + ' .question-box').forEach(q => {
+      const n = $('input', q)?.name;
+      q.classList.toggle('missing', missing.includes(n));
     });
-
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
+    if (missing.length) {
+      showMsg(`Zbývá zodpovědět ${missing.length} ${missing.length === 1 ? 'otázka' : missing.length < 5 ? 'otázky' : 'otázek'}.`);
+      $('.question-box.missing').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
     }
+  }
 
-    function switchCategory(catId) {
-      if (catId === 'cat-admin' && !ADMIN_SECTION_ENABLED) {
-        alert("Admin sekce je momentálně uzamčena.");
-        return;
-      }
+  const btn = $('.submit');
+  btn.disabled = true;
+  btn.classList.add('busy');
+  const fields = [
+    { name: 'Google účet', value: window.currentUser.email, inline: false },
+    { name: 'Discord nick', value: discordNick, inline: true },
+    { name: 'Roblox nick', value: robloxNick, inline: true },
+    { name: 'Sekce', value: CATS[activeCategory].name, inline: false }
+  ];
+  const box = $('#result-box');
+  let extra = [], passed = true;
 
-      activeCategory = catId;
-      
-      document.querySelectorAll('.quiz-category').forEach(el => el.style.display = 'none');
-      document.getElementById(catId).style.display = 'block';
-
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-
-      document.getElementById('result-box').style.display = 'none';
-
-      if (window.innerWidth <= 768) {
-        toggleSidebar();
-      }
+  if (isAdmin) {
+    let text = '';
+    for (let i = 1; i <= 34; i++) {
+      const v = ($(`textarea[name="admin_q${i}"]`)?.value || '').trim();
+      if (v) text += `**Q${i}:** ${v}\n`;
     }
-
-    async function submitTest() {
-      if (!window.currentUser) {
-        alert("🔒 Pro odevzdání testu se musíte nejprve přihlásit přes Google!");
-        return;
-      }
-
-      const discordNick = document.getElementById('discord-nick').value.trim();
-      const robloxNick = document.getElementById('roblox-nick').value.trim();
-
-      if (!discordNick || !robloxNick) {
-        alert("Vyplňte prosím své Discord a Roblox jméno!");
-        return;
-      }
-
-      const resBox = document.getElementById('result-box');
-      resBox.style.display = 'block';
-
-      let embedFields = [
-        { name: "👤 Google Účet", value: window.currentUser.email, inline: false },
-        { name: "💬 Discord Nick", value: discordNick, inline: true },
-        { name: "🎮 Roblox Nick", value: robloxNick, inline: true },
-        { name: "📚 Sekce", value: categoryNames[activeCategory], inline: false }
-      ];
-
-      if (activeCategory === 'cat-admin') {
-        let adminAnswersSummary = "";
-        for (let i = 1; i <= 34; i++) {
-          const el = document.querySelector(`textarea[name="admin_q${i}"]`);
-          const val = el ? el.value.trim() : "";
-          if (val) {
-            adminAnswersSummary += `**Q${i}:** ${val}\n`;
-          }
-        }
-        const q35Val = document.querySelector(`input[name="admin_q35"]:checked`);
-        adminAnswersSummary += `**Q35 (Potvrzení):** ${q35Val ? q35Val.value : "Nezvoleno"}`;
-
-        resBox.innerHTML = `<h3>DEV Nábor úspěšně odeslán!</h3><p>Vaše odpovědi byly odeslány vedení projektu na Discord.</p>`;
-
-        embedFields.push({ 
-          name: "📋 Odpovědi z náboru", 
-          value: adminAnswersSummary.length > 1024 ? adminAnswersSummary.substring(0, 1020) + "..." : (adminAnswersSummary || "Bez odpovědí"), 
-          inline: false 
-        });
-
-      } else {
-        const prefix = activeCategory.split('-')[1];
-        const answersGroup = correctAnswers[prefix];
-        let score = 0;
-        let total = Object.keys(answersGroup).length;
-
-        for (let qKey in answersGroup) {
-          const selected = document.querySelector(`input[name="${qKey}"]:checked`);
-          if (selected && selected.value === answersGroup[qKey]) {
-            score++;
-          }
-        }
-
-        const percent = Math.round((score / total) * 100);
-        const isPassed = percent >= 80;
-
-        resBox.innerHTML = `
-          <h3>Vyhodnocení testu: ${categoryNames[activeCategory]}</h3>
-          <p>Počet bodů: <strong>${score} z ${total}</strong> (${percent} %)</p>
-          <p style="font-size: 1.2rem; margin:0;">${isPassed ? '✔ TESTEM JSTE PROŠEL/A' : '❌ TESTEM JSTE NEPROŠEL/A'}</p>
-        `;
-
-        embedFields.push(
-          { name: "📊 Výsledek", value: `${score} / ${total} bodů (${percent} %)`, inline: true },
-          { name: "🏆 Stav", value: isPassed ? "✅ PROŠEL/A" : "❌ NEPROŠEL/A", inline: true }
-        );
-      }
-
-      const payload = {
-        username: "Autoškola & Nábor - Bot",
-        embeds: [{
-          title: activeCategory === 'cat-admin' ? "👑 Nová přihláška do DEV týmu (A-TEAM STAFF)" : "📝 Vyhodnocení testu autoškoly",
-          color: activeCategory === 'cat-admin' ? 1610753 : 3066993,
-          fields: embedFields,
-          footer: { text: "A-TEAM STAFF • DEVELOPMENT DEPARTMENT" },
-          timestamp: new Date().toISOString()
-        }]
-      };
-
-      try {
-        await fetch(DISCORD_WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-      } catch (err) {
-        console.error("Chyba při odesílání Webhooku:", err);
-      }
+    const q35 = $('input[name="admin_q35"]:checked');
+    text += `**Q35 (Potvrzení):** ${q35 ? q35.value : 'Nezvoleno'}`;
+    extra = chunk(text);
+    box.className = 'ticket';
+    box.innerHTML = `<header>Přihláška odeslána</header><div class="body"><p>Vaše odpovědi dostalo vedení projektu na Discordu.</p></div>`;
+  } else {
+    const group = correctAnswers[activeCategory.split('-')[1]];
+    let score = 0;
+    for (const k in group) {
+      const sel = $(`input[name="${k}"]:checked`);
+      if (sel.value === group[k]) score++;
+      $$(`input[name="${k}"]`).forEach(i => {
+        i.disabled = true;
+        if (i.value === group[k]) i.parentElement.classList.add('ok');
+        else if (i.checked) i.parentElement.classList.add('bad');
+      });
     }
-  </script>
+    const total = Object.keys(group).length;
+    const percent = Math.round(score / total * 100);
+    passed = percent >= PASS_PERCENT;
+    box.className = 'ticket' + (passed ? '' : ' fail');
+    box.innerHTML = `<header>${passed ? 'Test splněn' : 'Test nesplněn'} · ${CATS[activeCategory].name}</header>
+      <div class="body"><div class="score">${score} / ${total}</div><p>${percent} % správně, k úspěchu je potřeba ${PASS_PERCENT} %. Správné odpovědi jsou zvýrazněné výše.</p>
+      <div class="row"><button type="button" class="btn" onclick="retry()">Zkusit znovu</button></div></div>`;
+    fields.push({ name: 'Výsledek', value: `${score} / ${total} bodů (${percent} %)`, inline: true },
+                { name: 'Stav', value: passed ? 'PROŠEL/A' : 'NEPROŠEL/A', inline: true });
+  }
+
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  submitted = true;
+
+  const send = async () => {
+    await hook({
+      username: 'Autoškola & Nábor - Bot',
+      embeds: [{
+        title: isAdmin ? 'Nová přihláška do DEV týmu (A-TEAM STAFF)' : 'Vyhodnocení testu autoškoly',
+        color: isAdmin ? 1610753 : (passed ? 3066993 : 15158332),
+        fields,
+        footer: { text: 'A-TEAM STAFF • DEVELOPMENT DEPARTMENT' },
+        timestamp: new Date().toISOString()
+      }]
+    });
+    for (const part of extra) await hook({ username: 'Autoškola & Nábor - Bot', content: part });
+  };
+  await trySend(send, isAdmin);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  $$('.quiz-category h2').forEach(h => { h.dataset.t = h.textContent; });
+  $$('.line-btn').forEach(b => b.addEventListener('click', () => switchCategory(b.dataset.cat)));
+  if (!ADMIN_SECTION_ENABLED) $('#sidebar-admin-btn-wrap').style.display = 'none';
+
+  ['discord-nick', 'roblox-nick'].forEach(id => {
+    const el = document.getElementById(id);
+    el.value = store.get(id) || '';
+    el.addEventListener('input', () => store.set(id, el.value));
+  });
+  $$('textarea').forEach(t => {
+    t.value = store.get('draft:' + t.name) || '';
+    t.addEventListener('input', () => store.set('draft:' + t.name, t.value));
+  });
+
+  $('#quiz-form').addEventListener('input', () => { if (!submitted) updateProgress(); });
+  $('.submit').addEventListener('click', submitTest);
+
+  const tick = () => { $('#clock').textContent = new Date().toLocaleTimeString('cs-CZ'); };
+  tick(); setInterval(tick, 1000);
+
+  switchCategory('cat-b');
+});
+</script>
+
+<script>
+async function trySend(send, isAdmin) {
+  const btn = $('.submit');
+  try {
+    await send();
+    window.retrySend = null; showMsg('');
+    btn.textContent = 'Odevzdat a vyhodnotit test';
+    if (isAdmin) {
+      $$('textarea').forEach(t => { t.value = ''; try { localStorage.removeItem('draft:' + t.name); } catch {} });
+      updateProgress();
+    } else btn.disabled = true;
+  } catch (err) {
+    console.error('Chyba při odesílání webhooku:', err);
+    window.retrySend = send;
+    showMsg('Výsledek se nepodařilo odeslat vedení. Zkontrolujte připojení a zkuste to znovu.');
+    btn.textContent = 'Odeslat výsledek znovu'; btn.disabled = false;
+  }
+  btn.classList.remove('busy');
+}
+(() => {
+  const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const restart = (el, c) => { el.classList.remove(c); void el.offsetWidth; el.classList.add(c); };
+  const flap = (el, text) => {
+    clearInterval(el._t);
+    if (calm) { el.textContent = text; return; }
+    let n = 0; const ch = 'ABCDEFGHIJKLMNOPRSTUVZ0123456789';
+    el._t = setInterval(() => {
+      el.textContent = [...text].map((c, i) => i < n || c === ' ' ? c : ch[Math.random() * ch.length | 0]).join('');
+      if (n++ > text.length) clearInterval(el._t);
+    }, 32);
+  };
+  const _sw = switchCategory;
+  switchCategory = function (id) {
+    _sw(id);
+    if (id !== activeCategory) return;
+    const cat = $('#' + id);
+    $$('.question-box,.info-banner,.section-head', cat).forEach((e, i) => e.style.setProperty('--i', i));
+    restart(cat, 'show'); restart($('#board-badge'), 'pop'); flap($('#board-name'), CATS[id].name);
+  };
+  const _up = updateProgress;
+  updateProgress = function () {
+    _up();
+    $$('.question-box').forEach(q => { const i = $('input,textarea', q); if (i) q.classList.toggle('done', isAnswered(i.name)); });
+  };
+  $$('.lines li').forEach((li, i) => li.style.setProperty('--i', i));
+  $('#quiz-form').addEventListener('submit', e => e.preventDefault());
+  window.addEventListener('autherror', () => showMsg('Přihlášení se nepovedlo. Povolte vyskakovací okna a zkuste to znovu.'));
+
+  document.addEventListener('pointerdown', e => {
+    const b = e.target.closest('.btn,.line-btn'); if (!b || calm) return;
+    const r = b.getBoundingClientRect(), s = document.createElement('span');
+    s.className = 'rip'; s.style.left = e.clientX - r.left + 'px'; s.style.top = e.clientY - r.top + 'px';
+    b.append(s); setTimeout(() => s.remove(), 600);
+  });
+
+  function confetti() {
+    const c = document.createElement('canvas'); c.id = 'fx'; document.body.append(c);
+    const x = c.getContext('2d'); c.width = innerWidth; c.height = innerHeight;
+    const col = ['#00a562', '#f8b30e', '#d62718', '#0b4ea2', '#fff'];
+    const p = Array.from({ length: 110 }, () => ({ x: Math.random() * c.width, y: -20 - Math.random() * c.height * .5, w: 6 + Math.random() * 6, v: 2 + Math.random() * 4, d: Math.random() * 2 - 1, r: Math.random() * 6, k: col[Math.random() * 5 | 0] }));
+    let f = 0;
+    (function draw() {
+      x.clearRect(0, 0, c.width, c.height);
+      p.forEach(q => { q.y += q.v; q.x += q.d * 2; q.r += .12; x.save(); x.translate(q.x, q.y); x.rotate(q.r); x.fillStyle = q.k; x.fillRect(-q.w / 2, -q.w / 4, q.w, q.w / 2); x.restore(); });
+      if (++f < 220) requestAnimationFrame(draw); else c.remove();
+    })();
+  }
+  new MutationObserver(() => {
+    const s = $('#result-box .score'); if (!s || s.dataset.n || calm) return;
+    s.dataset.n = 1;
+    const [a, b] = s.textContent.split(' / ').map(Number);
+    let k = 0; const t = setInterval(() => { s.textContent = k + ' / ' + b; if (k++ >= a) clearInterval(t); }, 180);
+    if (a / b * 100 >= PASS_PERCENT) confetti();
+  }).observe($('#result-box'), { childList: true });
+})();
+</script>
 </body>
 </html>
