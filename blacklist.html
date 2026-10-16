@@ -1,1 +1,408 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blacklist | Prague Community</title>
+<style>
+:root{--blue:#0b4ea2;--navy:#082a57;--bg:#eef2f7;--card:#fff;--ink:#14213d;--sub:#566680;--line:#d3dce8;--ok:#00a562;--warn:#f8b30e;--bad:#d62718;--led:#ffb400;--r:8px}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1424;--card:#13203a;--ink:#e8eefb;--sub:#9db0cb;--line:#27385c;--blue:#6aa5ff}}
+*{box-sizing:border-box}
+html{scroll-padding-top:90px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Helvetica Neue",Arial,sans-serif}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+@keyframes drop{from{opacity:0;transform:translateY(-100%)}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes scan{to{background-position:200% 0}}
+@keyframes dash{to{background-position:40px 0}}
+@keyframes blink{50%{opacity:.15}}
+@keyframes glow{50%{text-shadow:0 0 14px var(--led)}}
+@keyframes drive{to{transform:translateX(calc(100vw + 160px))}}
+@keyframes route{to{background-position:36px 0}}
+.top{background:var(--blue);color:#fff;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;padding:10px 20px;flex-wrap:wrap;animation:drop .6s cubic-bezier(.2,.9,.3,1)}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;background:repeating-linear-gradient(90deg,var(--warn) 0 24px,transparent 24px 36px);animation:route 1.2s linear infinite}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;margin-right:auto}
+.brand b{background:#fff;color:var(--blue);padding:2px 9px;border-radius:5px;font-weight:900;animation:pop .7s .4s both}
+.brand small{display:block;font-weight:400;font-size:.75rem;opacity:.85}
+.top a{color:#fff;text-decoration:none;font-weight:600;padding:6px 12px;border-radius:var(--r);transition:background .2s}
+.top a:hover,.top a[aria-current]{background:rgba(255,255,255,.18)}
+.wrap{max-width:980px;margin:0 auto;padding:24px 20px 60px}
+.board{position:relative;overflow:hidden;background:#0a0a0a;color:var(--led);border-radius:var(--r);padding:16px 20px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-family:"Courier New",monospace;animation:rise .6s .1s both}
+.board::before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,180,0,.14) 50%,transparent 70%) 0 0/200% 100%;animation:scan 4s linear infinite;pointer-events:none}
+.board::after{content:"";position:absolute;left:-90px;bottom:6px;width:64px;height:12px;background:repeating-linear-gradient(90deg,#9ed0ff 0 8px,var(--blue) 8px 12px);border-radius:4px 8px 0 0;animation:drive 9s linear infinite}
+.board i.stripe{position:absolute;left:0;right:0;bottom:0;height:6px;background:repeating-linear-gradient(90deg,var(--bad) 0 20px,#fff 20px 40px);animation:dash 1s linear infinite}
+.badge{flex:none;display:grid;place-items:center;min-width:34px;height:34px;padding:0 8px;color:#fff;font-weight:800;border-radius:6px}
+.badge.big{min-width:48px;height:48px;font-size:1.5rem;background:var(--bad);animation:pop .6s .3s both}
+.board .what{flex:1;min-width:200px}
+.board strong{display:block;font-size:1.3rem;animation:glow 3s ease-in-out infinite}
+.board span{opacity:.8;font-size:.85rem}
+#clock{font-size:1.8rem;font-weight:700;letter-spacing:2px;animation:glow 3s ease-in-out infinite}
+.sep{font-style:normal;animation:blink 1s steps(1) infinite}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;border-top:5px solid var(--c);animation:rise .5s both;animation-delay:calc(.25s + var(--i)*.08s);transition:transform .2s,box-shadow .2s}
+.stat:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(0,0,0,.12)}
+.stat b{display:block;font-size:2rem;line-height:1.1}
+.stat span{color:var(--sub);font-size:.85rem}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;animation:rise .5s .5s both}
+.tools input,.tools select{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;transition:border-color .2s,box-shadow .2s}
+.tools input{flex:1;min-width:200px}
+.tools input:focus,.tools select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(11,78,162,.2);outline:0}
+.chips{display:flex;gap:8px;flex-wrap:wrap;width:100%}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;cursor:pointer;font-weight:600;transition:background .2s,color .2s,transform .15s}
+.chip:hover{transform:translateY(-2px)}
+.chip:active{transform:scale(.95)}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+#list{list-style:none;margin:16px 0 0;padding:0}
+.row{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px;overflow:hidden;animation:rise .45s both;animation-delay:min(calc(var(--i)*55ms),700ms);transition:box-shadow .25s,border-color .25s}
+.row:hover,.row.open{box-shadow:0 6px 18px rgba(0,0,0,.1);border-color:var(--blue)}
+.head{display:flex;align-items:center;gap:14px;width:100%;padding:12px 16px;background:none;border:0;text-align:left;cursor:pointer}
+.row .badge{background:var(--c)}
+.who{flex:1;min-width:0}
+.who b{display:block}
+.who small{display:block;color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{flex:none;padding:3px 12px;border-radius:99px;font-size:.8rem;font-weight:700;background:var(--c);color:#fff}
+.s-t .pill{color:#3a2a00}
+.dt{flex:none;color:var(--sub);font-size:.85rem;min-width:84px;text-align:right}
+.head::after{content:"";flex:none;width:9px;height:9px;border:solid var(--sub);border-width:0 2px 2px 0;transform:rotate(45deg);transition:transform .3s}
+.open .head::after{transform:rotate(-135deg)}
+.s-p{--c:var(--bad)}.s-t{--c:var(--warn)}.s-e{--c:var(--ok)}
+.more{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s}
+.open .more{grid-template-rows:1fr}
+.more>div{overflow:hidden}
+.more dl{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;margin:0;padding:6px 16px 4px;border-top:2px dashed var(--line)}
+.more dt{color:var(--sub);font-size:.85rem}
+.more dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.btn{margin:10px 16px 16px;background:var(--blue);color:#fff;border:0;border-radius:var(--r);padding:8px 16px;font-weight:700;cursor:pointer;transition:transform .15s,background .2s}
+.btn:hover{background:var(--navy);transform:translateY(-2px)}
+.btn:active{transform:scale(.95)}
+.empty{display:none;text-align:center;padding:40px 10px;color:var(--sub);animation:rise .4s both}
+.empty.show{display:block}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:30}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.info{margin-top:24px;background:#fff6dc;color:#4a3600;border-left:6px solid var(--warn);border-radius:var(--r);padding:14px 16px;font-size:.92rem;animation:rise .5s .7s both}
+@media(prefers-color-scheme:dark){.info{background:#2d2610;color:#f5e3a8}}
+.foot{color:var(--sub);font-size:.8rem;margin-top:24px}
+@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}.dt{display:none}.more dl{grid-template-columns:1fr}.brand small{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
+[hidden]{display:none!important}
+.top .login{background:#fff;color:var(--blue);border:0;border-radius:var(--r);padding:8px 14px;font-weight:700;cursor:pointer;transition:transform .15s}
+.top .login:hover{transform:translateY(-2px)}
+.top .login:active{transform:scale(.95)}
+#auth-status{font-size:.85rem}
+#auth-status.flash{animation:pop .5s}
+.adm{display:none!important}
+body.admin .adm{display:inline-block!important}
+.tools .btn{margin:0}
+.acts{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 16px}
+.acts .btn{margin:10px 0 0}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{background:var(--bg)}
+.btn.danger{background:var(--bad)}
+.btn:disabled{opacity:.6;cursor:wait}
+dialog{border:0;border-radius:var(--r);padding:22px;background:var(--card);color:var(--ink);width:min(520px,92vw);animation:pop .3s}
+dialog::backdrop{background:rgba(8,42,87,.55);backdrop-filter:blur(3px)}
+dialog h3{margin:0 0 14px}
+dialog label{display:block;font-size:.85rem;color:var(--sub);margin-bottom:10px}
+dialog input,dialog select,dialog textarea{width:100%;margin-top:4px;padding:9px 10px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--ink)}
+dialog input:focus,dialog select:focus,dialog textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(11,78,162,.2);outline:0}
+dialog textarea{min-height:80px;resize:vertical}
+dialog .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+dialog .acts{padding:0;justify-content:flex-end}
+@media(max-width:700px){dialog .two{grid-template-columns:1fr}#auth-status{display:none}}
+
+html{scroll-behavior:smooth}
+::selection{background:var(--warn);color:#1a1200}
+@keyframes grow{from{transform:scaleY(0)}}
+@keyframes flash{0%,100%{background:var(--card)}30%{background:color-mix(in srgb,var(--c) 24%,var(--card))}}
+body{background-color:var(--bg);background-image:radial-gradient(rgba(11,78,162,.09) 1px,transparent 1px);background-size:22px 22px}
+@media(prefers-color-scheme:dark){body{background-image:radial-gradient(rgba(106,165,255,.08) 1px,transparent 1px)}}
+.top{background:linear-gradient(180deg,#1259b3,#0a468f);box-shadow:0 4px 18px rgba(8,42,87,.25)}
+.brand b{color:#0b4ea2;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.brand span{line-height:1.15}
+.top .login{color:#0b4ea2}
+.wrap{max-width:1040px;padding-top:28px}
+.board{background-image:radial-gradient(rgba(255,180,0,.09) 1px,transparent 1px);background-size:6px 6px;box-shadow:0 10px 26px rgba(0,0,0,.22);padding:20px 24px 26px}
+.board strong{font-size:1.5rem;letter-spacing:.5px}
+.adm-bar{margin-top:12px;padding:10px 16px;border-radius:var(--r);background:var(--navy);color:#fff;font-weight:600;font-size:.9rem;border-left:6px solid var(--warn)}
+body.admin .adm-bar{display:block!important}
+.stat{display:flex;align-items:center;gap:14px;border-top-width:0;border-left:5px solid var(--c);box-shadow:0 2px 8px rgba(8,42,87,.06)}
+.stat .badge{border-radius:50%;min-width:40px;height:40px;font-size:1.05rem}
+.tools{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;box-shadow:0 2px 8px rgba(8,42,87,.06)}
+.tools input,.tools select{background:var(--bg)}
+.btn{background:#0b4ea2}
+.chip[aria-pressed=true]{background:#0b4ea2;border-color:#0b4ea2}
+.chip span{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-left:8px;padding:0 6px;border-radius:99px;background:rgba(127,127,127,.18);font-size:.75rem}
+.chip[aria-pressed=true] span{background:rgba(255,255,255,.25)}
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin-top:26px}
+.sec h2{margin:0;font-size:1.2rem}
+.sec span{color:var(--sub);font-size:.85rem}
+#list{position:relative;padding-left:34px}
+#list::before{content:"";position:absolute;left:11px;top:22px;bottom:22px;width:4px;border-radius:2px;background:var(--line);transform-origin:top;animation:grow 1s .4s both}
+#list:empty::before{display:none}
+.row{position:relative;overflow:visible}
+.row::before{content:"";position:absolute;left:-28px;top:20px;width:14px;height:14px;border-radius:50%;background:var(--card);border:4px solid var(--c);transition:transform .25s,background .25s;z-index:1}
+.row:hover::before{transform:scale(1.3)}
+.row.open::before{background:var(--c)}
+.row.fresh{animation:rise .45s both,flash 1.4s ease-out 2}
+.row.sk{height:64px;background:linear-gradient(100deg,var(--card) 30%,var(--bg) 50%,var(--card) 70%) 0 0/200% 100%;animation:scan 1.4s linear infinite}
+.row.sk::before{display:none}
+.who b{font-size:1.05rem}
+.info{box-shadow:0 2px 8px rgba(8,42,87,.06)}
+.foot{border-top:1px solid var(--line);padding-top:16px;text-align:center}
+.up{position:fixed;right:20px;bottom:20px;width:44px;height:44px;border-radius:50%;border:0;background:#0b4ea2;color:#fff;font-size:1.3rem;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.25);opacity:0;transform:translateY(20px) scale(.8);pointer-events:none;transition:opacity .25s,transform .25s,background .2s;z-index:25}
+.up.on{opacity:1;transform:none;pointer-events:auto}
+.up:hover{background:var(--navy)}
+@media(max-width:700px){#list{padding-left:26px}#list::before{left:8px}.row::before{left:-23px}.board{padding:16px}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><b>PID</b><span>Blacklist<small>Prague Community · zákaz nástupu</small></span></div>
+  <a href="blacklist.html" aria-current="page">Blacklist</a>
+  <span id="auth-status">Status: Nepřihlášen</span>
+  <button class="login" id="btn-login" type="button">Přihlásit se přes Google</button>
+</header>
+
+<div class="wrap">
+  <section class="board">
+    <span class="badge big">X</span>
+    <div class="what"><strong>Blacklist · Zákaz nástupu</strong><span id="meta"></span></div>
+    <div id="clock" aria-hidden="true">--:--:--</div>
+    <i class="stripe"></i>
+  </section>
+
+  <div class="adm-bar adm">Režim správce: můžete přidávat, upravovat i mazat záznamy.</div>
+
+  <section class="stats" id="stats"></section>
+
+  <section class="tools">
+    <input type="search" id="q" placeholder="Hledat podle Roblox / Discord jména nebo důvodu" aria-label="Hledat">
+    <select id="sort" aria-label="Řazení">
+      <option value="new">Nejnovější</option>
+      <option value="old">Nejstarší</option>
+      <option value="name">Jméno A–Z</option>
+    </select>
+    <button class="btn adm" id="add" type="button">+ Přidat záznam</button>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <div class="sec"><h2>Seznam zákazů</h2><span id="shown"></span></div>
+  <ul id="list"></ul>
+  <div class="empty" id="empty"><b>Žádný záznam nevyhovuje.</b><br>Zkuste upravit hledání nebo filtr.</div>
+
+  <div class="info"><b>Odvolání:</b> Pokud se domníváte, že jste byli zapsáni neoprávněně, otevřete na Discordu ticket a uveďte své Roblox jméno. Každý případ posuzuje vedení projektu.</div>
+  <p class="foot">Fiktivní komunitní projekt pro Roblox. Nejde o oficiální stránky Pražské integrované dopravy ani ROPID.</p>
+</div>
+<dialog id="dlg">
+  <form id="f">
+    <h3 id="dlg-title">Nový záznam</h3>
+    <label>Roblox jméno<input name="roblox" required maxlength="40" autocomplete="off"></label>
+    <label>Discord jméno<input name="discord" maxlength="40" autocomplete="off"></label>
+    <label>Důvod<textarea name="reason" required maxlength="300"></textarea></label>
+    <label>Zapsal<input name="by" required maxlength="40" autocomplete="off"></label>
+    <div class="two">
+      <label>Datum zápisu<input type="date" name="date" required></label>
+      <label>Typ zákazu<select name="type"><option value="p">Trvalý</option><option value="t">Dočasný</option></select></label>
+    </div>
+    <label id="until-wrap" hidden>Platí do<input type="date" name="until"></label>
+    <div class="acts">
+      <button type="button" class="btn danger" id="del" hidden>Smazat</button>
+      <button type="button" class="btn ghost" id="cancel">Zrušit</button>
+      <button class="btn" id="save">Uložit</button>
+    </div>
+  </form>
+</dialog>
+<button class="up" id="up" type="button" aria-label="Nahoru">↑</button>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCA8xhs3qS9NH7XoedqDjdL2WY7gh0_-WE",
+  authDomain: "fiktivnipid.firebaseapp.com",
+  projectId: "fiktivnipid",
+  storageBucket: "fiktivnipid.firebasestorage.app",
+  messagingSenderId: "858723196116",
+  appId: "1:858723196116:web:05dbbe2f8684277e30af41"
+};
+// Administrátoři, kteří mohou upravovat blacklist (stejný seznam musí být i ve Firestore pravidlech)
+const ADMINS = ['tad.studio.cz@gmail.com', 'smatlakp003@gmail.com'];
+
+let BANS = [];
+let state = 'load';
+let fresh = [], seen = null;
+
+const ST = { p:{ n:'Trvalý', b:'P' }, t:{ n:'Dočasný', b:'D' }, e:{ n:'Vypršel', b:'V' } };
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = v => String(v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const day = d => new Date(d + 'T23:59:59');
+const fmt = d => day(d).toLocaleDateString('cs-CZ');
+const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
+let filter = 'all';
+
+const status = b => !b.until ? 'p' : day(b.until) < new Date() ? 'e' : 't';
+const left = b => Math.max(0, Math.ceil((day(b.until) - new Date()) / 864e5));
+
+function countUp(el, to) {
+  if (calm || !to) { el.textContent = to; return; }
+  let n = 0;
+  const iv = setInterval(() => { el.textContent = ++n; if (n >= to) clearInterval(iv); }, 700 / to);
+}
+
+function stats() {
+  const c = k => BANS.filter(b => status(b) === k).length;
+  const items = [['Celkem záznamů', BANS.length, '#0b4ea2', 'Σ', '#fff'], ['Trvalé', c('p'), 'var(--bad)', 'P', '#fff'], ['Dočasné', c('t'), 'var(--warn)', 'D', '#3a2a00'], ['Vypršelé', c('e'), 'var(--ok)', 'V', '#fff']];
+  $('#stats').innerHTML = items.map(([l, v, col, ic, fg], i) => `<div class="stat" style="--i:${i};--c:${col}"><span class="badge" style="background:${col};color:${fg}">${ic}</span><div><b data-v="${v}">0</b><span>${l}</span></div></div>`).join('');
+  $$('#stats b').forEach(b => countUp(b, +b.dataset.v));
+  $('#meta').textContent = `Aktivních zákazů: ${c('p') + c('t')}`;
+}
+
+function chips() {
+  const defs = [['all', 'Vše'], ['p', 'Trvalé'], ['t', 'Dočasné'], ['e', 'Vypršelé']];
+  $('#chips').innerHTML = defs.map(([k, l]) => `<button class="chip" data-k="${k}" aria-pressed="${k === filter}">${l}<span>${k === 'all' ? BANS.length : BANS.filter(b => status(b) === k).length}</span></button>`).join('');
+}
+
+function render() {
+  if (state === 'load') { $('#list').innerHTML = '<li class="row sk"></li>'.repeat(3); $('#empty').classList.remove('show'); return; }
+  const q = $('#q').value.trim().toLowerCase(), sort = $('#sort').value;
+  const rows = BANS.filter(b => (filter === 'all' || status(b) === filter) &&
+    (!q || [b.roblox, b.discord, b.reason, b.by].some(v => v.toLowerCase().includes(q))))
+    .sort((a, b) => sort === 'name' ? a.roblox.localeCompare(b.roblox) : sort === 'old' ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date));
+  $('#shown').textContent = `Zobrazeno ${rows.length} z ${BANS.length}`;
+  $('#list').innerHTML = rows.map((b, i) => {
+    const s = status(b);
+    const end = s === 'p' ? 'Nikdy (trvalý zákaz)' : s === 'e' ? `${fmt(b.until)} (vypršel)` : `${fmt(b.until)} (zbývá ${left(b)} dní)`;
+    return `<li class="row s-${s}${fresh.includes(b.id) ? ' fresh' : ''}" style="--i:${i}" data-id="${esc(b.id)}">
+      <button class="head" aria-expanded="false"><span class="badge">${ST[s].b}</span>
+        <span class="who"><b>${esc(b.roblox)}</b><small>${esc(b.reason)}</small></span>
+        <span class="pill">${ST[s].n}</span><span class="dt">${fmt(b.date)}</span></button>
+      <div class="more"><div><dl>
+        <dt>Roblox jméno</dt><dd>${esc(b.roblox)}</dd><dt>Discord</dt><dd>${esc(b.discord)}</dd>
+        <dt>Důvod</dt><dd>${esc(b.reason)}</dd><dt>Zapsal</dt><dd>${esc(b.by)}</dd>
+        <dt>Datum zápisu</dt><dd>${fmt(b.date)}</dd><dt>Platnost do</dt><dd>${end}</dd></dl>
+        <div class="acts"><button class="btn" data-copy="${esc(b.roblox)}">Kopírovat Roblox jméno</button><button class="btn ghost adm" data-edit="${esc(b.id)}">Upravit</button></div></div></div></li>`;
+  }).join('');
+  $('#empty').innerHTML = state === 'load' ? 'Načítám záznamy…'
+    : state === 'err' ? '<b>Blacklist se nepodařilo načíst.</b><br>Zkontrolujte připojení, zapnutý Firestore a jeho pravidla.'
+    : !BANS.length ? '<b>Blacklist je zatím prázdný.</b>'
+    : '<b>Žádný záznam nevyhovuje.</b><br>Zkuste upravit hledání nebo filtr.';
+  $('#empty').classList.toggle('show', !rows.length);
+}
+
+function toast(t) {
+  const el = $('#toast'); el.textContent = t; el.classList.add('on');
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 1800);
+}
+
+document.addEventListener('click', async e => {
+  const h = e.target.closest('.head');
+  if (h) { const r = h.parentElement, o = r.classList.toggle('open'); h.setAttribute('aria-expanded', o); return; }
+  const c = e.target.closest('.chip');
+  if (c) { filter = c.dataset.k; chips(); render(); return; }
+  const ed = e.target.closest('[data-edit]');
+  if (ed && isAdmin()) { openDlg(BANS.find(b => b.id === ed.dataset.edit)); return; }
+  const cp = e.target.closest('[data-copy]');
+  if (cp) {
+    try { await navigator.clipboard.writeText(cp.dataset.copy); toast('Zkopírováno: ' + cp.dataset.copy); }
+    catch { toast('Kopírování se nepovedlo, označte jméno ručně.'); }
+  }
+});
+$('#q').addEventListener('input', render);
+$('#sort').addEventListener('change', render);
+
+const up = $('#up');
+addEventListener('scroll', () => up.classList.toggle('on', scrollY > 400), { passive: true });
+up.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+const tick = () => { $('#clock').innerHTML = new Date().toLocaleTimeString('cs-CZ').replace(/:/g, '<i class="sep">:</i>'); };
+tick(); setInterval(tick, 1000);
+stats(); chips(); render();
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+const db = getFirestore(app);
+const col = collection(db, 'blacklist');
+let user = null;
+const isAdmin = () => !!user && ADMINS.includes((user.email || '').toLowerCase());
+
+$('#btn-login').addEventListener('click', () => {
+  if (user) signOut(auth);
+  else signInWithPopup(auth, provider).catch(e => {
+    if (!/popup-closed|cancelled-popup/.test(e.code)) toast('Přihlášení se nepovedlo. Povolte vyskakovací okna a zkuste to znovu.');
+  });
+});
+onAuthStateChanged(auth, u => {
+  user = u;
+  document.body.classList.toggle('admin', isAdmin());
+  const a = $('#auth-status');
+  a.textContent = u ? 'Přihlášen: ' + u.email + (isAdmin() ? ' · admin' : '') : 'Status: Nepřihlášen';
+  a.classList.remove('flash'); void a.offsetWidth; a.classList.add('flash');
+  $('#btn-login').textContent = u ? 'Odhlásit se' : 'Přihlásit se přes Google';
+});
+
+onSnapshot(col, snap => {
+  BANS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const ids = new Set(BANS.map(b => b.id));
+  fresh = seen ? [...ids].filter(i => !seen.has(i)) : [];
+  seen = ids;
+  setTimeout(() => { fresh = []; }, 2500);
+  state = 'ok'; stats(); chips(); render();
+}, err => { console.error('Firestore:', err); state = 'err'; stats(); render(); });
+
+// ----- úpravy (jen admin) -----
+const dlg = $('#dlg'), f = $('#f');
+let editId = null, delArmed = false;
+const syncType = () => { $('#until-wrap').hidden = f.type.value !== 't'; f.until.required = f.type.value === 't'; };
+f.type.addEventListener('change', syncType);
+
+function openDlg(b) {
+  editId = b ? b.id : null; delArmed = false;
+  $('#dlg-title').textContent = b ? 'Upravit záznam' : 'Nový záznam';
+  f.roblox.value = b?.roblox || ''; f.discord.value = b?.discord || ''; f.reason.value = b?.reason || '';
+  f.by.value = b?.by || user?.displayName || ''; f.date.value = b?.date || new Date().toISOString().slice(0, 10);
+  f.type.value = b && b.until ? 't' : 'p'; f.until.value = b?.until || '';
+  syncType();
+  $('#del').hidden = !b; $('#del').textContent = 'Smazat';
+  dlg.showModal();
+}
+$('#add').addEventListener('click', () => isAdmin() && openDlg());
+$('#cancel').addEventListener('click', () => dlg.close());
+
+f.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!isAdmin()) { toast('Nemáte oprávnění upravovat blacklist.'); return; }
+  const data = {
+    roblox: f.roblox.value.trim(), discord: f.discord.value.trim(), reason: f.reason.value.trim(),
+    by: f.by.value.trim(), date: f.date.value, until: f.type.value === 't' ? f.until.value : null
+  };
+  if (data.until && data.until < data.date) { toast('Konec zákazu nemůže být před datem zápisu.'); return; }
+  const save = $('#save'); save.disabled = true;
+  try {
+    if (editId) await updateDoc(doc(db, 'blacklist', editId), { ...data, updatedBy: user.email, updatedAt: serverTimestamp() });
+    else await addDoc(col, { ...data, createdBy: user.email, createdAt: serverTimestamp() });
+    dlg.close(); toast('Uloženo');
+  } catch (err) {
+    console.error(err);
+    toast(err.code === 'permission-denied' ? 'Firestore pravidla vám úpravy nedovolují.' : 'Uložení se nepovedlo.');
+  }
+  save.disabled = false;
+});
+
+$('#del').addEventListener('click', async () => {
+  if (!isAdmin() || !editId) return;
+  if (!delArmed) { delArmed = true; $('#del').textContent = 'Opravdu smazat?'; return; }
+  try { await deleteDoc(doc(db, 'blacklist', editId)); dlg.close(); toast('Záznam smazán'); }
+  catch (err) { console.error(err); toast('Smazání se nepovedlo.'); }
+});
+</script>
+</body>
+</html>
