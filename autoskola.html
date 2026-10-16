@@ -216,6 +216,13 @@ textarea{min-height:90px;resize:vertical}
             <label class="option-label"><input type="radio" name="b_q5" value="B"><span class="key">B</span><span>Zahájíte resuscitaci (stlačování hrudníku v rytmu 100-120/min) a zavoláte záchrannou službu (155).</span></label>
             <label class="option-label"><input type="radio" name="b_q5" value="C"><span class="key">C</span><span>Dáte mu napít vody.</span></label>
           </div>
+
+          <div class="question-box">
+            <div class="question-title"><span class="qnum">6</span><span>Řidič vozidla z výhledu v křižovatce (když zrovna pospícháš):</span></div>
+            <label class="option-label"><input type="radio" name="b_q6" value="A"><span class="key">A</span><span>projede křižovatkou jako první.</span></label>
+            <label class="option-label"><input type="radio" name="b_q6" value="B"><span class="key">B</span><span>Musí se připravit na šíleného řidiče autobusu zprava.</span></label>
+            <label class="option-label"><input type="radio" name="b_q6" value="C"><span class="key">C</span><span>projede křižovatkou současně s autobusem.</span></label>
+          </div>
         </div>
 
         <!-- SKUPINA C -->
@@ -335,6 +342,13 @@ textarea{min-height:90px;resize:vertical}
             <label class="option-label"><input type="radio" name="t_q5" value="A"><span class="key">A</span><span>Nebezpečí úrazu elektrickým proudem (vznik nebezpečného dotykového nebo krokového napětí).</span></label>
             <label class="option-label"><input type="radio" name="t_q5" value="B"><span class="key">B</span><span>Zvýšení spotřeby pneumatik.</span></label>
             <label class="option-label"><input type="radio" name="t_q5" value="C"><span class="key">C</span><span>Zablokování dveří pro cestující.</span></label>
+          </div>
+
+          <div class="question-box">
+            <div class="question-title"><span class="qnum">6</span><span>Řidič trolejbusu v křižovatce (když zrovna pospíchá):</span></div>
+            <label class="option-label"><input type="radio" name="t_q6" value="A"><span class="key">A</span><span>projede křižovatkou jako první.</span></label>
+            <label class="option-label"><input type="radio" name="t_q6" value="B"><span class="key">B</span><span>Musí se připravit na šíleného řidiče autobusu zprava.</span></label>
+            <label class="option-label"><input type="radio" name="t_q6" value="C"><span class="key">C</span><span>projede křižovatkou současně s autobusem.</span></label>
           </div>
         </div>
 
@@ -506,8 +520,8 @@ textarea{min-height:90px;resize:vertical}
           </div>
           <div class="question-box">
             <div class="question-title"><span class="qnum">35</span><span>Potvrzuješ, že jsi odpovídal pravdivě a jsi připraven na případný praktický úkol nebo pohovor?</span></div>
-            <label class="option-label"><input type="radio" name="admin_q35" value="Ano"> Ano, potvrzuji.</label>
-            <label class="option-label"><input type="radio" name="admin_q35" value="Ne"> Ne.</label>
+            <label class="option-label"><input type="radio" name="admin_q35" value="Ano"><span class="key">A</span><span>Ano, potvrzuji.</span></label>
+            <label class="option-label"><input type="radio" name="admin_q35" value="Ne"><span class="key">B</span><span>Ne.</span></label>
           </div>
         </div>
 
@@ -568,21 +582,21 @@ textarea{min-height:90px;resize:vertical}
 
 <script>
 // Přepínač admin sekce (true = zobrazit, false = skrýt)
-const ADMIN_SECTION_ENABLED = false;
+const ADMIN_SECTION_ENABLED = true;
 const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1559452632970559562/NuG6HaINy1ARb4Ga1u0Mclerjz5KtD-I42LrohCRAGWP1aZ2JneMpNrore9edOXfXa2r";
 const PASS_PERCENT = 80;
 
 const correctAnswers = {
-  b: { b_q1:"A", b_q2:"B", b_q3:"B", b_q4:"B", b_q5:"B" },
+  b: { b_q1:"A", b_q2:"B", b_q3:"B", b_q4:"B", b_q5:"B", b_q6:"B" },
   c: { c_q1:"B", c_q2:"B", c_q3:"A", c_q4:"B", c_q5:"C" },
   d: { d_q1:"B", d_q2:"A", d_q3:"A", d_q4:"B", d_q5:"B" },
-  t: { t_q1:"C", t_q2:"B", t_q3:"A", t_q4:"B", t_q5:"A" }
+  t: { t_q1:"C", t_q2:"B", t_q3:"A", t_q4:"B", t_q5:"A", t_q6:"B" }
 };
 const CATS = {
   'cat-b': { cls:'b', badge:'B', name:'Skupina B (Osobní)' },
   'cat-c': { cls:'c', badge:'C', name:'Skupina C (Nákladní)' },
   'cat-d': { cls:'d', badge:'D', name:'Skupina D (Autobusy)' },
-  'cat-t': { cls:'t', badge:'T', name:'Trolejbus (Drážní)' },
+  'cat-t': { cls:'t', badge:'T', name:'Trolejbus' },
   'cat-admin': { cls:'a', badge:'N', name:'DEV Nábor (Admin)' }
 };
 let activeCategory = 'cat-b';
@@ -618,8 +632,7 @@ function updateProgress() {
   const pct = keys.length ? Math.round(done / keys.length * 100) : 0;
   $('#prog-text').textContent = `Zodpovězeno ${done} z ${keys.length}`;
   $('#prog-bar').style.width = pct + '%';
-  $('.track').style.setProperty('--p', pct + '%');
-  $('#board-meta').textContent = activeCategory === 'cat-admin'
+  $('.track').style.setProperty('--p', pct + '\%');$('#board-meta').textContent = activeCategory === 'cat-admin'
     ? `${keys.length} otázek · odpovědi se odešlou vedení`
     : `${keys.length} otázek · k úspěchu ${PASS_PERCENT} %`;
 }
@@ -627,8 +640,8 @@ function updateProgress() {
 function switchCategory(catId) {
   if (catId === 'cat-admin' && !ADMIN_SECTION_ENABLED) { showMsg('Admin sekce je momentálně uzamčena.'); return; }
   activeCategory = catId;
-  $$('.quiz-category').forEach(el => el.style.display = el.id === catId ? 'block' : 'none');
-  $$('.line-btn').forEach(b => b.setAttribute('aria-current', b.dataset.cat === catId));
+  $$('.quiz-category').forEach(el => el.style.display = el.id === catId ? 'block' : 'none'); $$
+('.line-btn').forEach(b => b.setAttribute('aria-current', b.dataset.cat === catId));
   const c = CATS[catId];
   $('#board-badge').className = 'badge big ' + c.cls;
   $('#board-badge').textContent = c.badge;
@@ -642,15 +655,10 @@ function resetResult() {
   window.retrySend = null;
   const sb = $('.submit'); sb.textContent = 'Odevzdat a vyhodnotit test'; sb.classList.remove('busy');
   showMsg('');
-  $('#result-box').style.display = 'none';
-  $$('.question-box').forEach(q => q.classList.remove('missing'));
-  $$('.option-label').forEach(l => l.classList.remove('ok', 'bad'));
-  $$('#quiz-form input[type=radio]').forEach(i => i.disabled = false);
-  $('.submit').disabled = false;
-}
-
-function retry() {
-  $$('#' + activeCategory + ' input:checked').forEach(i => i.checked = false);
+  $('#result-box').style.display = 'none'; $$('.question-box').forEach(q => q.classList.remove('missing'));
+  $$('.option-label').forEach(l => l.classList.remove('ok', 'bad'));$$
+('#quiz-form input[type=radio]').forEach(i => i.disabled = false);
+  $('.submit').disabled = false; }  function retry() { $$('#' + activeCategory + ' input:checked').forEach(i => i.checked = false);
   resetResult();
   updateProgress();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -681,13 +689,7 @@ async function submitTest() {
   if (window.retrySend) { const b = $('.submit'); b.disabled = true; b.classList.add('busy'); await trySend(window.retrySend, activeCategory === 'cat-admin'); return; }
   if (!window.currentUser) { showMsg('Pro odevzdání testu se nejprve přihlaste přes Google.'); return; }
   const discordNick = $('#discord-nick').value.trim();
-  const robloxNick = $('#roblox-nick').value.trim();
-  if (!discordNick || !robloxNick) { showMsg('Vyplňte prosím své Discord a Roblox jméno.'); return; }
-
-  const isAdmin = activeCategory === 'cat-admin';
-  if (!isAdmin) {
-    const missing = questionKeys().filter(k => !isAnswered(k));
-    $$('#' + activeCategory + ' .question-box').forEach(q => {
+  const robloxNick = $('#roblox-nick').value.trim(); if (!discordNick \vert{}\vert{} !robloxNick) { showMsg('Vyplňte prosím své Discord a Roblox jméno.'); return; }    const isAdmin = activeCategory === 'cat-admin'; if (!isAdmin) { const missing = questionKeys().filter(k => !isAnswered(k)); $$('#' + activeCategory + ' .question-box').forEach(q => {
       const n = $('input', q)?.name;
       q.classList.toggle('missing', missing.includes(n));
     });
@@ -765,16 +767,9 @@ async function submitTest() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  $$('.quiz-category h2').forEach(h => { h.dataset.t = h.textContent; });
-  $$('.line-btn').forEach(b => b.addEventListener('click', () => switchCategory(b.dataset.cat)));
-  if (!ADMIN_SECTION_ENABLED) $('#sidebar-admin-btn-wrap').style.display = 'none';
-
-  ['discord-nick', 'roblox-nick'].forEach(id => {
-    const el = document.getElementById(id);
-    el.value = store.get(id) || '';
-    el.addEventListener('input', () => store.set(id, el.value));
-  });
-  $$('textarea').forEach(t => {
+  $$('.quiz-category h2').forEach(h => { h.dataset.t = h.textContent; });$$
+('.line-btn').forEach(b => b.addEventListener('click', () => switchCategory(b.dataset.cat)));
+  if (!ADMIN_SECTION_ENABLED) $('#sidebar-admin-btn-wrap').style.display = 'none';    ['discord-nick', 'roblox-nick'].forEach(id => { const el = document.getElementById(id); el.value = store.get(id) \vert{}\vert{} ''; el.addEventListener('input', () => store.set(id, el.value)); }); $$('textarea').forEach(t => {
     t.value = store.get('draft:' + t.name) || '';
     t.addEventListener('input', () => store.set('draft:' + t.name, t.value));
   });
@@ -791,13 +786,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <script>
 async function trySend(send, isAdmin) {
-  const btn = $('.submit');
-  try {
-    await send();
-    window.retrySend = null; showMsg('');
-    btn.textContent = 'Odevzdat a vyhodnotit test';
-    if (isAdmin) {
-      $$('textarea').forEach(t => { t.value = ''; try { localStorage.removeItem('draft:' + t.name); } catch {} });
+  const btn = $('.submit'); try { await send(); window.retrySend = null; showMsg(''); btn.textContent = 'Odevzdat a vyhodnotit test'; if (isAdmin) { $$('textarea').forEach(t => { t.value = ''; try { localStorage.removeItem('draft:' + t.name); } catch {} });
       updateProgress();
     } else btn.disabled = true;
   } catch (err) {
@@ -824,17 +813,8 @@ async function trySend(send, isAdmin) {
   switchCategory = function (id) {
     _sw(id);
     if (id !== activeCategory) return;
-    const cat = $('#' + id);
-    $$('.question-box,.info-banner,.section-head', cat).forEach((e, i) => e.style.setProperty('--i', i));
-    restart(cat, 'show'); restart($('#board-badge'), 'pop'); flap($('#board-name'), CATS[id].name);
-  };
-  const _up = updateProgress;
-  updateProgress = function () {
-    _up();
-    $$('.question-box').forEach(q => { const i = $('input,textarea', q); if (i) q.classList.toggle('done', isAnswered(i.name)); });
-  };
-  $$('.lines li').forEach((li, i) => li.style.setProperty('--i', i));
-  $('#quiz-form').addEventListener('submit', e => e.preventDefault());
+    const cat = $('#' + id); $$('.question-box,.info-banner,.section-head', cat).forEach((e, i) => e.style.setProperty('--i', i));
+    restart(cat, 'show'); restart($('#board-badge'), 'pop'); flap($('#board-name'), CATS[id].name); }; const _up = updateProgress; updateProgress = function () { _up(); $$('.question-box').forEach(q => { const i = $('input,textarea', q); if (i) q.classList.toggle('done', isAnswered(i.name)); }); }; $$('.lines li').forEach((li, i) => li.style.setProperty('--i', i));$('#quiz-form').addEventListener('submit', e => e.preventDefault());
   window.addEventListener('autherror', () => showMsg('Přihlášení se nepovedlo. Povolte vyskakovací okna a zkuste to znovu.'));
 
   document.addEventListener('pointerdown', e => {
